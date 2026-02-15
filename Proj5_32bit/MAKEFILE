@@ -1,0 +1,44 @@
+#
+# Makefile for FLINT+ 2.61 — 32-bit DOS/4GW port
+# Open Watcom C/C++ wmake
+#
+# Usage:  wmake          (build)
+#         wmake clean    (remove .obj and .exe)
+#
+
+CC = wpp386
+CFLAGS = -bt=dos -mf -ox -zq -w3 -i=.
+
+LINK = wlink
+LFLAGS = system dos4g
+
+OBJS = proj5.obj mskeyc.obj pic.obj rdwrf.obj bgi32.obj
+
+TARGET = proj5.exe
+
+.EXTENSIONS:
+.EXTENSIONS: .exe .obj .cpp
+
+all: $(TARGET) .SYMBOLIC
+
+$(TARGET): $(OBJS)
+	$(LINK) $(LFLAGS) name $(TARGET) file {$(OBJS)}
+
+proj5.obj: proj5.cpp proj5.h compat.h bgi32.h
+	$(CC) $(CFLAGS) proj5.cpp
+
+mskeyc.obj: mskeyc.cpp compat.h bgi32.h
+	$(CC) $(CFLAGS) mskeyc.cpp
+
+pic.obj: pic.cpp compat.h bgi32.h
+	$(CC) $(CFLAGS) pic.cpp
+
+rdwrf.obj: rdwrf.cpp compat.h bgi32.h
+	$(CC) $(CFLAGS) rdwrf.cpp
+
+bgi32.obj: bgi32.cpp bgi32.h
+	$(CC) $(CFLAGS) bgi32.cpp
+
+clean: .SYMBOLIC
+	@if exist *.obj del *.obj
+	@if exist $(TARGET) del $(TARGET)

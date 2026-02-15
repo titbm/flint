@@ -1,0 +1,22 @@
+# Build artifacts
+*.obj
+*.OBJ
+*.exe
+!Proj5_32bit/DOS4GW.EXE
+DEBUG.LOG
+&1
+
+# IDE files
+*.ide
+*.bak
+*.tmp
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store

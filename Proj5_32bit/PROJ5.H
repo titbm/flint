@@ -1,0 +1,461 @@
+/***********************************
+	proj5.h
+	iB
+	32-bit DOS/4GW port (Open Watcom)
+***********************************/
+#if !defined(__PROJ5_H)
+#define __PROJ5_H
+
+#include "compat.h"
+#include "bgi32.h"
+
+#define ADRPT0 0x300
+#define ADRPPI ADRPT0+0x08		//0x308
+#define ADRRG ADRPT0+0x0c		//0x30c
+#define ADRCMOS ADRPT0+0x18	//0x318
+
+/* CURSOR_ON/CURSOR_OFF defined in compat.h */
+
+#define ESC 27
+#define ENTER 13
+#define COLDLG 3
+#define COLBK 56
+#define COLBKL 59
+#define COL_ON 60
+#define STEP_ON 0xfe		// AND
+#define STEP_OFF 0x01	// OR
+#define PULS_ON 0xbf		// AND
+#define PULS_OFF 0x40	// OR
+#define PR_OPEN 0x7f		// AND
+#define PR_CLOSE 0x80	// OR
+#define X0 160				// Picture:Xleft
+#define Y0 450				// Picture:Ydown
+/*--------------------------------------------------------
+	btc_***[]:	1 parameter:		1 - button
+											3 - ctlbt
+											4 - special
+					2 parameter:		0 - press+autorepeat
+											1 - release
+					next parameters:	x_left, y_top, dx, dy
+---------------------------------------------------------*/
+
+#define BNM_SCR 9
+static char *bnam_scr[] = {"F9 XYZ","F1 Config","F2 Convert",
+	"F3 DatLoad","F4 GlsLoad","F5 Start","F6 Statist","F7 Version",
+	"F10 Exit"};
+static int btc_scr[] = {
+	1,1,40,430,90,18,
+	1,1,520,160,90,18,
+	1,1,520,190,90,18,
+	1,1,520,220,90,18,
+	1,1,520,280,90,18,
+	1,1,520,310,90,18,
+	1,1,520,340,90,18,
+	1,1,520,370,90,18,
+	1,1,520,430,90,18};
+
+#define BNM_CFG 27		// 27 + 9*gl_nmb
+static char *bnam_cfg[] = {"Ok","Cancel","Load .cfg","Las.puls",
+	"Save .cfg","+","-","+","-","+","-","S+","S-","X+","X-","Y+",
+	"Y-","Z+","Z-","1","9","protect.open","work ptr","constant",
+	"variable","Las.adjust","#","","","","","","","","",""};
+static int btc_cfg[] = {
+	1,1,300,386,90,18,	// Ok
+	1,1,400,386,90,18,	// Cancel
+	1,1,120,125,90,18,	// Load .cfg
+	1,0,120,180,90,18,	// Las.puls
+	1,1,120,386,90,18,	// Save .cfg
+	1,0,345,132,22,14,	// + las.puls period
+	1,0,345,149,22,14,	// -
+	1,0,345,177,22,14,	// + delay
+	1,0,345,194,22,14,	// -
+	1,0,345,237,22,14,	// + step freq.
+	1,0,345,254,22,14,	// -
+	1,0,465,132,22,14,	// S+
+	1,0,465,149,22,14,	// S-
+	1,0,465,177,22,14,	// X+
+	1,0,465,194,22,14,	// X-
+	1,0,465,222,22,14,	// Y+
+	1,0,465,239,22,14,	// Y-
+	1,0,465,267,22,14,	// Z+
+	1,0,465,284,22,14,	// Z-
+	3,0,120,90,10,10,		// 1
+	3,0,120,105,10,10,	// 9
+	3,0,120,160,10,10,	// protect open
+	3,0,400,90,10,10,		// work ptr
+	3,0,280,280,10,10,	// constant
+	3,0,280,295,10,10,	// variable
+	1,0,120,205,90,18,	// Las.adj.
+	1,1,203,310,22,14,	// Statistics reset
+	4,0,280,315,12,12,	// 1
+	4,0,296,315,12,12,	// 2
+	4,0,312,315,12,12,	// 3
+	4,0,280,331,12,12,	// 4
+	4,0,296,331,12,12,	// 5
+	4,0,312,331,12,12,	// 6
+	4,0,280,347,12,12,	// 7
+	4,0,296,347,12,12,	// 8
+	4,0,312,347,12,12};	// 9
+
+#define BNM_OPN 12		// 12 + flag + k
+static char *bnam_opn[] = {"Ok","Cancel","up","dn","","","up","dn",
+	"","","*.bft","*.cft","*.asc","*.bmp","","",""};
+static int btc_opn[] = {
+	1,1,370,386,90,18,	// Ok
+	1,1,470,386,90,18,	// Cancel
+	1,0,225,175,22,14,	// subdir up
+	1,0,225,286,22,14,	// subdir dn
+	4,0,110,180,110,120,	// directory area
+	4,1,110,330,110,17,	// ChDisk area
+	1,0,380,175,22,14,	// up
+	1,0,380,286,22,14,	// dn
+	4,0,265,180,110,120,	// directory area
+	4,0,420,175,110,17,	// file name input
+	3,0,280,330,10,10,	// *.bft
+	3,0,280,345,10,10,	// *.cft
+	3,0,280,315,10,10,	// *.asc
+	3,0,280,360,10,10,	// *.bmp
+	4,0,450,232,60,18,	// dx
+	4,0,450,257,60,18,	// dy
+	4,0,450,282,60,18};	// dz
+
+#define BNM_ED 31
+static char *bnam_ed[] = {"Cancel","Data Save","Data Load","View XYZ",
+	"0->Center","up","<-","dn","->","+","-","+","-","+","-","+","-","Sort",
+	"","","","","","mirror","Dimensions","C->Center","invert","","","",""};
+static int btc_ed[] = {
+	1,1,500,438,90,18,	// Cancel
+	1,1,391,438,90,18,	// Data Save
+	1,1,100,438,90,18,	// Data Load
+	1,1,500,250,90,18,	// View XYZ
+	1,1,500,384,90,18,	// 0->Center
+	1,0,534,348,22,14,	// up
+	1,0,508,358,22,14,	// <-
+	1,0,534,365,22,14,	// dn
+	1,0,560,358,22,14,	// ->
+	1,0,565,77,22,14,		// + n
+	1,0,565,94,22,14,		// - n
+	1,0,565,113,22,14,	// + Xsize
+	1,0,565,130,22,14,	// - Xsize
+	1,0,565,149,22,14,	// + Ysize
+	1,0,565,166,22,14,	// - Ysize
+	1,0,565,185,22,14,	// + Zsize
+	1,0,565,202,22,14,	// - Zsize
+	1,1,294,438,90,18,	// sort
+	4,1,500,85,60,16,		// nglass
+	4,1,500,121,60,16,	// Xsize
+	4,1,500,157,60,16,	// Ysize
+	4,1,500,193,60,16,	// Zsize
+	4,1,500,54,76,16,		// Glass
+	3,0,505,234,10,10,	// Mirror
+	1,1,197,438,90,18,	// Dimensions
+	1,1,500,407,90,18,	// C->Center
+	3,0,505,221,10,10,	// Invert
+	4,1,527,274,60,16,	// dT
+	4,1,527,292,60,16,	// dL
+	4,1,527,310,60,16,	// dR
+	4,1,527,328,60,16};	// dB
+
+#define BNM_GLOAD 3
+static char *bnam_gload[] = {"Up","Down","Cancel"};
+static int btc_gload[] = {
+	1,1,300,207,90,18,	// Up
+	1,1,300,339,90,18,	// Down
+	1,1,300,376,90,18};	// Cancel
+
+#define BNM_GSEL 5
+static char *bnam_gsel[] = {"Ok","Cancel","","up","dn"};
+static int btc_gsel[] = {
+	1,1,300,386,90,18,	// Ok
+	1,1,400,386,90,18,	// Cancel
+	4,0,120,220,130,120,	// type area
+	1,0,255,215,22,14,	// up
+	1,0,255,326,22,14};	// dn
+
+#define BNM_STRT 15
+static char *bnam_strt[] = {" Ok"," Cancel","+","-","++","--",
+	"Beginning","Point number","Continuation","Saved in CMOS",
+	"End sensors","Drawing check","Stop","Coord.reboot/continuation",
+	"Ignore"};
+static int btc_strt[] = {
+	1,1,300,376,90,18,	// Ok
+	1,1,400,376,90,18,	// Cancel
+	1,0,345,140,22,14,	// +
+	1,0,345,160,22,14,	// -
+	1,0,375,140,22,14,	// ++
+	1,0,375,160,22,14,	// --
+	3,0,120,130,10,10,	// Beginning
+	3,0,120,150,10,10,	// Point number
+	3,0,120,170,10,10,	// Continuation
+	3,0,120,190,10,10,	// Saved in CMOS
+	3,0,120,225,10,10,	// End sensors
+	3,0,120,245,10,10,	// Drawing check
+	3,0,135,300,10,10,	// Stop
+	3,0,135,320,10,10,	// Ptr auto reboot
+	3,0,135,340,10,10};	// Ignore
+
+#define BNM_STAT 1
+static char *bnam_stat[] = {" Ok"};
+static int btc_stat[] = {
+	1,1,400,376,90,18};	// Ok
+
+#define BNM_MSG 2
+static char *bnam_msg[] = {"Ok","No","Nx"};
+static int btc_msg[] = {
+	1,1,310,322,22,14,	// Ok
+	1,1,340,322,22,14,	// No
+	1,1,266,322,22,14};	// Next
+
+#define BNM_INFO 1
+static char *bnam_info[] = {"Ok"};
+static int btc_info[] = {1,1,340,322,22,14};	// No
+
+#define BNM_SORT 9
+static char *bnam_sort[] = {"Close","Off","0.5mm layers","K*dz",
+	"+","-","+","-","Sort/time"};
+static int btc_sort[] = {
+	1,1,290,376,90,18,	// Close
+	3,0,130,210,10,10,	// Off
+	3,0,130,230,10,10,	// Sort1
+	3,0,130,250,10,10,	// Sort2
+	1,0,355,254,22,14,	// + K1
+	1,0,355,272,22,14,	// - K1
+	1,0,355,294,22,14,	// + K2
+	1,0,355,312,22,14,	// - K2
+	1,1,290,343,90,18};	// Sort/time
+
+#define BNM_DIM 14
+static char *bnam_dim[] = {"Cancel","+","-","Ok","from 0",
+	"from centre","","","+","-","+","-","+","-"};
+static int btc_dim[] = {
+	1,1,290,376,90,18,	// Cancel
+	1,0,255,214,22,14,	// + K
+	1,0,255,232,22,14,	// - K
+	1,1,190,376,90,18,	// Ok
+	3,0,130,305,10,10,	// 0 axis
+	3,0,130,325,10,10,	// glass center
+	3,0,130,225,10,10, 	// Kx=Ky=Kz
+	3,0,130,265,10,10,	// different
+	1,0,365,214,22,14,	// + KX
+	1,0,365,232,22,14,	// - KX
+	1,0,365,254,22,14,	// + KY
+	1,0,365,272,22,14,	// - KY
+	1,0,365,294,22,14,	// + KZ
+	1,0,365,312,22,14};	// - KZ
+
+/* Mouse cursor masks (no far pointer needed in 32-bit flat model) */
+static unsigned short scr_cur_masks[] = {
+	0x7fff, 0x3fff, 0x1fff, 0x0fff,		//AND mask
+	0x07ff, 0x03ff, 0x01ff, 0x00ff,
+	0x007f, 0x003f, 0x03ff, 0x01ff,
+	0x31ff, 0x70ff, 0xf8ff, 0xf8ff,
+	0x0000, 0x0000, 0x4000, 0x6000,		//XOR mask
+	0x7000, 0x7800, 0x7c00, 0x7e00,
+	0x7f00, 0x7800, 0x6800, 0x4c00,
+	0x0400, 0x0600, 0x0200, 0x0000};
+
+static char pattern[][8] = {
+	{(char)0xFF, (char)0xFF, (char)0xFF, (char)0xFF, (char)0xFF, (char)0xFF, (char)0xFF, (char)0xFF},
+	{(char)0xF7, (char)0xFF, (char)0xFF, (char)0xFF, (char)0x7F, (char)0xFF, (char)0xFF, (char)0xFF},
+	{(char)0xF7, (char)0xFF, (char)0x7F, (char)0xFF, (char)0xF7, (char)0xFF, (char)0x7F, (char)0xFF},
+	{(char)0xDD, (char)0xFF, (char)0x77, (char)0xFF, (char)0xDD, (char)0xFF, (char)0x77, (char)0xFF},
+	{(char)0xDD, (char)0x7F, (char)0xDD, (char)0xF7, (char)0xDD, (char)0x7F, (char)0xDD, (char)0xF7},
+	{(char)0xDD, (char)0x77, (char)0xDD, (char)0x77, (char)0xDD, (char)0x77, (char)0xDD, (char)0x77},
+	{(char)0x55, (char)0x77, (char)0xDD, (char)0x77, (char)0x55, (char)0x77, (char)0xDD, (char)0x77},
+	{(char)0xAA, (char)0xDD, (char)0xAA, (char)0x77, (char)0xAA, (char)0xDD, (char)0xAA, (char)0x77},
+	{(char)0xAA, (char)0x57, (char)0xAA, (char)0x75, (char)0xAA, (char)0x57, (char)0xAA, (char)0x75},
+	{(char)0xAA, (char)0x54, (char)0xAA, (char)0x45, (char)0xAA, (char)0x54, (char)0xAA, (char)0x45},
+	{(char)0xAA, (char)0x55, (char)0xAA, (char)0x55, (char)0xAA, (char)0x55, (char)0xAA, (char)0x55},
+	{(char)0xAA, (char)0x54, (char)0xAA, (char)0x45, (char)0xAA, (char)0x54, (char)0xAA, (char)0x45},
+	{(char)0x55, (char)0x88, (char)0x55, (char)0x22, (char)0x55, (char)0x88, (char)0x55, (char)0x22},
+	{(char)0x88, (char)0xAA, (char)0x88, (char)0x22, (char)0x88, (char)0xAA, (char)0x88, (char)0x22},
+	{(char)0x88, (char)0x22, (char)0x88, (char)0x22, (char)0x88, (char)0x22, (char)0x88, (char)0x22},
+	{(char)0x88, (char)0x20, (char)0x88, (char)0x02, (char)0x88, (char)0x20, (char)0x88, (char)0x02},
+	{(char)0x88, (char)0x00, (char)0x22, (char)0x00, (char)0x88, (char)0x00, (char)0x22, (char)0x00},
+	{(char)0x80, (char)0x00, (char)0x08, (char)0x00, (char)0x80, (char)0x00, (char)0x08, (char)0x00},
+	{(char)0x80, (char)0x00, (char)0x00, (char)0x00, (char)0x08, (char)0x00, (char)0x00, (char)0x00},
+	{(char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00, (char)0x00}};
+
+static unsigned char flint[] = {
+0xBF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
+0x83,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
+0xC0,0x3F,0xFF,0x9F,0xFF,0xFF,0xFF,0xEF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
+0xC0,0x3F,0xFF,0x0F,0xF0,0xFF,0x9F,0xF3,0xFF,0xFE,0x7F,0xFF,0xFF,0xFF,0xFF,
+0xC0,0x1F,0xFE,0x07,0xF8,0x03,0x80,0x78,0xFF,0xF8,0x3F,0xFF,0xFF,0xFF,0xFF,
+0xE0,0x1F,0xFE,0x01,0xF8,0x03,0xC0,0x38,0x3F,0xF0,0x1F,0xFF,0xF0,0x3F,0xFF,
+0xE0,0x1F,0xFC,0x00,0xFC,0x03,0xC0,0x3C,0x0F,0xE0,0x0F,0xFF,0xF8,0x1F,0xFF,
+0xE0,0x0F,0xFE,0x00,0x7C,0x01,0xC0,0x3C,0x07,0xE0,0x07,0xFF,0xF8,0x1F,0xFF,
+0xF0,0x0F,0xFE,0x01,0xFC,0x01,0xE0,0x1E,0x03,0xE0,0x03,0xFF,0xF8,0x1F,0xFF,
+0xF0,0x0F,0xFE,0x03,0xFE,0x01,0xE0,0x1E,0x03,0xE0,0x07,0xFF,0xFC,0x0F,0xFF,
+0xF0,0x07,0xFE,0x03,0xFE,0x01,0xE0,0x1E,0x01,0xE0,0x0F,0xFF,0xFC,0x0F,0xFF,
+0xF8,0x07,0xFF,0x01,0xFF,0x00,0xF0,0x0F,0x01,0xF0,0x0F,0xFF,0xFE,0x07,0xFF,
+0xF8,0x07,0xFF,0x01,0xFF,0x00,0xF0,0x0F,0x01,0xF0,0x0F,0xFF,0xFE,0x07,0xFF,
+0xF8,0x03,0xFF,0x01,0xFF,0x00,0xF0,0x0F,0x00,0xF8,0x0F,0xFF,0xFE,0x07,0xFF,
+0xFC,0x03,0xFF,0x80,0xFF,0x00,0x78,0x07,0x80,0xF8,0x0F,0xFF,0xFF,0x03,0xFF,
+0xFC,0x03,0xFF,0x80,0xFF,0x80,0x78,0x07,0x80,0x7C,0x07,0xFE,0x00,0x00,0x03,
+0xEC,0x03,0xFF,0x80,0x7B,0x80,0x78,0x07,0x80,0x7C,0x07,0xFE,0x00,0x00,0x03,
+0xE0,0x01,0xFF,0xC0,0x7C,0x00,0x3C,0x03,0x80,0x60,0x07,0xFF,0x00,0x00,0x01,
+0xF0,0x00,0x07,0xC0,0x7C,0x00,0x3C,0x01,0x80,0x30,0x00,0x3F,0x00,0x00,0x01,
+0xF8,0x00,0x07,0xC0,0x3E,0x00,0x3C,0x00,0x80,0x38,0x00,0x1F,0x80,0x00,0x00,
+0xFC,0x00,0x03,0xE0,0x3F,0x80,0x1E,0x00,0x00,0x3C,0x00,0x1F,0x80,0x00,0x00,
+0xFF,0x00,0x01,0xE0,0x3F,0xF8,0x1E,0x01,0x00,0x3F,0x00,0x0F,0xFF,0xC0,0xFF,
+0xFF,0x80,0x00,0xE0,0x1F,0xFF,0x1F,0xE1,0xC0,0x7F,0x00,0x0F,0xFF,0xC0,0xFF,
+0xFF,0x80,0x7F,0xF0,0x1F,0xFF,0xCF,0xFC,0xF0,0xFF,0x80,0xFF,0xFF,0xE0,0x7F,
+0xFF,0x80,0x7F,0xF0,0x0F,0xFF,0xFF,0xFF,0xFF,0xFF,0x80,0xFF,0xFF,0xE0,0x7F,
+0xFF,0x80,0x3D,0xF8,0x0F,0xFF,0xFF,0xFF,0xFF,0xFF,0xC0,0x7F,0xFF,0xE0,0x7F,
+0xFF,0xC0,0x3C,0xF8,0x0F,0xFC,0x3F,0xFF,0xFF,0xFF,0xC0,0x7F,0xFF,0xF0,0x3F,
+0xFF,0xC0,0x38,0x78,0x07,0xF8,0x1F,0xFF,0xFF,0xFF,0xF8,0x3F,0xFF,0xF0,0x3F,
+0xFF,0xE0,0x30,0x7C,0x07,0xF0,0x07,0xFF,0xFF,0xFF,0xFF,0x3F,0xFF,0xF0,0x3F,
+0xFF,0xF0,0x00,0x3C,0x03,0xF0,0x07,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xF8,0x1F,
+0xFF,0xFC,0x00,0x3C,0x03,0xF8,0x03,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xF8,0x1F,
+0xFF,0xFE,0x00,0x3E,0x03,0xF8,0x03,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
+0xFF,0xFF,0x80,0x1F,0x81,0xFC,0x03,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
+0xFF,0xFF,0xE0,0x3F,0xF9,0xFF,0x07,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
+
+static unsigned short fico[] = {
+	0x0000, 0x0000, 0x0001, 0x0000, 0x0000, 0x0000, 0x0005, 0x0000,
+	0x0000, 0x0400, 0x0014, 0x0000, 0x0000, 0x1500, 0x0014, 0x0000,
+	0x0000, 0x1540, 0x0054, 0x0000, 0x0000, 0x1554, 0x0054, 0x0000,
+	0x0000, 0x0555, 0x4150, 0x0000, 0x0000, 0x0555, 0x5550, 0x0000,
+	0x0000, 0x0155, 0x5550, 0x0000, 0x0000, 0x0005, 0x5555, 0x0000,
+	0x0000, 0x0000, 0x1555, 0x5400, 0x0000, 0x0000, 0x5545, 0x5550,
+	0x0000, 0x0001, 0x5540, 0x0554, 0x0000, 0x0005, 0x5500, 0x0000,
+	0x0000, 0x0005, 0x5500, 0x0000, 0x0000, 0x0005, 0x5500, 0x0000,
+	0x2800, 0x0001, 0x5400, 0x0000, 0x2A00, 0xA000, 0x0080, 0x0000,
+	0x2A02, 0xA8A8, 0xA8A0, 0x0A00, 0x2A02, 0xA0A8, 0xA8A8, 0x2A80,
+	0x2A02, 0xA0A8, 0xA8A8, 0x2A00, 0x2A02, 0xA0A8, 0xA8A8, 0x2A00,
+	0xAAA2, 0xA2A8, 0xA8A8, 0xAA80, 0x2AA2, 0xA028, 0x2AA8, 0x2AA0,
+	0x2A02, 0xA000, 0x00A0, 0x2A00, 0x2A22, 0xA0A0, 0x0000, 0x2A00,
+	0x0AAA, 0xA0A8, 0x0000, 0x2800, 0x02A0, 0xA0A0, 0x0000, 0x0000};
+
+/* ===== Global variables ===== */
+
+int f_demo;							// 0-work, 1-demo
+int f_bcab;							// 0..3 - bin,char,asc,bmp file
+int f_bca;							// 0..2 - bin,char,asc file
+int f_bc;							// 0 - bin, 1 - char file
+int xptr,yptr,zptr;				// reference point coordinates
+int do_ptr;							// table binding flag
+int f_ptr;							// 1 - mandatory binding in Start
+int xcur,ycur,zcur;				// current table coordinates
+int f_data;							// data presence flag
+int f_xyz;							// control picture axes selection
+long start_nmb;					// start point number
+long lastn;							// last processed point number
+long nmax;							// last point number in table
+int l_period;						// min laser period in ms
+int step_freq;						// step motor frequency in Hz
+int f_const;						// step frequency: 1-const, 0-variable
+unsigned int step;				// step size for adjustment
+char glstype[9];					// glass type label
+double nglas;						// glass refraction index
+int xsize,ysize,zsize;			// picture size in 0.1 mm
+int xofs,yofs,zofs;				// 3D object offset in picture
+int gl_nmb;							// number of specimens: 0->1pcs, 1->9pcs
+unsigned int glpos9;				// used positions out of 9
+unsigned int nmrpt[20];			// reiteration count for 10 positions
+int d_check;						// drawing check
+int f_noise;						// 0:ignore, 1:ptr auto reboot, 2:stop
+int f_sort;							// sort: 0.5mm layers(=1), Ki*dz(=2)
+int sK1, sK2;						// sort coefficients for dz>0, dz<0
+int nmb_pbt;						// pressed button number
+int pkey;							// pressed key number
+int tout;							// tout=1: compute and display processing time
+extern char path[];
+char wrkpath[MAXPATH];
+char wrkfile[13];
+unsigned long ulMax;				// max number of points (memory limit)
+
+/* 32-bit port: short* for 16-bit .bft compatibility, flat model */
+short *iTabl;
+
+unsigned int dx,dy,dz;			// grid step and layer spacing for *.bmp
+
+int fcdim,kdim;					// dimension modification parameters
+int feqk,kxdim,kydim,kzdim;
+
+/* Image buffers - dynamically allocated in 32-bit version */
+void *bitmapmsg;					// dialog background save buffer
+void *bgmap;						// progressbar background save buffer
+
+extern int coord[2];				// coord[0]-hor.(columns), coord[1]-vert.(rows)
+extern char mname[100][13];
+extern char dname[50][13];
+char gtype[50][16];
+extern int lastf;
+extern int lastd;
+int xmin,xmax,ymin,ymax,zmin,zmax;	// object bounds in 10 mkm
+unsigned int errnmb;				// failed positions at stop
+int k_old,p_old;					// for progbar()
+unsigned long ulFlash;			// cumulative laser pulse count
+unsigned long ulService;		// service lamp replacement date
+
+/* Function prototypes */
+void set_gr_cursor(int hot_spot_row, int hot_spot_column,
+		unsigned short *scr_cur_masks);
+void ms_init(void);
+int ms_key_cmd(void);
+void beep(int tone, int duration);	// Hz,ms
+void out_time(int newt);
+void CurDir(void);
+int rdfile(char filename[], char masname[], unsigned int nmb);
+int wrfile(char filename[], char masname[], unsigned int nmb);
+void RdCfg(int gl_nmber);
+void FlashRd(void);
+void FlashWr(void);
+int rddir(char f_namext[]);
+int rdasc_t(char filename[]);
+int rdgls(void);
+long rdcft_t(char filename[]);
+int wrasc(char filename[]);
+int wrt_cft(char filename[]);
+int wrt_bft(char filename[]);
+long rdbft_t(char filename[]);
+long rdbmp(char filename[]);
+int pi_ini(void);
+void sh_open(unsigned int pos);
+void sh_close(void);
+int process(void);
+int move_sen(int dir);
+int move(int x, int y, int z);
+
+void button(int btc[], int nmb, char buttxt[]);
+void buttonp(int btc[], int nmb, char buttxt[]);
+void ctlbt(int btxl, int btyl, int colctl, char ctltxt[]);
+int pressbt(int btc[], int nmb);
+int msgbox(char msgtxt[], int more);
+void infobox(char msgtxt[]);
+int msg(int msgx, int msgy, int onoff, char msgtxt[]);
+int InrDcr(int param, int pmin, int pmax, int pstep, int updn);
+void sw_ctl(int flag, int param, int xpos, int ypos, int col);
+int dlgopen(char destnm[], char dlgnm[], int fasc);
+int disksel(int nmb);
+void WndBkgr(int xl,int yt,int xr,int yb, int col,char txt[]);
+int dlgcfg(void);
+int dlged(void);
+void chdiska(void);
+int inp_dig(int xl, int yt, double min, double max, int ax);
+void glload(int direct);
+int dlgload(void);
+int gselect(void);
+int dlgstart(void);
+void ClearRpt(void);
+int dlgstat(void);
+void mainscr(int all);
+void glaspos(int xl, int yt, int cw);
+void drawfl(void);
+void draw(int flag, int all);
+void DrawPix(int hp,int hs, int vp, int vs, int color);
+int draw_bt(int btc[], char *bnam[], int bnm);
+int dlgsort(void);
+int sort(void);
+int sort2(void);
+long cros(unsigned long k1, unsigned long k2);
+void swap(unsigned long k1, unsigned long k2);
+int minmax(void);
+unsigned int scan_ms(int btc[], char *bnam[], int nbt);
+void progbar(long nmb_max, long nmb, int set, int xl, int yt);
+void htime(char tmpstr[]);
+int dlgdim(void);
+
+#endif

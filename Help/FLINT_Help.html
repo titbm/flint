@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FLINT+ v2.61 — Руководство пользователя</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: #16213e;
+    border-right: 2px solid #0f3460;
+    padding: 20px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 100;
+  }
+  
+  .sidebar h1 {
+    font-size: 1.1em;
+    color: #00d4ff;
+    padding: 0 16px 6px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid #0f3460;
+  }
+  .sidebar .subtitle {
+    font-size: 0.78em;
+    color: #7a8ba0;
+    padding: 0 16px 12px;
+    display: block;
+  }
+  
+  .toc-item {
+    display: block;
+    padding: 8px 16px;
+    color: #a0b4c8;
+    text-decoration: none;
+    font-size: 0.9em;
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+  }
+  .toc-item:hover, .toc-item.active {
+    background: #0f3460;
+    color: #00d4ff;
+    border-left-color: #00d4ff;
+  }
+  
+  .sidebar-footer {
+    padding: 16px;
+    font-size: 0.75em;
+    color: #555;
+    border-top: 1px solid #0f3460;
+    margin-top: 16px;
+  }
+  
+  /* Main content */
+  .main {
+    margin-left: 260px;
+    padding: 30px 40px;
+    flex: 1;
+    max-width: 900px;
+  }
+  
+  .main > h1 {
+    color: #00d4ff;
+    font-size: 1.8em;
+    margin-bottom: 6px;
+  }
+  .main > .lead {
+    color: #7a8ba0;
+    margin-bottom: 30px;
+    font-size: 0.95em;
+    line-height: 1.6;
+  }
+  
+  .screen-section {
+    margin-bottom: 50px;
+    padding-top: 20px;
+    border-top: 1px solid #0f3460;
+  }
+  .screen-section h2 {
+    color: #00d4ff;
+    font-size: 1.4em;
+    margin-bottom: 10px;
+  }
+  .screen-desc {
+    color: #b0c4de;
+    margin-bottom: 16px;
+    line-height: 1.6;
+    font-size: 0.9em;
+  }
+  
+  /* Screenshot container with hotspots */
+  .screen-container {
+    position: relative;
+    display: inline-block;
+    border: 2px solid #0f3460;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #000;
+    margin-bottom: 12px;
+  }
+  .screen-container img {
+    display: block;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+  
+  .hotspot {
+    position: absolute;
+    border: 1px solid transparent;
+    cursor: help;
+    transition: all 0.15s;
+    z-index: 10;
+  }
+  .hotspot:hover {
+    border-color: #ff0;
+    background: rgba(255,255,0,0.18);
+    box-shadow: 0 0 8px rgba(255,255,0,0.4);
+  }
+  
+  .tooltip {
+    display: none;
+    position: absolute;
+    background: #1a1a2e;
+    color: #fff;
+    border: 1px solid #00d4ff;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+    max-width: 320px;
+    line-height: 1.4;
+    z-index: 50;
+    pointer-events: none;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+  }
+  
+  /* Elements table */
+  .elements-table {
+    margin-bottom: 10px;
+  }
+  .elements-table summary {
+    cursor: pointer;
+    color: #00d4ff;
+    font-size: 0.85em;
+    padding: 4px 0;
+  }
+  .elements-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85em;
+    margin-top: 6px;
+  }
+  .elements-table th {
+    background: #16213e;
+    color: #00d4ff;
+    padding: 6px 10px;
+    text-align: left;
+    border-bottom: 1px solid #0f3460;
+  }
+  .elements-table td {
+    padding: 5px 10px;
+    border-bottom: 1px solid #1a2a4a;
+    color: #c0d0e0;
+  }
+  .elements-table tr:hover td {
+    background: #0f3460;
+  }
+  
+  .no-img {
+    width: 640px; height: 480px; background: #333;
+    display: flex; align-items: center; justify-content: center;
+    color: #888;
+  }
+  
+  /* Key shortcuts legend */
+  .legend {
+    background: #16213e;
+    border: 1px solid #0f3460;
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 30px;
+  }
+  .legend h3 { color: #00d4ff; margin-bottom: 8px; font-size: 1em; }
+  .legend table { font-size: 0.85em; }
+  .legend td { padding: 3px 12px 3px 0; color: #b0c4de; }
+  .legend .key {
+    display: inline-block;
+    background: #2a3a5e;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 0.9em;
+    border: 1px solid #4a5a7e;
+  }
+  
+  /* Mobile */
+  @media (max-width: 960px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <h1>FLINT+ v2.61</h1>
+  <span class="subtitle">Руководство пользователя</span>
+  <a href="#overview" class="toc-item">Обзор программы</a>
+  <a href="#keys" class="toc-item">Клавиши управления</a>
+  <a href="#mainscr" class="toc-item">Главный экран</a><a href="#config" class="toc-item">Настройки (Configuration)</a><a href="#convert" class="toc-item">Редактор данных (Data Convert)</a><a href="#fileopen" class="toc-item">Открытие файла (Data Load)</a><a href="#glassload" class="toc-item">Загрузка стекла (Glass Load)</a><a href="#glassselect" class="toc-item">Выбор стекла (Glass Select)</a><a href="#start" class="toc-item">Запуск гравировки (Start)</a><a href="#statistics" class="toc-item">Статистика (Statistics)</a><a href="#sorting" class="toc-item">Сортировка (Sorting)</a><a href="#dimensions" class="toc-item">Масштабирование (Dimensions)</a><a href="#msgbox" class="toc-item">Окно сообщения</a><a href="#infobox" class="toc-item">О программе (Version)</a>
+  <div class="sidebar-footer">
+    &copy; ILTiP Ltd, Сосновый Бор<br>
+    32-bit DOS/4GW версия
+  </div>
+</nav>
+
+<main class="main">
+  <h1>FLINT+ v2.61</h1>
+  <p class="lead">
+    Программа управления установкой лазерной гравировки внутри стекла.
+    Разработана в Институте лазерных технологий и инжиниринга (ILTiP Ltd), г. Сосновый Бор, Россия.<br><br>
+    <b>Наведите курсор</b> на любой элемент интерфейса на картинке — появится подсказка.
+    Нажмите «Таблица элементов» под картинкой для полного списка.
+  </p>
+  
+  <section id="overview" class="screen-section">
+    <h2>Обзор программы</h2>
+    <p class="screen-desc">
+      FLINT+ управляет лазерной установкой для нанесения 3D-изображений внутри стеклянных заготовок.
+      Программа загружает 3D-модель (набор точек в пространстве), отображает её на экране,
+      позволяет настроить параметры стекла и лазера, выполнить сортировку точек для оптимизации пути,
+      и запустить процесс гравировки.<br><br>
+      <b>Основные возможности:</b><br>
+      • Загрузка 3D-данных из файлов BFT, CFT, ASC, BMP<br>
+      • Просмотр объекта в 4 проекциях (XY, YX, XZ, YZ)<br>
+      • Масштабирование, зеркалирование, центрирование<br>
+      • Сортировка точек для минимизации перемещений лазера<br>
+      • Поддержка серийной работы (до 9 стёкол за один цикл)<br>
+      • Справочник типов стекла с показателями преломления<br>
+      • Контроль ошибок и автоматическое восстановление<br>
+      • До 8 000 000 точек (32-bit версия с расширенной памятью)
+    </p>
+  </section>
+  
+  <section id="keys" class="screen-section">
+    <div class="legend">
+      <h3>Горячие клавиши</h3>
+      <table>
+        <tr><td><span class="key">F1</span></td><td>Настройки оборудования (Configuration)</td></tr>
+        <tr><td><span class="key">F2</span></td><td>Редактор данных (Data Convert)</td></tr>
+        <tr><td><span class="key">F3</span></td><td>Загрузить файл данных (Data Load)</td></tr>
+        <tr><td><span class="key">F4</span></td><td>Загрузка стекла (Glass Load)</td></tr>
+        <tr><td><span class="key">F5</span></td><td>Начать гравировку (Start)</td></tr>
+        <tr><td><span class="key">F6</span></td><td>Статистика (Statistics)</td></tr>
+        <tr><td><span class="key">F7</span></td><td>О программе (Version)</td></tr>
+        <tr><td><span class="key">F9</span></td><td>Переключить оси отображения (XYZ)</td></tr>
+        <tr><td><span class="key">F10</span></td><td>Выход из программы</td></tr>
+        <tr><td><span class="key">Enter</span></td><td>Подтвердить / Ok</td></tr>
+        <tr><td><span class="key">Esc</span></td><td>Отменить / Cancel</td></tr>
+      </table>
+    </div>
+  </section>
+
+  
+    <section id="mainscr" class="screen-section">
+      <h2>Главный экран</h2>
+      <p class="screen-desc">Это главный рабочий экран программы FLINT+. Здесь отображается загруженное 3D-изображение, <br>    информация о текущем файле, параметры стекла и кнопки доступа ко всем функциям программы.<br>    Фон — градиентный узор синего цвета. В правой части — логотип FLINT и кнопки меню.<br>    В левой части — информационная панель: имя файла, количество точек, параметры стекла.<br>    В центре — область предпросмотра 3D-объекта (проекция на плоскость).</p>
+      <div class="screen-container">
+        <img src="data:image/png;base64,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" width="640" height="480" alt="Главный экран">
+        <div class="hotspot" style="left:40px;top:430px;width:90px;height:18px;" data-tip="F9 XYZ — переключение осей отображения (XY → YX → XZ → YZ)"></div>
+        <div class="hotspot" style="left:520px;top:160px;width:90px;height:18px;" data-tip="F1 Config — открыть диалог настроек оборудования"></div>
+        <div class="hotspot" style="left:520px;top:190px;width:90px;height:18px;" data-tip="F2 Convert — открыть редактор данных (загрузка, конвертация, просмотр)"></div>
+        <div class="hotspot" style="left:520px;top:220px;width:90px;height:18px;" data-tip="F3 DatLoad — загрузить файл данных (.bft/.cft/.asc/.bmp)"></div>
+        <div class="hotspot" style="left:520px;top:280px;width:90px;height:18px;" data-tip="F4 GlsLoad — загрузка/выгрузка стекла (управление столом)"></div>
+        <div class="hotspot" style="left:520px;top:310px;width:90px;height:18px;" data-tip="F5 Start — начать процесс лазерной гравировки"></div>
+        <div class="hotspot" style="left:520px;top:340px;width:90px;height:18px;" data-tip="F6 Statist — показать статистику работы"></div>
+        <div class="hotspot" style="left:520px;top:370px;width:90px;height:18px;" data-tip="F7 Version — информация о версии программы"></div>
+        <div class="hotspot" style="left:520px;top:430px;width:90px;height:18px;" data-tip="F10 Exit — выход из программы"></div>
+        <div class="hotspot" style="left:20px;top:30px;width:120px;height:12px;" data-tip="Имя загруженного файла данных"></div>
+        <div class="hotspot" style="left:20px;top:145px;width:120px;height:12px;" data-tip="Nmax — общее количество точек в загруженном файле"></div>
+        <div class="hotspot" style="left:20px;top:164px;width:70px;height:20px;" data-tip="Nlast — номер последней обработанной точки"></div>
+        <div class="hotspot" style="left:20px;top:230px;width:80px;height:115px;" data-tip="Панель параметров стекла: тип, показатель преломления n, размеры X/Y/Z в мм"></div>
+        <div class="hotspot" style="left:30px;top:360px;width:50px;height:12px;" data-tip="Demo — программа работает в демо-режиме (оборудование не подключено)"></div>
+        <div class="hotspot" style="left:20px;top:380px;width:100px;height:12px;" data-tip="Максимальное количество точек (зависит от доступной памяти)"></div>
+        <div class="hotspot" style="left:30px;top:50px;width:50px;height:12px;" data-tip="Переключатель режима: 1 стекло или 9 стёкол"></div>
+        <div class="hotspot" style="left:160px;top:150px;width:300px;height:300px;" data-tip="Область предпросмотра 3D-объекта. Показывает проекцию точек на выбранную плоскость"></div>
+        <div class="tooltip" id="tip-mainscr"></div>
+      </div>
+      <details class="elements-table">
+        <summary>Таблица элементов (17)</summary>
+        <table>
+          <tr><th>#</th><th>Описание</th></tr>
+          <tr><td>1</td><td>F9 XYZ — переключение осей отображения (XY → YX → XZ → YZ)</td></tr>
+<tr><td>2</td><td>F1 Config — открыть диалог настроек оборудования</td></tr>
+<tr><td>3</td><td>F2 Convert — открыть редактор данных (загрузка, конвертация, просмотр)</td></tr>
+<tr><td>4</td><td>F3 DatLoad — загрузить файл данных (.bft/.cft/.asc/.bmp)</td></tr>
+<tr><td>5</td><td>F4 GlsLoad — загрузка/выгрузка стекла (управление столом)</td></tr>
+<tr><td>6</td><td>F5 Start — начать процесс лазерной гравировки</td></tr>
+<tr><td>7</td><td>F6 Statist — показать статистику работы</td></tr>
+<tr><td>8</td><td>F7 Version — информация о версии программы</td></tr>
+<tr><td>9</td><td>F10 Exit — выход из программы</td></tr>
+<tr><td>10</td><td>Имя загруженного файла данных</td></tr>
+<tr><td>11</td><td>Nmax — общее количество точек в загруженном файле</td></tr>
+<tr><td>12</td><td>Nlast — номер последней обработанной точки</td></tr>
+<tr><td>13</td><td>Панель параметров стекла: тип, показатель преломления n, размеры X/Y/Z в мм</td></tr>
+<tr><td>14</td><td>Demo — программа работает в демо-режиме (оборудование не подключено)</td></tr>
+<tr><td>15</td><td>Максимальное количество точек (зависит от доступной памяти)</td></tr>
+<tr><td>16</td><td>Переключатель режима: 1 стекло или 9 стёкол</td></tr>
+<tr><td>17</td><td>Область предпросмотра 3D-объекта. Показывает проекцию точек на выбранную плоскость</td></tr>
+
+        </table>
+      </details>
+    </section>
+    <section id="config" class="screen-section">
+      <h2>Настройки (Configuration)</h2>
+      <p class="screen-desc">Диалог настройки оборудования. Здесь задаются параметры лазера, шаговых двигателей, <br>    координаты привязки стола и режимы работы. Вызывается клавишей F1 с главного экрана.<br>    Левая часть — управление конфигурацией и защитой. Центр — параметры лазера и частоты.<br>    Правая часть — координаты привязки стола (X, Y, Z) и шаг перемещения.</p>
+      <div class="screen-container">
+        <img src="data:image/png;base64,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" width="640" height="480" alt="Настройки (Configuration)">
+        <div class="hotspot" style="left:300px;top:386px;width:90px;height:18px;" data-tip="Ok — принять изменения и вернуться на главный экран"></div>
+        <div class="hotspot" style="left:400px;top:386px;width:90px;height:18px;" data-tip="Cancel — отменить изменения"></div>
+        <div class="hotspot" style="left:120px;top:125px;width:90px;height:18px;" data-tip="Load .cfg — загрузить настройки из файла конфигурации"></div>
+        <div class="hotspot" style="left:120px;top:180px;width:90px;height:18px;" data-tip="Las.puls — сделать одиночный импульс лазера (для тестирования)"></div>
+        <div class="hotspot" style="left:120px;top:386px;width:90px;height:18px;" data-tip="Save .cfg — сохранить текущие настройки в файл"></div>
+        <div class="hotspot" style="left:120px;top:205px;width:90px;height:18px;" data-tip="Las.adjust — непрерывная работа лазера для настройки (выход — любая клавиша)"></div>
+        <div class="hotspot" style="left:345px;top:132px;width:22px;height:14px;" data-tip="+ — увеличить период лазерного импульса"></div>
+        <div class="hotspot" style="left:345px;top:149px;width:22px;height:14px;" data-tip="- — уменьшить период лазерного импульса"></div>
+        <div class="hotspot" style="left:345px;top:177px;width:22px;height:14px;" data-tip="+ — увеличить задержку"></div>
+        <div class="hotspot" style="left:345px;top:194px;width:22px;height:14px;" data-tip="- — уменьшить задержку"></div>
+        <div class="hotspot" style="left:345px;top:237px;width:22px;height:14px;" data-tip="+ — увеличить частоту шагового двигателя"></div>
+        <div class="hotspot" style="left:345px;top:254px;width:22px;height:14px;" data-tip="- — уменьшить частоту шагового двигателя"></div>
+        <div class="hotspot" style="left:465px;top:132px;width:22px;height:14px;" data-tip="S+ — увеличить шаг перемещения"></div>
+        <div class="hotspot" style="left:465px;top:149px;width:22px;height:14px;" data-tip="S- — уменьшить шаг перемещения"></div>
+        <div class="hotspot" style="left:465px;top:177px;width:22px;height:14px;" data-tip="X+ — увеличить координату X привязки"></div>
+        <div class="hotspot" style="left:465px;top:194px;width:22px;height:14px;" data-tip="X- — уменьшить координату X привязки"></div>
+        <div class="hotspot" style="left:465px;top:222px;width:22px;height:14px;" data-tip="Y+ — увеличить координату Y привязки"></div>
+        <div class="hotspot" style="left:465px;top:239px;width:22px;height:14px;" data-tip="Y- — уменьшить координату Y привязки"></div>
+        <div class="hotspot" style="left:465px;top:267px;width:22px;height:14px;" data-tip="Z+ — увеличить координату Z привязки"></div>
+        <div class="hotspot" style="left:465px;top:284px;width:22px;height:14px;" data-tip="Z- — уменьшить координату Z привязки"></div>
+        <div class="hotspot" style="left:120px;top:90px;width:80px;height:12px;" data-tip="Режим «1» — работа с одним стеклом"></div>
+        <div class="hotspot" style="left:120px;top:105px;width:80px;height:12px;" data-tip="Режим «9» — работа с 9 стёклами (серия)"></div>
+        <div class="hotspot" style="left:120px;top:160px;width:90px;height:12px;" data-tip="Защита лазера — открыть/закрыть затвор"></div>
+        <div class="hotspot" style="left:400px;top:90px;width:80px;height:12px;" data-tip="Привязка стола — включить/выключить перемещение к координатам"></div>
+        <div class="hotspot" style="left:280px;top:280px;width:80px;height:12px;" data-tip="Частота шагов — постоянная"></div>
+        <div class="hotspot" style="left:280px;top:295px;width:80px;height:12px;" data-tip="Частота шагов — переменная (зависит от расстояния)"></div>
+        <div class="hotspot" style="left:280px;top:140px;width:62px;height:18px;" data-tip="Поле: период лазерного импульса (мс)"></div>
+        <div class="hotspot" style="left:280px;top:185px;width:62px;height:18px;" data-tip="Поле: задержка (мкс)"></div>
+        <div class="hotspot" style="left:280px;top:245px;width:62px;height:18px;" data-tip="Поле: частота шаговых двигателей (Гц)"></div>
+        <div class="hotspot" style="left:400px;top:140px;width:62px;height:18px;" data-tip="Поле: шаг перемещения стола"></div>
+        <div class="hotspot" style="left:400px;top:185px;width:62px;height:18px;" data-tip="Поле: координата X привязки"></div>
+        <div class="hotspot" style="left:400px;top:230px;width:62px;height:18px;" data-tip="Поле: координата Y привязки"></div>
+        <div class="hotspot" style="left:400px;top:275px;width:62px;height:18px;" data-tip="Поле: координата Z привязки"></div>
+        <div class="hotspot" style="left:130px;top:255px;width:97px;height:18px;" data-tip="Счётчик суммарных импульсов лазера"></div>
+        <div class="hotspot" style="left:130px;top:287px;width:97px;height:18px;" data-tip="Дата последнего обслуживания лампы"></div>
+        <div class="hotspot" style="left:203px;top:310px;width:22px;height:14px;" data-tip="# — сброс счётчика и обновление даты обслуживания"></div>
+        <div class="hotspot" style="left:280px;top:313px;width:52px;height:52px;" data-tip="Схема позиций при работе с 9 стёклами (кликабельные клетки)"></div>
+        <div class="tooltip" id="tip-config"></div>
+      </div>
+      <details class="elements-table">
+        <summary>Таблица элементов (37)</summary>
+        <table>
+          <tr><th>#</th><th>Описание</th></tr>
+          <tr><td>1</td><td>Ok — принять изменения и вернуться на главный экран</td></tr>
+<tr><td>2</td><td>Cancel — отменить изменения</td></tr>
+<tr><td>3</td><td>Load .cfg — загрузить настройки из файла конфигурации</td></tr>
+<tr><td>4</td><td>Las.puls — сделать одиночный импульс лазера (для тестирования)</td></tr>
+<tr><td>5</td><td>Save .cfg — сохранить текущие настройки в файл</td></tr>
+<tr><td>6</td><td>Las.adjust — непрерывная работа лазера для настройки (выход — любая клавиша)</td></tr>
+<tr><td>7</td><td>+ — увеличить период лазерного импульса</td></tr>
+<tr><td>8</td><td>- — уменьшить период лазерного импульса</td></tr>
+<tr><td>9</td><td>+ — увеличить задержку</td></tr>
+<tr><td>10</td><td>- — уменьшить задержку</td></tr>
+<tr><td>11</td><td>+ — увеличить частоту шагового двигателя</td></tr>
+<tr><td>12</td><td>- — уменьшить частоту шагового двигателя</td></tr>
+<tr><td>13</td><td>S+ — увеличить шаг перемещения</td></tr>
+<tr><td>14</td><td>S- — уменьшить шаг перемещения</td></tr>
+<tr><td>15</td><td>X+ — увеличить координату X привязки</td></tr>
+<tr><td>16</td><td>X- — уменьшить координату X привязки</td></tr>
+<tr><td>17</td><td>Y+ — увеличить координату Y привязки</td></tr>
+<tr><td>18</td><td>Y- — уменьшить координату Y привязки</td></tr>
+<tr><td>19</td><td>Z+ — увеличить координату Z привязки</td></tr>
+<tr><td>20</td><td>Z- — уменьшить координату Z привязки</td></tr>
+<tr><td>21</td><td>Режим «1» — работа с одним стеклом</td></tr>
+<tr><td>22</td><td>Режим «9» — работа с 9 стёклами (серия)</td></tr>
+<tr><td>23</td><td>Защита лазера — открыть/закрыть затвор</td></tr>
+<tr><td>24</td><td>Привязка стола — включить/выключить перемещение к координатам</td></tr>
+<tr><td>25</td><td>Частота шагов — постоянная</td></tr>
+<tr><td>26</td><td>Частота шагов — переменная (зависит от расстояния)</td></tr>
+<tr><td>27</td><td>Поле: период лазерного импульса (мс)</td></tr>
+<tr><td>28</td><td>Поле: задержка (мкс)</td></tr>
+<tr><td>29</td><td>Поле: частота шаговых двигателей (Гц)</td></tr>
+<tr><td>30</td><td>Поле: шаг перемещения стола</td></tr>
+<tr><td>31</td><td>Поле: координата X привязки</td></tr>
+<tr><td>32</td><td>Поле: координата Y привязки</td></tr>
+<tr><td>33</td><td>Поле: координата Z привязки</td></tr>
+<tr><td>34</td><td>Счётчик суммарных импульсов лазера</td></tr>
+<tr><td>35</td><td>Дата последнего обслуживания лампы</td></tr>
+<tr><td>36</td><td># — сброс счётчика и обновление даты обслуживания</td></tr>
+<tr><td>37</td><td>Схема позиций при работе с 9 стёклами (кликабельные клетки)</td></tr>
+
+        </table>
+      </details>
+    </section>
+    <section id="convert" class="screen-section">
+      <h2>Редактор данных (Data Convert)</h2>
+      <p class="screen-desc">Диалог работы с 3D-данными. Здесь можно загружать файлы разных форматов,<br>    просматривать объект в разных проекциях, менять размеры стекла, зеркалить, инвертировать,<br>    смещать объект и сохранять результат. Вызывается клавишей F2.<br>    В центре — область предпросмотра объекта. Справа — параметры стекла и отступы.</p>
+      <div class="screen-container">
+        <img src="data:image/png;base64,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" width="640" height="480" alt="Редактор данных (Data Convert)">
+        <div class="hotspot" style="left:500px;top:438px;width:90px;height:18px;" data-tip="Cancel — закрыть без сохранения"></div>
+        <div class="hotspot" style="left:391px;top:438px;width:90px;height:18px;" data-tip="Data Save — сохранить данные в файл"></div>
+        <div class="hotspot" style="left:100px;top:438px;width:90px;height:18px;" data-tip="Data Load — загрузить данные из файла"></div>
+        <div class="hotspot" style="left:500px;top:250px;width:90px;height:18px;" data-tip="View XYZ — переключить проекцию (XY → YX → XZ → YZ)"></div>
+        <div class="hotspot" style="left:500px;top:384px;width:90px;height:18px;" data-tip="0-&gt;Center — сместить начало координат в центр стекла"></div>
+        <div class="hotspot" style="left:534px;top:348px;width:22px;height:14px;" data-tip="Вверх — сместить объект вверх"></div>
+        <div class="hotspot" style="left:508px;top:358px;width:22px;height:14px;" data-tip="Влево — сместить объект влево"></div>
+        <div class="hotspot" style="left:534px;top:365px;width:22px;height:14px;" data-tip="Вниз — сместить объект вниз"></div>
+        <div class="hotspot" style="left:560px;top:358px;width:22px;height:14px;" data-tip="Вправо — сместить объект вправо"></div>
+        <div class="hotspot" style="left:565px;top:77px;width:22px;height:14px;" data-tip="+n — увеличить показатель преломления"></div>
+        <div class="hotspot" style="left:565px;top:94px;width:22px;height:14px;" data-tip="-n — уменьшить показатель преломления"></div>
+        <div class="hotspot" style="left:565px;top:113px;width:22px;height:14px;" data-tip="+X — увеличить размер стекла по X"></div>
+        <div class="hotspot" style="left:565px;top:130px;width:22px;height:14px;" data-tip="-X — уменьшить размер стекла по X"></div>
+        <div class="hotspot" style="left:565px;top:149px;width:22px;height:14px;" data-tip="+Y — увеличить размер стекла по Y"></div>
+        <div class="hotspot" style="left:565px;top:166px;width:22px;height:14px;" data-tip="-Y — уменьшить размер стекла по Y"></div>
+        <div class="hotspot" style="left:565px;top:185px;width:22px;height:14px;" data-tip="+Z — увеличить размер стекла по Z"></div>
+        <div class="hotspot" style="left:565px;top:202px;width:22px;height:14px;" data-tip="-Z — уменьшить размер стекла по Z"></div>
+        <div class="hotspot" style="left:294px;top:438px;width:90px;height:18px;" data-tip="Sort — открыть диалог сортировки точек"></div>
+        <div class="hotspot" style="left:197px;top:438px;width:90px;height:18px;" data-tip="Dimensions — открыть диалог масштабирования"></div>
+        <div class="hotspot" style="left:500px;top:407px;width:90px;height:18px;" data-tip="C-&gt;Center — центрировать объект по его габаритам"></div>
+        <div class="hotspot" style="left:505px;top:221px;width:25px;height:12px;" data-tip="Invert — инвертировать отображение (чёрное/белое)"></div>
+        <div class="hotspot" style="left:505px;top:234px;width:25px;height:12px;" data-tip="Mirror — зеркальное отражение по горизонтали"></div>
+        <div class="hotspot" style="left:500px;top:54px;width:78px;height:18px;" data-tip="Тип стекла (кликните для выбора из справочника)"></div>
+        <div class="hotspot" style="left:500px;top:85px;width:62px;height:18px;" data-tip="Поле: показатель преломления n (кликните для ввода числа)"></div>
+        <div class="hotspot" style="left:500px;top:121px;width:62px;height:18px;" data-tip="Поле: размер X в мм (кликните для ввода)"></div>
+        <div class="hotspot" style="left:500px;top:157px;width:62px;height:18px;" data-tip="Поле: размер Y в мм (кликните для ввода)"></div>
+        <div class="hotspot" style="left:500px;top:193px;width:62px;height:18px;" data-tip="Поле: размер Z в мм (кликните для ввода)"></div>
+        <div class="hotspot" style="left:527px;top:274px;width:62px;height:18px;" data-tip="dT — отступ сверху (в мм)"></div>
+        <div class="hotspot" style="left:527px;top:292px;width:62px;height:18px;" data-tip="dL — отступ слева (в мм)"></div>
+        <div class="hotspot" style="left:527px;top:310px;width:62px;height:18px;" data-tip="dR — отступ справа (в мм)"></div>
+        <div class="hotspot" style="left:527px;top:328px;width:62px;height:18px;" data-tip="dB — отступ снизу (в мм)"></div>
+        <div class="hotspot" style="left:110px;top:60px;width:370px;height:360px;" data-tip="Область предпросмотра — отображает точки объекта в выбранной проекции"></div>
+        <div class="tooltip" id="tip-convert"></div>
+      </div>
+      <details class="elements-table">
+        <summary>Таблица элементов (32)</summary>
+        <table>
+          <tr><th>#</th><th>Описание</th></tr>
+          <tr><td>1</td><td>Cancel — закрыть без сохранения</td></tr>
+<tr><td>2</td><td>Data Save — сохранить данные в файл</td></tr>
+<tr><td>3</td><td>Data Load — загрузить данные из файла</td></tr>
+<tr><td>4</td><td>View XYZ — переключить проекцию (XY → YX → XZ → YZ)</td></tr>
+<tr><td>5</td><td>0-&gt;Center — сместить начало координат в центр стекла</td></tr>
+<tr><td>6</td><td>Вверх — сместить объект вверх</td></tr>
+<tr><td>7</td><td>Влево — сместить объект влево</td></tr>
+<tr><td>8</td><td>Вниз — сместить объект вниз</td></tr>
+<tr><td>9</td><td>Вправо — сместить объект вправо</td></tr>
+<tr><td>10</td><td>+n — увеличить показатель преломления</td></tr>
+<tr><td>11</td><td>-n — уменьшить показатель преломления</td></tr>
+<tr><td>12</td><td>+X — увеличить размер стекла по X</td></tr>
+<tr><td>13</td><td>-X — уменьшить размер стекла по X</td></tr>
+<tr><td>14</td><td>+Y — увеличить размер стекла по Y</td></tr>
+<tr><td>15</td><td>-Y — уменьшить размер стекла по Y</td></tr>
+<tr><td>16</td><td>+Z — увеличить размер стекла по Z</td></tr>
+<tr><td>17</td><td>-Z — уменьшить размер стекла по Z</td></tr>
+<tr><td>18</td><td>Sort — открыть диалог сортировки точек</td></tr>
+<tr><td>19</td><td>Dimensions — открыть диалог масштабирования</td></tr>
+<tr><td>20</td><td>C-&gt;Center — центрировать объект по его габаритам</td></tr>
+<tr><td>21</td><td>Invert — инвертировать отображение (чёрное/белое)</td></tr>
+<tr><td>22</td><td>Mirror — зеркальное отражение по горизонтали</td></tr>
+<tr><td>23</td><td>Тип стекла (кликните для выбора из справочника)</td></tr>
+<tr><td>24</td><td>Поле: показатель преломления n (кликните для ввода числа)</td></tr>
+<tr><td>25</td><td>Поле: размер X в мм (кликните для ввода)</td></tr>
+<tr><td>26</td><td>Поле: размер Y в мм (кликните для ввода)</td></tr>
+<tr><td>27</td><td>Поле: размер Z в мм (кликните для ввода)</td></tr>
+<tr><td>28</td><td>dT — отступ сверху (в мм)</td></tr>
+<tr><td>29</td><td>dL — отступ слева (в мм)</td></tr>
+<tr><td>30</td><td>dR — отступ справа (в мм)</td></tr>
+<tr><td>31</td><td>dB — отступ снизу (в мм)</td></tr>
+<tr><td>32</td><td>Область предпросмотра — отображает точки объекта в выбранной проекции</td></tr>
+
+        </table>
+      </details>
+    </section>
+    <section id="fileopen" class="screen-section">
+      <h2>Открытие файла (Data Load)</h2>
+      <p class="screen-desc">Диалог выбора файла для загрузки. Поддерживаемые форматы:<br>    .bft (бинарный FLINT), .cft (текстовый FLINT), .asc (ASCII 3D Studio), .bmp (растровое изображение).<br>    Слева — дерево каталогов, справа — список файлов. Внизу — выбор формата.<br>    Для BMP-файлов появляются дополнительные поля шага сетки (dx, dy, dz).</p>
+      <div class="screen-container">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAIAAAC6s0uzAAAPy0lEQVR4nO3d7XKySAKG4bg1p6gHSQ4yWxNrWcI32vA0eF01P/IaxIykuNMNwu1+v38BAMf6z8GvBwAIMABkGAEDQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQMA/iRet1/f3d/pHAKC8+/3+VRkBHmgS2wGA/Ty+KmQKGgACBBgAAgQYAAIcA37jKML6o8WP9w4tP0ofom5X6IA38JHn2N4rOCfLCHiL5u8Xj6MO/vde9326C5BmBPyq5res7dB2apD6+PtFU3pQu/i6cgtQJQEupFvW7oTzs9PDCk4tv0l3zcPXHV1/lefiA3wgAS5ka9jeDOFisx8rgg1AjmPArxrGrFkdxZXLL65n8WdzrBegVgK8xdQB3eEk8PAQ7GP18vOvO7rmlT/P1tcFYDe3Gk7Frus8daNGgIt59B+ooX1GwAAQIMAAECDAABAgwAAQIMAAEOBCHBN8PgfgApqvagnw+bYZABdgChoAAgQYAAIEGAACBBgAAgQYAAIEGAAC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" width="640" height="480" alt="Открытие файла (Data Load)">
+        <div class="hotspot" style="left:370px;top:386px;width:90px;height:18px;" data-tip="Ok — открыть выбранный файл"></div>
+        <div class="hotspot" style="left:470px;top:386px;width:90px;height:18px;" data-tip="Cancel — отменить"></div>
+        <div class="hotspot" style="left:225px;top:175px;width:22px;height:14px;" data-tip="Вверх — прокрутка списка каталогов вверх"></div>
+        <div class="hotspot" style="left:225px;top:286px;width:22px;height:14px;" data-tip="Вниз — прокрутка каталогов вниз"></div>
+        <div class="hotspot" style="left:380px;top:175px;width:22px;height:14px;" data-tip="Вверх — прокрутка списка файлов вверх"></div>
+        <div class="hotspot" style="left:380px;top:286px;width:22px;height:14px;" data-tip="Вниз — прокрутка файлов вниз"></div>
+        <div class="hotspot" style="left:110px;top:175px;width:112px;height:125px;" data-tip="Список каталогов — кликните для перехода в папку"></div>
+        <div class="hotspot" style="left:265px;top:175px;width:112px;height:125px;" data-tip="Список файлов — кликните для выбора файла"></div>
+        <div class="hotspot" style="left:420px;top:175px;width:112px;height:18px;" data-tip="Поле ввода имени файла (кликните для ручного ввода)"></div>
+        <div class="hotspot" style="left:110px;top:329px;width:112px;height:19px;" data-tip="Текущий диск — кликните для смены (появится список A:–Z:)"></div>
+        <div class="hotspot" style="left:280px;top:330px;width:25px;height:12px;" data-tip="*.bft — фильтр бинарных файлов FLINT"></div>
+        <div class="hotspot" style="left:280px;top:345px;width:25px;height:12px;" data-tip="*.cft — фильтр текстовых файлов FLINT"></div>
+        <div class="hotspot" style="left:280px;top:315px;width:25px;height:12px;" data-tip="*.asc — фильтр файлов ASCII (3D Studio)"></div>
+        <div class="hotspot" style="left:280px;top:360px;width:25px;height:12px;" data-tip="*.bmp — фильтр BMP-изображений"></div>
+        <div class="hotspot" style="left:110px;top:160px;width:470px;height:10px;" data-tip="Текущий путь к каталогу"></div>
+        <div class="tooltip" id="tip-fileopen"></div>
+      </div>
+      <details class="elements-table">
+        <summary>Таблица элементов (15)</summary>
+        <table>
+          <tr><th>#</th><th>Описание</th></tr>
+          <tr><td>1</td><td>Ok — открыть выбранный файл</td></tr>
+<tr><td>2</td><td>Cancel — отменить</td></tr>
+<tr><td>3</td><td>Вверх — прокрутка списка каталогов вверх</td></tr>
+<tr><td>4</td><td>Вниз — прокрутка каталогов вниз</td></tr>
+<tr><td>5</td><td>Вверх — прокрутка списка файлов вверх</td></tr>
+<tr><td>6</td><td>Вниз — прокрутка файлов вниз</td></tr>
+<tr><td>7</td><td>Список каталогов — кликните для перехода в папку</td></tr>
+<tr><td>8</td><td>Список файлов — кликните для выбора файла</td></tr>
+<tr><td>9</td><td>Поле ввода имени файла (кликните для ручного ввода)</td></tr>
+<tr><td>10</td><td>Текущий диск — кликните для смены (появится список A:–Z:)</td></tr>
+<tr><td>11</td><td>*.bft — фильтр бинарных файлов FLINT</td></tr>
+<tr><td>12</td><td>*.cft — фильтр текстовых файлов FLINT</td></tr>
+<tr><td>13</td><td>*.asc — фильтр файлов ASCII (3D Studio)</td></tr>
+<tr><td>14</td><td>*.bmp — фильтр BMP-изображений</td></tr>
+<tr><td>15</td><td>Текущий путь к каталогу</td></tr>
+
+        </table>
+      </details>
+    </section>
+    <section id="glassload" class="screen-section">
+      <h2>Загрузка стекла (Glass Load)</h2>
+      <p class="screen-desc">Диалог управления столом для загрузки/выгрузки стекла. <br>    Кнопка «Up» поднимает стол вверх для установки стекла, «Down» опускает.<br>    Схема в центре показывает расположение 9 позиций для серийной работы.</p>
+      <div class="screen-container">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAIAAAC6s0uzAAALRklEQVR4nO3da27b1hpA0eaiUzQHSU+yuFEsMHpZtnW0SXEt5IejGiRhFN75Dl+/3t7e/gEAnut/T94fACDAANAwAQNAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQODfYqdsw/v7e30IsA1vb2/1IbA9AsxN8+wHBJ+YJj8ivsESNAAEBBgAAgIMAAHngHnc2a/jCePjh888hXzxSB6yQSfC+eIVi67J4h4mYH6cqHn+k6i2WMedPmrvuguMZALmx/W9P1fXhtSTi0jPJ+n7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" width="640" height="480" alt="Загрузка стекла (Glass Load)">
+        <div class="hotspot" style="left:300px;top:207px;width:90px;height:18px;" data-tip="Up — поднять стол вверх (загрузка стекла)"></div>
+        <div class="hotspot" style="left:300px;top:339px;width:90px;height:18px;" data-tip="Down — опустить стол вниз (выгрузка)"></div>
+        <div class="hotspot" style="left:300px;top:376px;width:90px;height:18px;" data-tip="Cancel — вернуться на главный экран"></div>
+        <div class="hotspot" style="left:300px;top:230px;width:90px;height:105px;" data-tip="Схема расположения 9 стёкол: позиции 1–9 и направление 10"></div>
+        <div class="tooltip" id="tip-glassload"></div>
+      </div>
+      <details class="elements-table">
+        <summary>Таблица элементов (4)</summary>
+        <table>
+          <tr><th>#</th><th>Описание</th></tr>
+          <tr><td>1</td><td>Up — поднять стол вверх (загрузка стекла)</td></tr>
+<tr><td>2</td><td>Down — опустить стол вниз (выгрузка)</td></tr>
+<tr><td>3</td><td>Cancel — вернуться на главный экран</td></tr>
+<tr><td>4</td><td>Схема расположения 9 стёкол: позиции 1–9 и направление 10</td></tr>
+
+        </table>
+      </details>
+    </section>
+    <section id="glassselect" class="screen-section">
+      <h2>Выбор стекла (Glass Select)</h2>
+      <p class="screen-desc">Справочник типов стекла. Список загружается из файла FLINT.GLS.<br>    Каждая строка содержит тип стекла и его показатель преломления.<br>    Кликните по строке — тип и n подставятся автоматически.</p>
+      <div class="screen-container">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAIAAAC6s0uzAAANNklEQVR4nO3dUVLjSKJAUZjoLeJFmkX2i1ee9qglywhj+6bwOdEflABZVhF1O1NS8v7x8fEGADzXf578egCAAANAwwgYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAI/FW86F59fn7WhwDwDB8fH070ownwNx0f8/cAMI5DfQCvwRQ0AAQEGAACAgwAAdeAH3nt5LjYOPgl5Pse52H49wtsu+fUPVmPYAT8gIAd/wnPXrr79oDjdBMHwFVGwA+o7/aYXRwuL+u1HElvfIkt+7nXcV7cPjsnAPxDgFPTIp4nbNei9d2YbdnP9HW37GftOGf7OUov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" width="640" height="480" alt="Выбор стекла (Glass Select)">
+        <div class="hotspot" style="left:300px;top:386px;width:90px;height:18px;" data-tip="Ok — подтвердить выбор стекла"></div>
+        <div class="hotspot" style="left:400px;top:386px;width:90px;height:18px;" data-tip="Cancel — отменить выбор"></div>
+        <div class="hotspot" style="left:119px;top:214px;width:132px;height:127px;" data-tip="Список типов стекла — кликните для выбора"></div>
+        <div class="hotspot" style="left:255px;top:215px;width:22px;height:14px;" data-tip="Вверх — прокрутка списка"></div>
+        <div class="hotspot" style="left:255px;top:326px;width:22px;height:14px;" data-tip="Вниз — прокрутка списка"></div>
+        <div class="hotspot" style="left:309px;top:214px;width:133px;height:20px;" data-tip="Выбранный тип стекла и его показатель преломления"></div>
+        <div class="tooltip" id="tip-glassselect"></div>
+      </div>
+      <details class="elements-table">
+        <summary>Таблица элементов (6)</summary>
+        <table>
+          <tr><th>#</th><th>Описание</th></tr>
+          <tr><td>1</td><td>Ok — подтвердить выбор стекла</td></tr>
+<tr><td>2</td><td>Cancel — отменить выбор</td></tr>
+<tr><td>3</td><td>Список типов стекла — кликните для выбора</td></tr>
+<tr><td>4</td><td>Вверх — прокрутка списка</td></tr>
+<tr><td>5</td><td>Вниз — прокрутка списка</td></tr>
+<tr><td>6</td><td>Выбранный тип стекла и его показатель преломления</td></tr>
+
+        </table>
+      </details>
+    </section>
+    <section id="start" class="screen-section">
+      <h2>Запуск гравировки (Start)</h2>
+      <p class="screen-desc">Диалог запуска процесса лазерной гравировки. Здесь выбирается начальная точка,<br>    режимы контроля и поведение при сбоях. Вызывается клавишей F5.</p>
+      <div class="screen-container">
+        <img src="data:image/png;base64,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BXYmwJdQzo79X0dvnLm9Ktbo4kvm4CXrlHeV+4zfef3VvS83yW5bf8ro8069FfMrVO/z/Pu//Hm3fV/Abn5ut9t+q1/M4/HY/rG1arPqy1+k8enJefkH3L7Bj4xKsQf7gFtliyLApQlwkwy4AFdnHzAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQ4Ecc5T4PlTB0AJyfAjbr9mjxH9+PncexrAeDzBPgSRi/SDkDD7AO+hOpSegA0zwT8HZPx82q75R96o9eRHV4nuPzC4SWEtR9gJRPwdfXhLOvbe94+vHj78PbRi8PPPB6ABUzALDa6fVt3ATYR4Ot6Dr4fD2SVYXudATaxCfoSqs3Ivef24YWN7LckV9urZxbvH28OBljJBPw1G4dHj5ReMs7O9Nv4C7CVADfqA2fbUEeAhglwk7QT4OrsAwaAAAEGgAABBoAAAQaAAAEGgAABBoAAAQaAAAEGgAAn4jiQEyYD8JcAH8XJrQAo2AQNAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABTsSxiXNaAZfklEEHEuBN/BsF4D02QQNAgAADQIAAA0CAAANAgAADQICjoCGvS7+Aptzv95lfNPBeLX+vaJwJGAACBBgAAmyChlNtb/yt+7vVcXgL1Ttz5Jvj/w5WMQHDOTw/3J8t8UG/8L2q3q69+TGIVUzAcLL6dl13/234cV8+7GtVb0L5boyOxVWeXz4+NV5zPSZguAj1fek5E4+OxcPbp8bo1HjN9ZiA4QrUd/m7tMHUxgZ4hwkYTqActkZbaxqbeiuem+uHk+sq/SLls5TzNGwgwHC+rozuv9Tg4VtR7Tvvb1zyXo0uUt1erVBtpoZ5P7fb7cVD+OvxeDjpDHswQ5WcCSt/JqzBDxBKsQcTMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAEOBUl5Dlvg/eKLyTA0ACnM/Re8X1sggaAAAEGgAABBoAA+4BXcpETAD5BgFeorgfyz8WRAGATm6ABIECAASBAgAEgQIABIOCnOrAIADiACRgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgA/nO8/wdyBDhDjkJF4wAAAABJRU5ErkJggg==" width="640" height="480" alt="Запуск гравировки (Start)">
+        <div class="hotspot" style="left:300px;top:376px;width:90px;height:18px;" data-tip="Ok — начать гравировку с выбранными параметрами"></div>
+        <div class="hotspot" style="left:400px;top:376px;width:90px;height:18px;" data-tip="Cancel — отменить и вернуться"></div>
+        <div class="hotspot" style="left:345px;top:140px;width:22px;height:14px;" data-tip="+ — увеличить номер начальной точки на 1"></div>
+        <div class="hotspot" style="left:345px;top:160px;width:22px;height:14px;" data-tip="- — уменьшить номер начальной точки на 1"></div>
+        <div class="hotspot" style="left:375px;top:140px;width:22px;height:14px;" data-tip="++ — увеличить номер начальной точки на 10"></div>
+        <div class="hotspot" style="left:375px;top:160px;width:22px;height:14px;" data-tip="-- — уменьшить номер начальной точки на 10"></div>
+        <div class="hotspot" style="left:120px;top:130px;width:150px;height:12px;" data-tip="С начала — начать гравировку с первой точки"></div>
+        <div class="hotspot" style="left:120px;top:150px;width:150px;height:12px;" data-tip="С номера точки — начать с указанного номера"></div>
+        <div class="hotspot" style="left:120px;top:170px;width:150px;height:12px;" data-tip="Продолжение — продолжить с того места, где остановились"></div>
+        <div class="hotspot" style="left:120px;top:190px;width:150px;height:12px;" data-tip="Из CMOS — восстановить позицию из энергонезависимой памяти"></div>
+        <div class="hotspot" style="left:280px;top:150px;width:62px;height:18px;" data-tip="Поле: номер начальной точки"></div>
+        <div class="hotspot" style="left:120px;top:225px;width:150px;height:12px;" data-tip="Концевые датчики — включить/выключить контроль положения стола"></div>
+        <div class="hotspot" style="left:120px;top:245px;width:150px;height:12px;" data-tip="Проверка рисунка — включить/выключить контроль границ"></div>
+        <div class="hotspot" style="left:135px;top:300px;width:200px;height:12px;" data-tip="Стоп — остановить гравировку при ошибке"></div>
+        <div class="hotspot" style="left:135px;top:320px;width:200px;height:12px;" data-tip="Перезагрузка координат — автоматический возврат и продолжение"></div>
+        <div class="hotspot" style="left:135px;top:340px;width:200px;height:12px;" data-tip="Игнорировать — продолжать гравировку при ошибках"></div>
+        <div class="hotspot" style="left:120px;top:291px;width:262px;height:70px;" data-tip="Блок «После сбоя» — выбор поведения при ошибках во время работы"></div>
+        <div class="tooltip" id="tip-start"></div>
+      </div>
+      <details class="elements-table">
+        <summary>Таблица элементов (17)</summary>
+        <table>
+          <tr><th>#</th><th>Описание</th></tr>
+          <tr><td>1</td><td>Ok — начать гравировку с выбранными параметрами</td></tr>
+<tr><td>2</td><td>Cancel — отменить и вернуться</td></tr>
+<tr><td>3</td><td>+ — увеличить номер начальной точки на 1</td></tr>
+<tr><td>4</td><td>- — уменьшить номер начальной точки на 1</td></tr>
+<tr><td>5</td><td>++ — увеличить номер начальной точки на 10</td></tr>
+<tr><td>6</td><td>-- — уменьшить номер начальной точки на 10</td></tr>
+<tr><td>7</td><td>С начала — начать гравировку с первой точки</td></tr>
+<tr><td>8</td><td>С номера точки — начать с указанного номера</td></tr>
+<tr><td>9</td><td>Продолжение — продолжить с того места, где остановились</td></tr>
+<tr><td>10</td><td>Из CMOS — восстановить позицию из энергонезависимой памяти</td></tr>
+<tr><td>11</td><td>Поле: номер начальной точки</td></tr>
+<tr><td>12</td><td>Концевые датчики — включить/выключить контроль положения стола</td></tr>
+<tr><td>13</td><td>Проверка рисунка — включить/выключить контроль границ</td></tr>
+<tr><td>14</td><td>Стоп — остановить гравировку при ошибке</td></tr>
+<tr><td>15</td><td>Перезагрузка координат — автоматический возврат и продолжение</td></tr>
+<tr><td>16</td><td>Игнорировать — продолжать гравировку при ошибках</td></tr>
+<tr><td>17</td><td>Блок «После сбоя» — выбор поведения при ошибках во время работы</td></tr>
+
+        </table>
+      </details>
+    </section>
+    <section id="statistics" class="screen-section">
+      <h2>Статистика (Statistics)</h2>
+      <p class="screen-desc">Диалог просмотра статистики работы. Показывает суммарный счётчик импульсов лазера,<br>    дату обслуживания, количество обработанных точек и сетку ошибок по позициям (для режима 9 стёкол).</p>
+      <div class="screen-container">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAIAAAC6s0uzAAAPIUlEQVR4nO3d4ZKiSAKF0amNfkV9SH3JjSinWRYSBARukp4T82PaolPK6vCrTCX9ud1u/wAA5/rPyfcHAAgwAGSYAQNAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAwJ/EnV7V8/lMnwLAGW63mwf6aAK80uNxzA8CoBr3e/oMvoIlaAAIEGAACBBgAAjwGvBhL5yMXy2+39e9hFw8/nUXkXGAb33PqfdkHUGA99NP2v0+zN7aNzVMHb82mXuNA8CuBHhvr+4O8tZVcDDvnJoxvz1+avzBVz8ZZ+a3B/EG+NiPhYV1azLz7ZkK29sl3/FXp45ffuQn40z9P/ANRitnSnEEM+Bd9defl0Rrl4vtHo//3eNepewPcsT4AF/Pu6D3s7C742XhhcfPeA3Sn7BuG6d/8GA5+u34AKxhCfqYJehVq77dLPPt2nJx/Lcv0C4cZ/P4QGMsQZ9CgHcNMEADBPgUlqABIECAASBAgAEgQIABIECAASDARhybuBYWaJIL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AANAgAADQIAAA0CAN2HBxV3i4ignCSMCDFd2ibdnO0kosQQNAAFmwHBllS/tzu8sVokLnSRtEWC4uGqfmosfPFWby50kDbEEDQABAgwAAQIMAAECDAABAgwAAQIMAAEuQ4KGjK9XqfDSGicJvwQYGlJhbsecJPyyBA0AAQIMAAECDAABAgwAAQIMAAECDAABAgwAAgwA38EMGAACBBgAAmxFefHdce/3FUeuGnnVmLuPDNA6M+BqdPVanrFxtpeMXxxn1VD9e388/v1v7fkAfDcz4DoM6tj/Y79qxdu7EM4ffyjpBVjJDLhu/VnmVFy7r/b/uGpKOhhh20kCsIYZcHNOzmH3K4IMA6xhBtyE8XL0qhnttteAO957BbCeANca0ZduJXnwQu/gq4M3cL2OH6xCF8f/RP9V5+LpATDNEnQ1puo1X7XxVwevBy8ZZ3M4FRdgKzNgAAgQYAAIsATNB+yEBbCVGTBb2QkL4ANmwOzBRcBBl3jwnSSMCDDf8dzaqku8Ed1JQoklaD7jCmCATcyA+Y75TasqX364xMdkXegkaYsAs1W3//MRnzTMqh9EnSIfzNX8SdIQAeYD1T5hAVTPa8AAECDAABAgwAAQIMAAECDAABDgXdDQkPH1KhW+U91Jwi8BhoZUmNsxJwm/LEEDQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQMCfxJ0C+7nfL/BoOkkYEWC4ssfjn/o5SSixBA0AAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAH2gm53Z3mAJjfuboUAb+LfKACfsQQNAAECDAABAgwAAQIMAAECDAAB3gUNXImrZPru97uLMq7LDBgAAgQYAAIsQQONrs3+evzdNmd8C2SZAQOtebX2FVrdpVoCDDRb30GDB4cVb4fTCDDw1ZGGFAEGvov6UgkBBprSX3YutnZmXRrOJMBAa/qJHb8LWoOphMuQgAaNX98tzoMhyAwYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAJcBwxciR2saIYAA5diAw1aYQkaAAIEGAACBBgAArwGvJKPMANgDwK8wu126//x+Xzu8jMA4AtZggaAAAEGgAABBoAAAQaAgJ/BG4sAgBOYAQNAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAAPAP+f7L3HCEhD6eHuBAAAAAElFTkSuQmCC" width="640" height="480" alt="Статистика (Statistics)">
+        <div class="hotspot" style="left:400px;top:376px;width:90px;height:18px;" data-tip="Ok — закрыть окно статистики"></div>
+        <div class="hotspot" style="left:130px;top:160px;width:300px;height:12px;" data-tip="Общее количество импульсов лазера за всё время"></div>
+        <div class="hotspot" style="left:130px;top:172px;width:300px;height:12px;" data-tip="Дата последнего обслуживания (замены лампы)"></div>
+        <div class="hotspot" style="left:130px;top:225px;width:300px;height:12px;" data-tip="Общее количество точек в текущем файле"></div>
+        <div class="hotspot" style="left:130px;top:240px;width:300px;height:12px;" data-tip="Номер точки, на которой остановилась обработка"></div>
+        <div class="hotspot" style="left:130px;top:265px;width:200px;height:12px;" data-tip="Количество повторных проходов: первый / следующие"></div>
+        <div class="hotspot" style="left:320px;top:210px;width:53px;height:33px;" data-tip="Результат для единичного стекла (позиция 10)"></div>
+        <div class="hotspot" style="left:320px;top:255px;width:160px;height:75px;" data-tip="Сетка ошибок по позициям 1–9 (для серийного режима)"></div>
+        <div class="tooltip" id="tip-statistics"></div>
+      </div>
+      <details class="elements-table">
+        <summary>Таблица элементов (8)</summary>
+        <table>
+          <tr><th>#</th><th>Описание</th></tr>
+          <tr><td>1</td><td>Ok — закрыть окно статистики</td></tr>
+<tr><td>2</td><td>Общее количество импульсов лазера за всё время</td></tr>
+<tr><td>3</td><td>Дата последнего обслуживания (замены лампы)</td></tr>
+<tr><td>4</td><td>Общее количество точек в текущем файле</td></tr>
+<tr><td>5</td><td>Номер точки, на которой остановилась обработка</td></tr>
+<tr><td>6</td><td>Количество повторных проходов: первый / следующие</td></tr>
+<tr><td>7</td><td>Результат для единичного стекла (позиция 10)</td></tr>
+<tr><td>8</td><td>Сетка ошибок по позициям 1–9 (для серийного режима)</td></tr>
+
+        </table>
+      </details>
+    </section>
+    <section id="sorting" class="screen-section">
+      <h2>Сортировка (Sorting)</h2>
+      <p class="screen-desc">Диалог сортировки точек для оптимизации пути лазера.<br>    Правильная сортировка может значительно ускорить обработку:<br>    лазер будет перемещаться между близкими точками, а не прыгать через весь объект.<br>    Доступны два метода: сортировка слоями по 0.5мм и сортировка с коэффициентами K1/K2.</p>
+      <div class="screen-container">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAIAAAC6s0uzAAAO8klEQVR4nO3d67KaygKF0Xhqv6I8JD7kOpVYoQg3QZDZjWPU/pEgS03c5Zfu5nK73++/AIBz/e/k1wMABBgAMoyAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIECAASBAgAEgQIABIOC/xIte0+PxSL8F+Hb3+z39FmAtAT5Ue+zTAVs0/rqoiSloAAgQYAAIEGAACLAGHFqg2r9a3Ew9yfMlLEXzrQbHQjomi5IZAZ+lS2N7xNEicz/ePT8AZTMCPlcz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YKp2ec+5gq6fOu6nev/Icuv88Fz+t24HqJARcLW6Go1HlpsS1Z/HHjzP+uC9ncytg2/1Ba7idr/f0+/hIh6Px/t5WFi4XTi6eNMa8JqjlCdfeuUfatPrOgqaTxhNvfh+o2QCXEaAgf0EmKpYAwaAAGvAcIbW9EhP0zT+PsAIGAACBBgAAgQYztb0HPJsL1/r5f5HvRlgPQGGUz071/7xMp8rn+3la73cv3s/wGkchAUBTdOMm9evY/dQF9Hu0cFDk6Fdru/gofEzD/aZ23/8osB6zgMu70IcH7od4VZbb9Lw6f0vdBT028HrMjzO8+Dl9m+fHCsP3sDcs8WOgnYeMFUxAi5G/7YKH4rT25eWHFylcvw8x+5/dV29NgVsfefe7uJ6FoxhP2vAZRh8VY5vIjRIcn/L4NFu/6MOqWkK279yW7u7crF2eTp6Yf+XLzf5bM+3YeUY9hDg4i18kQ4yPLhx/eQ079t3GFz5PIfs/5XD37ntg7LOPVu/kQv1ndx/zUtMvn/jYNjDGnBJ14Jef0+huc4tryVvfSeDp21z+9fPlbD6rAGDNeDKPdO1fs34jc61G5/nkP0BvoAp6GIMJpNfbl9YPN6/Bjw4POplKT+9P8DlOAq6GJtuQb9w0NZCyfaPfde/pT37A3wBI2AACBBgAAgQYAAIEGAACHAQFpzBNSuAAQGGUzjqG/iXKWgACBBgAAgQYAAIEGAACBBgAAgQYAAIcBrSB3zfTeYhzFleVEiAP8B3AQCvmIIGgAABBoAAAQaAAAEGgAABBoAAR0HDGVoHxw9uzuhkAb6eETAABAgwAASYgobQHOxfbdsONnZbgAszAoazPUPb/qG78LWMgCFT3/WD3cnh8mD75EjaYBpKJsBQTbCbP/rj5nG/5/YHSiPAUKW2bZ997X7bf3QwOAYKJMCQCefyQHblUz1/MR7pGvVC+W73+z39Hi7i8Xi4tgArL8SxfBT0wlrv5M5r9v+KC3GMhv2+3yiZETAETHZxLpabdi42usCA05AAIECAASBAgAEgQIABIECAASBAgAEgQIABIMB5wHAG14YEBgQYTuHaGMC/TEEDQIAAA0CAAANAgDXgQ7kHKwDrCPBhBjc++313QgCYYQoaAAIEGAACBBgAAgQYAAJug0OHAIATGAEDQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADQIAAA0CAAANAgAADwK/z/R8ScXbfeQm0jgAAAABJRU5ErkJggg==" width="640" height="480" alt="Сортировка (Sorting)">
+        <div class="hotspot" style="left:290px;top:376px;width:90px;height:18px;" data-tip="Close — закрыть диалог сортировки"></div>
+        <div class="hotspot" style="left:130px;top:210px;width:80px;height:12px;" data-tip="Выкл. — не сортировать"></div>
+        <div class="hotspot" style="left:130px;top:230px;width:100px;height:12px;" data-tip="Слои 0.5мм — сортировка по горизонтальным слоям с оптимизацией пути внутри слоя"></div>
+        <div class="hotspot" style="left:130px;top:250px;width:80px;height:12px;" data-tip="K*dz — сортировка с коэффициентами, учитывающими вертикальное расстояние"></div>
+        <div class="hotspot" style="left:355px;top:254px;width:22px;height:14px;" data-tip="+ — увеличить K1 (коэффициент для движения вверх)"></div>
+        <div class="hotspot" style="left:355px;top:272px;width:22px;height:14px;" data-tip="- — уменьшить K1"></div>
+        <div class="hotspot" style="left:355px;top:294px;width:22px;height:14px;" data-tip="+ — увеличить K2 (коэффициент для движения вниз)"></div>
+        <div class="hotspot" style="left:355px;top:312px;width:22px;height:14px;" data-tip="- — уменьшить K2"></div>
+        <div class="hotspot" style="left:290px;top:343px;width:90px;height:18px;" data-tip="Sort/time — выполнить сортировку и показать расчётное время обработки"></div>
+        <div class="hotspot" style="left:290px;top:262px;width:62px;height:18px;" data-tip="Поле: коэффициент K1 (для dz &gt; 0, движение вверх)"></div>
+        <div class="hotspot" style="left:290px;top:302px;width:62px;height:18px;" data-tip="Поле: коэффициент K2 (для dz &lt; 0, движение вниз)"></div>
+        <div class="hotspot" style="left:130px;top:335px;width:140px;height:12px;" data-tip="Количество точек в текущем файле"></div>
+        <div class="hotspot" style="left:130px;top:350px;width:140px;height:12px;" data-tip="Расчётное время обработки (часы:минуты:секунды)"></div>
+        <div class="tooltip" id="tip-sorting"></div>
+      </div>
+      <details class="elements-table">
+        <summary>Таблица элементов (13)</summary>
+        <table>
+          <tr><th>#</th><th>Описание</th></tr>
+          <tr><td>1</td><td>Close — закрыть диалог сортировки</td></tr>
+<tr><td>2</td><td>Выкл. — не сортировать</td></tr>
+<tr><td>3</td><td>Слои 0.5мм — сортировка по горизонтальным слоям с оптимизацией пути внутри слоя</td></tr>
+<tr><td>4</td><td>K*dz — сортировка с коэффициентами, учитывающими вертикальное расстояние</td></tr>
+<tr><td>5</td><td>+ — увеличить K1 (коэффициент для движения вверх)</td></tr>
+<tr><td>6</td><td>- — уменьшить K1</td></tr>
+<tr><td>7</td><td>+ — увеличить K2 (коэффициент для движения вниз)</td></tr>
+<tr><td>8</td><td>- — уменьшить K2</td></tr>
+<tr><td>9</td><td>Sort/time — выполнить сортировку и показать расчётное время обработки</td></tr>
+<tr><td>10</td><td>Поле: коэффициент K1 (для dz &gt; 0, движение вверх)</td></tr>
+<tr><td>11</td><td>Поле: коэффициент K2 (для dz &lt; 0, движение вниз)</td></tr>
+<tr><td>12</td><td>Количество точек в текущем файле</td></tr>
+<tr><td>13</td><td>Расчётное время обработки (часы:минуты:секунды)</td></tr>
+
+        </table>
+      </details>
+    </section>
+    <section id="dimensions" class="screen-section">
+      <h2>Масштабирование (Dimensions)</h2>
+      <p class="screen-desc">Диалог изменения масштаба 3D-объекта. Можно масштабировать равномерно (K%) <br>    или по отдельным осям (Kx, Ky, Kz). Масштаб задаётся в процентах: 100% = без изменений,<br>    50% = уменьшить вдвое, 200% = увеличить вдвое. Диапазон: 50–200%.</p>
+      <div class="screen-container">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAIAAAC6s0uzAAAP+0lEQVR4nO3dAZKiSAKG0XZjrqiHxEPWRo/RDg0kAiJ/Jr4XExtVaqGV2+FXmSBcrtfrLwDgWP87+PkAAAEGgAwzYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAgQYAAIEGAACBBgAAj4J/Gk53S/39MvAb7d9XpNvwRYSoB31e27OWCNm+GiJZagASBAgAEgQIABIMA+4NDeqW7q3uN3IR//vINnXP4CngPYf3DpxycfvO/veys/r0MBqjkW0jFZ1MwM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5iDq+9JjTjw5LR7fXppGp6bXwFpmwBxBfZeP0galxQagZmbA7KA/2ZpsrdlYaSgey/Xjmesqz430n6U/nwYqJMDs35XJ/ZcaPB6Kwb7z541LxmpyI4PbB1sYLFMDWZfr9Rp+CWdxv9+/7eQ+zu7U50xY+TNhjf6u8P5GzcyAASBAgAEgQIABIECAASBAgAEgQIABIECAASDAqSjZzvkcjBWwmQDzhi878chbjBXwN0vQABAgwAAQIMAAEGAf8K5cYwaAZQR4N4Prrvy+OBIAFFiCBoAAAQaAAAEGgAABBoCAy+DQIQDgAGbAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAABAgwAAQIMAAECDAAPDreP8Hql8yx8kXcrEAAAAASUVORK5CYII=" width="640" height="480" alt="Масштабирование (Dimensions)">
+        <div class="hotspot" style="left:290px;top:376px;width:90px;height:18px;" data-tip="Cancel — отменить"></div>
+        <div class="hotspot" style="left:190px;top:376px;width:90px;height:18px;" data-tip="Ok — применить масштабирование ко всем точкам"></div>
+        <div class="hotspot" style="left:255px;top:214px;width:22px;height:14px;" data-tip="+ — увеличить общий масштаб K"></div>
+        <div class="hotspot" style="left:255px;top:232px;width:22px;height:14px;" data-tip="- — уменьшить общий масштаб K"></div>
+        <div class="hotspot" style="left:365px;top:214px;width:22px;height:14px;" data-tip="+Kx — увеличить масштаб по оси X"></div>
+        <div class="hotspot" style="left:365px;top:232px;width:22px;height:14px;" data-tip="-Kx — уменьшить масштаб по оси X"></div>
+        <div class="hotspot" style="left:365px;top:254px;width:22px;height:14px;" data-tip="+Ky — увеличить масштаб по оси Y"></div>
+        <div class="hotspot" style="left:365px;top:272px;width:22px;height:14px;" data-tip="-Ky — уменьшить масштаб по оси Y"></div>
+        <div class="hotspot" style="left:365px;top:294px;width:22px;height:14px;" data-tip="+Kz — увеличить масштаб по оси Z"></div>
+        <div class="hotspot" style="left:365px;top:312px;width:22px;height:14px;" data-tip="-Kz — уменьшить масштаб по оси Z"></div>
+        <div class="hotspot" style="left:130px;top:305px;width:80px;height:12px;" data-tip="От нуля — масштабирование относительно начала координат"></div>
+        <div class="hotspot" style="left:130px;top:325px;width:80px;height:12px;" data-tip="От центра — масштабирование относительно центра стекла"></div>
+        <div class="hotspot" style="left:130px;top:225px;width:80px;height:12px;" data-tip="Kx=Ky=Kz — одинаковый масштаб по всем осям"></div>
+        <div class="hotspot" style="left:130px;top:265px;width:80px;height:12px;" data-tip="Разный — независимый масштаб по каждой оси"></div>
+        <div class="hotspot" style="left:190px;top:222px;width:62px;height:18px;" data-tip="Поле: общий масштаб K (%)"></div>
+        <div class="hotspot" style="left:300px;top:222px;width:62px;height:18px;" data-tip="Поле: масштаб по оси X (%)"></div>
+        <div class="hotspot" style="left:300px;top:262px;width:62px;height:18px;" data-tip="Поле: масштаб по оси Y (%)"></div>
+        <div class="hotspot" style="left:300px;top:302px;width:62px;height:18px;" data-tip="Поле: масштаб по оси Z (%)"></div>
+        <div class="tooltip" id="tip-dimensions"></div>
+      </div>
+      <details class="elements-table">
+        <summary>Таблица элементов (18)</summary>
+        <table>
+          <tr><th>#</th><th>Описание</th></tr>
+          <tr><td>1</td><td>Cancel — отменить</td></tr>
+<tr><td>2</td><td>Ok — применить масштабирование ко всем точкам</td></tr>
+<tr><td>3</td><td>+ — увеличить общий масштаб K</td></tr>
+<tr><td>4</td><td>- — уменьшить общий масштаб K</td></tr>
+<tr><td>5</td><td>+Kx — увеличить масштаб по оси X</td></tr>
+<tr><td>6</td><td>-Kx — уменьшить масштаб по оси X</td></tr>
+<tr><td>7</td><td>+Ky — увеличить масштаб по оси Y</td></tr>
+<tr><td>8</td><td>-Ky — уменьшить масштаб по оси Y</td></tr>
+<tr><td>9</td><td>+Kz — увеличить масштаб по оси Z</td></tr>
+<tr><td>10</td><td>-Kz — уменьшить масштаб по оси Z</td></tr>
+<tr><td>11</td><td>От нуля — масштабирование относительно начала координат</td></tr>
+<tr><td>12</td><td>От центра — масштабирование относительно центра стекла</td></tr>
+<tr><td>13</td><td>Kx=Ky=Kz — одинаковый масштаб по всем осям</td></tr>
+<tr><td>14</td><td>Разный — независимый масштаб по каждой оси</td></tr>
+<tr><td>15</td><td>Поле: общий масштаб K (%)</td></tr>
+<tr><td>16</td><td>Поле: масштаб по оси X (%)</td></tr>
+<tr><td>17</td><td>Поле: масштаб по оси Y (%)</td></tr>
+<tr><td>18</td><td>Поле: масштаб по оси Z (%)</td></tr>
+
+        </table>
+      </details>
+    </section>
+    <section id="msgbox" class="screen-section">
+      <h2>Окно сообщения</h2>
+      <p class="screen-desc">Всплывающее окно подтверждения или предупреждения. <br>    Появляется при действиях, требующих подтверждения (сохранение, перезапись файла и т.д.).</p>
+      <div class="screen-container">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAIAAAC6s0uzAAAI40lEQVR4nO3d7WriUBRA0XHoK8aHbB7SYRAkaIwfUbe2a/1qpV7xDszm3BjcDMPwBwB4rb8vfj0AQIABoGECBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAl92nbO+7Q3PsbWxYAIGgIIjaAAICDAABFwDBl5tHMfDz8Mw+AfgdzIBA0BAgAEg4AiaVcbN/7PEYecU8ezm7Nki4IgJmAcEZloapnsy7IZ9em0RcMQEzANm33EzjptxWpphNxyScxj+bpoIj9a/uM7C3y+/xNFS59a59X0ZeYFlJmAe7Fy6HjURPmOdw2rPeF9O6YFZJmBWWejfbNLe5yR2P8uejrPXPPH696W+wDkCzCoXx9CjXN3UuWkgn2F6hnw4Qr/1ubO/XnwcYOMueO77Mobla6Wz+bn7U8HXXAOePn64UrvwKrMXgBfWue99mYAvbr7/gvi1BJg3/TakhUDy6QQYHEHzvhQX+Nl8ChoABBgAfgcTMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQ+CpeFLjBMA4r92u73Q674ZUrAxeZgAEgIMAAEHAEDR9mu93uf/j+/j73yH1rHi1492rANUzA8EmmaVzf3dnFgdcQYPjI+h41+OjP7k7p6RP3q61ZE5glwPCjrDk9Po36YbWF3gP3EWD4OdZfu3XdF15GgOFjTMfQ2dY+ZE7VYHgNAYZPMk3s6aegH9Xg09V8Lhoezm1I8GFOJ9TZOXjNmtNfDcTwJCZgAAgIMAAEBBgAAq4Bw7t73t237uuFkADDu3ve9/35JkEIOYIGgIAAA0DAETTnTa48juNopwAeyAQMAAEBBoCAAANAYDMMz7rDAQA4xwQMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAA+PN6/wBsPzfcWEcTVgAAAABJRU5ErkJggg==" width="640" height="480" alt="Окно сообщения">
+        <div class="hotspot" style="left:310px;top:322px;width:22px;height:14px;" data-tip="Ok — подтвердить действие"></div>
+        <div class="hotspot" style="left:340px;top:322px;width:22px;height:14px;" data-tip="No — отменить действие"></div>
+        <div class="tooltip" id="tip-msgbox"></div>
+      </div>
+      <details class="elements-table">
+        <summary>Таблица элементов (2)</summary>
+        <table>
+          <tr><th>#</th><th>Описание</th></tr>
+          <tr><td>1</td><td>Ok — подтвердить действие</td></tr>
+<tr><td>2</td><td>No — отменить действие</td></tr>
+
+        </table>
+      </details>
+    </section>
+    <section id="infobox" class="screen-section">
+      <h2>О программе (Version)</h2>
+      <p class="screen-desc">Информационное окно с данными о разработчике и версии программы.<br>    FLINT+ разработана в ILTiP Ltd (Институт лазерных технологий и инжиниринга), <br>    г. Сосновый Бор, Россия. Вызывается клавишей F7.</p>
+      <div class="screen-container">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAIAAAC6s0uzAAALKElEQVR4nO3d7XLaRgBA0aSTV8QPiV+y05JSRV9IgLkGzpn+cIVYUU8nNyuJ1c/D4fADAHisvx58PABAgAGgYQYMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgwAAQEGAACAgwAAQEGgIAAA0BAgAEgIMAAEBBgAAgIMAAEBBgAAgIMAAEBBoCAAANAQIABICDAABAQYAAICDAABAQYAAICDAABAQaAgAADQECAASAgwAAQEGAACAgw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" width="640" height="480" alt="О программе (Version)">
+        <div class="hotspot" style="left:340px;top:322px;width:22px;height:14px;" data-tip="Ok — закрыть окно"></div>
+        <div class="tooltip" id="tip-infobox"></div>
+      </div>
+      <details class="elements-table">
+        <summary>Таблица элементов (1)</summary>
+        <table>
+          <tr><th>#</th><th>Описание</th></tr>
+          <tr><td>1</td><td>Ok — закрыть окно</td></tr>
+
+        </table>
+      </details>
+    </section>
+  
+  <footer style="text-align:center; color:#555; padding:30px 0; font-size:0.8em;">
+    FLINT+ v2.61 — 32-bit DOS/4GW Extended Memory Version<br>
+    Документация сгенерирована автоматически из исходного кода
+  </footer>
+</main>
+
+<script>
+// Tooltip logic
+document.querySelectorAll('.screen-container').forEach(container => {
+  const tooltip = container.querySelector('.tooltip');
+  const hotspots = container.querySelectorAll('.hotspot');
+  
+  hotspots.forEach(hs => {
+    hs.addEventListener('mouseenter', e => {
+      tooltip.textContent = hs.dataset.tip;
+      tooltip.style.display = 'block';
+      
+      // Position tooltip
+      const rect = hs.getBoundingClientRect();
+      const cRect = container.getBoundingClientRect();
+      let left = hs.offsetLeft;
+      let top = hs.offsetTop + hs.offsetHeight + 4;
+      
+      // Keep within container
+      if (left + 300 > 640) left = 640 - 310;
+      if (left < 4) left = 4;
+      if (top + 60 > 480) top = hs.offsetTop - 40;
+      
+      tooltip.style.left = left + 'px';
+      tooltip.style.top = top + 'px';
+    });
+    
+    hs.addEventListener('mouseleave', () => {
+      tooltip.style.display = 'none';
+    });
+  });
+});
+
+// Active TOC highlighting
+const tocLinks = document.querySelectorAll('.toc-item');
+const sections = document.querySelectorAll('.screen-section');
+
+function updateTOC() {
+  let current = '';
+  sections.forEach(s => {
+    if (s.getBoundingClientRect().top < 200) current = s.id;
+  });
+  tocLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+}
+window.addEventListener('scroll', updateTOC);
+updateTOC();
+</script>
+
+</body>
+</html>
