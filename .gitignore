@@ -1,13 +1,10 @@
-# Build artifacts
-*.obj
-*.OBJ
-*.exe
-!Proj5_32bit/DOS4GW.EXE
-DEBUG.LOG
-&1
+# Build artifacts (Proj5_32bit only)
+Proj5_32bit/*.obj
+Proj5_32bit/proj5.exe
+Proj5_32bit/DEBUG.LOG
+Proj5_32bit/&1
 
 # IDE files
-*.ide
 *.bak
 *.tmp
 
