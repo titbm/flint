@@ -1,6 +1,5 @@
-# Build artifacts (Proj5_32bit only)
+# Build artifacts (Proj5_32bit: промежуточные файлы)
 Proj5_32bit/*.obj
-Proj5_32bit/proj5.exe
 Proj5_32bit/DEBUG.LOG
 Proj5_32bit/&1
 
