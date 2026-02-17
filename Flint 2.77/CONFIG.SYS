@@ -1,0 +1,18 @@
+[common]
+device=c:\windows\himem.sys
+dos=noauto
+dos=high,umb
+fileshigh=8
+buffershigh=8
+[menu]
+menuitem=DOS, DOS Promtp (Max Memory)
+menuitem=WIN, Windows
+menudefault=DOS,1
+[WIN]
+DEVICE=c:\windows\ifshlp.sys
+[DOS]
+device=c:\windows\emm386.exe ram noems
+country=007,866,c:\windows\command\country.sys
+DEVICEHIGH /L:1,17248 =C:\WINDOWS\COMMAND\DISPLAY.SYS CON=(EGA,,1)
+lastdrivehigh=d
+stackshigh=8,256
