@@ -10,8 +10,6 @@ Flint 2.77 src/LINK.RSP
 Flint 2.77 src/TURBOC.$LN
 Flint 2.77 src/BUILD/
 
-# Tools (DOSBox-X + Borland C++ 3.1)
-Tools/
 
 # IDE files
 *.bak
