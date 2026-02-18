@@ -74,6 +74,9 @@
 extern unsigned char LCtl;
 extern unsigned int LPeriod;
 
+/* v2.73: segment time estimator (PIC.CPP) */
+int seg_time(int adx, int ady, int adz);
+
 
 int main() {
 	int i, k, g_mode, g_error_code, all, g_driver=DETECT;
@@ -273,9 +276,9 @@ int dlgcfg(void) {
 	gd_new=gate_delay;								// v2.70
 	WndBkgr(100,60,520,410,COLDLG,"Configuration");
 	draw_bt(btc_cfg,bnam_cfg,BNM_CFG+9*gl_nmbnew);
-	outtextxy(160,314,"Reset");
-	outtextxy(130,245,"Flash nmb"); rectangle(130,255,226,271);
-	outtextxy(130,277,"Service date"); rectangle(130,287,226,303);
+	outtextxy(160,324,"Reset");
+	outtextxy(130,255,"Flash nmb"); rectangle(130,265,226,281);
+	outtextxy(130,287,"Service date"); rectangle(130,297,226,313);
 	outtextxy(270,100,".cfg");
 	outtextxy(400,130,"Step"); rectangle(400,140,460,156);
 	outtextxy(400,175,"X"); rectangle(400,185,460,201);
@@ -283,21 +286,20 @@ int dlgcfg(void) {
 	outtextxy(400,265,"Z"); rectangle(400,275,460,291);
 	outtextxy(280,120,"Las.puls"); outtextxy(280,130,"period");
 	rectangle(280,140,340,156); outtextxy(320,159,"ms");
-	outtextxy(280,165,"Gate");
-	outtextxy(280,175,"delay");
+	outtextxy(280,175,"Gate");
 	rectangle(280,185,340,201); outtextxy(320,204,"us");		// v2.70: gate delay
 	outtextxy(280,225,"Step"); outtextxy(280,235,"freq.");
 	rectangle(280,245,340,261); outtextxy(320,264,"Hz");
 	/* v2.73: dT display */
-	outtextxy(400,305,"dT:");
-	outtextxy(430,305,itoa(dT,tmpstr,10)); outtextxy(460,305,"ms");
+	outtextxy(400,342,"dT:");
+	outtextxy(428,342,itoa(dT,tmpstr,10)); outtextxy(460,342,"ms");
 	/* v2.77: sh_delay display */
-	outtextxy(400,320,"sh:");
-	outtextxy(430,320,itoa(sh_delay,tmpstr,10)); outtextxy(460,320,"ms");
-	if(f_demo) outtextxy(120,340,"Demo");
+	outtextxy(400,352,"sh:");
+	outtextxy(428,352,itoa(sh_delay,tmpstr,10)); outtextxy(460,352,"ms");
+	if(f_demo) outtextxy(120,352,"Demo");
 	ultoa(ulMax,tmpstr,10); strcat(tmpstr," pixels max");
-	outtextxy(120,350,tmpstr);
-	rectangle(120,238,238,330);
+	outtextxy(120,363,tmpstr);
+	rectangle(120,249,238,341);
 	rectangle(265,110,510,370);
 	while(1) {
 		sw_ctl(gl_nmbnew,0,120,90,COLDLG);						// 1 glass
@@ -335,14 +337,18 @@ int dlgcfg(void) {
 		bar(281,186,339,200); outtextxy(290,190,tmpstr);
 		itoa(sfnew,tmpstr,10);										// Step frequency
 		bar(281,246,339,260); outtextxy(290,250,tmpstr);
-		setfillstyle(1,COLBKL); bar(131,256,225,270);
-		outtextxy(140,260,ultoa(ulFlash,cfgmas,10));			// Flash Nmb
+		setfillstyle(1,COLBKL); bar(131,266,225,280);
+		outtextxy(140,270,ultoa(ulFlash,cfgmas,10));			// Flash Nmb
 		strcpy(tmpstr,itoa((ulService >> 24),cfgmas,10));
 		strcat(tmpstr,"-");
 		strcat(tmpstr,itoa(((ulService >> 16) & 0xff),cfgmas,10));
 		strcat(tmpstr,"-");
 		strcat(tmpstr,itoa((ulService & 0xffff),cfgmas,10));
-		bar(131,288,225,302); outtextxy(140,292,tmpstr);	// Service Date
+		bar(131,298,225,312); outtextxy(140,302,tmpstr);	// Service Date
+		/* v2.77: refresh dT/sh values (updates after Load .cfg) */
+		setfillstyle(1,COLDLG); bar(428,342,452,360);
+		itoa(dT,tmpstr,10); outtextxy(428,342,tmpstr);
+		itoa(sh_delay,tmpstr,10); outtextxy(428,352,tmpstr);
 		/* v2.71: centralized PT2 reprogramming via flag */
 		if(f_pt2) {
 			program_pt2(lpnew, f_gate ? gd_new : 1);
@@ -445,7 +451,7 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 				LCtl=(LCtl)? 0:3; outportb(LRG,LCtl); break;
 			case 23: ptr_work=(ptr_work)? 0:1;					// Work ptr on/off
 				if(ptr_work) {
-					if(msgbox("GLASS: n,size is true?",0,1)) f_make=1;
+					if(msgbox("GLASS: n,size is true?",0,0)) f_make=1;
 					else ptr_work=0;
 					} break;
 			case 24: f_constnew=1; break;							// Constant
@@ -719,15 +725,20 @@ k:					vmin=(int)((double)zmin/nglas); vmax=(int)((double)zmax/nglas);
 			}
 		i=(f_invert)? BLACK:WHITE; k=(f_invert)? COLDLG:BLACK;
 		setfillstyle(1,k); bar(121,411-yt,119+xr,409);
+		{ unsigned pseg=FP_SEG(iTabl), pofs=FP_OFF(iTabl);
+		int far *p;
 		for(t=0; t<nmax; t++) {
+			p=(int far *)MK_FP(pseg,pofs);
 			k=(f_mirror && (!h))?
-				(int)((long)kscale*(10*hsize-iTabl[3*t+h]-hofs)/100) :
-				(int)((long)kscale*(iTabl[3*t+h]+hofs)/100);
+				(int)((long)kscale*(10*hsize-p[h]-hofs)/100) :
+				(int)((long)kscale*(p[h]+hofs)/100);
 			m=(f_mirror && (f_view == 1))?
-				(int)((long)kscale*(10*vsize-iTabl[3*t+v]-vofs)/100) :
-				(int)((long)kscale*(iTabl[3*t+v]+vofs)/100);
+				(int)((long)kscale*(10*vsize-p[v]-vofs)/100) :
+				(int)((long)kscale*(p[v]+vofs)/100);
 			if((k>0)&&(k<xr)&&(m>0)&&(m<yt)) putpixel(120+k,410-m,i);
+			pofs+=6; if(pofs<6) pseg+=0x1000;
 			}
+		}
 		chpic0=0;
 		i=scan_ms(btc_ed,bnam_ed,BNM_ED,0);
 		switch(i) {
@@ -991,7 +1002,7 @@ int dlgstart(void) {
 	line(103,212,517,212);
 	line(236,156,275,156);
 	outtextxy(120,281,"After noise:");
-	rectangle(280,148,340,164); rectangle(120,291,380,360);
+	rectangle(280,150,340,168); rectangle(120,291,380,360);
 	while(1) {
 		sw_ctl(f_start,0,120,130,COLDLG);						// Beginning
 		sw_ctl(f_start,1,120,150,COLDLG);						// Point number
@@ -1219,16 +1230,20 @@ a:			vsize=zsize; outtextxy(X0-10,Y0-50,"Z"); break;
 	vs=k*vsize/10; hs=k*hsize/10; rectangle(X0,Y0-vs,X0+hs,Y0);
 	if(all) {
 		setfillstyle(1,BLACK); bar(X0+1,Y0-vs+1,X0+hs-1,Y0-1);
+		{ unsigned pseg=FP_SEG(iTabl), pofs=FP_OFF(iTabl);
+		int far *p;
 		for(i=0; i<nmax; i++) {
-			if(!flag) {hp=k*iTabl[3*i]/100; vp=k*iTabl[3*i+1]/100;}
-			else if(flag == 1) {hp=k*iTabl[3*i+1]/100; vp=k*iTabl[3*i]/100;}
+			p=(int far *)MK_FP(pseg,pofs);
+			if(!flag) {hp=k*p[0]/100; vp=k*p[1]/100;}
+			else if(flag == 1) {hp=k*p[1]/100; vp=k*p[0]/100;}
 			else {
-				d=iTabl[3*i+2]*nglas; vp=(int)(k*d/100);
-				hp=k*iTabl[3*i+flag-2]/100;
+				d=p[2]*nglas; vp=(int)(k*d/100);
+				hp=k*p[flag-2]/100;
 				}
 			color=(i<lastn)? COL_ON:COLBKL; DrawPix(hp,hs,vp,vs,color);
+			pofs+=6; if(pofs<6) pseg+=0x1000;
 			}
-		}
+		} }
 	else {
 		if(!flag) {hp=k*iTabl[3*lastn]/100; vp=k*iTabl[3*lastn+1]/100;}
 		else if(flag == 1) {hp=k*iTabl[3*lastn+1]/100; vp=k*iTabl[3*lastn]/100;}
@@ -1295,51 +1310,80 @@ b:					nmb_pbt=255; return 0;
 
 
 int sort(void) {
-	long i,k,m,ti,tk,tm,bgn,end,rmin,rmin1,rmin2,r,indx;
+	long i,k,m,bgn,end,rmin,rmin1,rmin2,r,indx;
 	unsigned int zmin;
 
 	if(!nmax) return 0;
 	getimage(160,464,460,474,bitmapmsg); progbar(nmax,0,1,160,464);
+	{ unsigned long bi_off = FP_OFF(iTabl);
 	for(i=0; i<(nmax-1); i++) {
-		zmin=iTabl[3*i+2]; indx=0;
-		for(k=i+1; k<nmax; k++) {
-			tk=3*k+2;
-			if(iTabl[tk]<zmin) {zmin=iTabl[tk]; indx=k;}
+		{ unsigned long bz=bi_off+4;
+		  zmin=*(unsigned int far *)MK_FP(FP_SEG(iTabl)+(unsigned)(bz>>4),(unsigned)(bz&0x0F));
+		}
+		indx=0;
+		{ unsigned long bk=bi_off+10;
+		  unsigned kseg=FP_SEG(iTabl)+(unsigned)(bk>>4), kofs=(unsigned)(bk&0x0F);
+		  for(k=i+1; k<nmax; k++) {
+			if(kofs >= 0xFFF0u) { kseg+=(kofs>>4); kofs&=0x0F; }
+			{ unsigned int zval=*(unsigned int far *)MK_FP(kseg,kofs);
+			  if(zval<zmin) {zmin=zval; indx=k;}
 			}
+			kofs+=6;
+			}
+		}
 		if(indx) swap(i,indx);
 		progbar(nmax,i,0,160,464); out_time(1);
 		if(kbhit()) {
 			if(getch()==ESC) {putimage(160,464,bitmapmsg,0); return 0;}
 			}
+		bi_off+=6;
 		}
+	}
 	putimage(160,464,bitmapmsg,0);
 	progbar(nmax,0,1,160,464);
 	zmin=iTabl[2]; bgn=0;
+	{ unsigned long bi_off2=6+FP_OFF(iTabl);
 	for(i=1; i<=nmax; i++) {
-		ti=3*i+2;
-		if((iTabl[ti]>zmin+49)||(i == nmax)) {
-			zmin=iTabl[ti]; end=i-1;
+		int ti_val;
+		{ unsigned long bz=bi_off2+4;
+		  ti_val=*(int far *)MK_FP(FP_SEG(iTabl)+(unsigned)(bz>>4),(unsigned)(bz&0x0F));
+		}
+		if((ti_val>zmin+49)||(i == nmax)) {
+			zmin=ti_val; end=i-1;
+			{ unsigned long bk_off=((unsigned long)bgn<<2)+((unsigned long)bgn<<1)+FP_OFF(iTabl);
 			for(k=bgn; k<=end; k++) {
-				tk=3*k;
-				rmin1=(long)abs(iTabl[tk+3]-iTabl[tk]);
-				rmin2=(long)abs(iTabl[tk+4]-iTabl[tk+1]);
+				int far *pk;
+				{ unsigned pks=FP_SEG(iTabl)+(unsigned)(bk_off>>4), pko=(unsigned)(bk_off&0x0F);
+				  pk=(int far *)MK_FP(pks,pko); }
+				rmin1=(long)abs(pk[3]-pk[0]);
+				rmin2=(long)abs(pk[4]-pk[1]);
 				rmin=(rmin1>rmin2)? rmin1:rmin2; indx=0;
-				for(m=k+2; m<=end; m++) {
-					tm=3*m;
-					rmin1=(long)abs(iTabl[tm]-iTabl[tk]);
-					rmin2=(long)abs(iTabl[tm+1]-iTabl[tk+1]);
+				{ unsigned long bm=bk_off+12;
+				  unsigned mseg=FP_SEG(iTabl)+(unsigned)(bm>>4), mofs=(unsigned)(bm&0x0F);
+				  for(m=k+2; m<=end; m++) {
+					if(mofs >= 0xFFF0u) { mseg+=(mofs>>4); mofs&=0x0F; }
+					{ int far *pm=(int far *)MK_FP(mseg,mofs);
+					  rmin1=(long)abs(pm[0]-pk[0]);
+					  rmin2=(long)abs(pm[1]-pk[1]);
+					}
 					r=(rmin1>rmin2)? rmin1:rmin2;
 					if(r < rmin) {rmin=r; indx=m;}
+					mofs+=6;
 					}
+				}
 				if(indx) swap(k+1,indx);
 				progbar(nmax,k,0,160,464); out_time(1);
 				if(kbhit()) {
 					if(getch()==ESC) {putimage(160,464,bitmapmsg,0); return 0;}
 					}
+				bk_off+=6;
 				}
+			}
 			bgn=i-1;
 			}
+		bi_off2+=6;
 		}
+	}
 	putimage(160,464,bitmapmsg,0); return 1;
 	}
 
@@ -1349,14 +1393,21 @@ int sort2(void) {
 
 	if(!nmax) return 0;
 	getimage(160,464,460,474,bitmapmsg); progbar(nmax,0,1,160,464);
+	{ unsigned long b0=FP_OFF(iTabl)+4;
+	  int far *p0z=(int far *)MK_FP(FP_SEG(iTabl)+(unsigned)(b0>>4),(unsigned)(b0&0x0F));
+	  unsigned long bi_off=6+FP_OFF(iTabl);
 	for(i=1; i<nmax; i++) {
-		zmin=iTabl[2];
-		if(iTabl[3*i+2]<zmin) swap(0,i);
+		zmin=*p0z;
+		{ unsigned long bz=bi_off+4;
+		  if(*(int far *)MK_FP(FP_SEG(iTabl)+(unsigned)(bz>>4),(unsigned)(bz&0x0F))<zmin) swap(0,i);
+		}
 		out_time(1); progbar(nmax,i,0,160,464);
 		if(kbhit()) {
 			if(getch()==ESC) {putimage(160,464,bitmapmsg,0); return 0;}
 			}
+		bi_off+=6;
 		}
+	}
 	putimage(160,464,bitmapmsg,0);
 	progbar(nmax,0,1,160,464);
 	for(i=0; i<nmax-2; i++) {
@@ -1375,22 +1426,26 @@ int sort2(void) {
 
 inline long cros(unsigned long k1, unsigned long k2) {
 	unsigned long dx,dy,dr; long dz; int k;
-
-	k1*=3; k2*=3;
-	dx=(long)abs(iTabl[k2]-iTabl[k1]);
-	dy=(long)abs(iTabl[k2+1]-iTabl[k1+1]);
-	dz=(long)(iTabl[k2+2]-iTabl[k1+2]);
+	unsigned long b1=(k1<<2)+(k1<<1)+FP_OFF(iTabl);
+	unsigned long b2=(k2<<2)+(k2<<1)+FP_OFF(iTabl);
+	int far *p1=(int far *)MK_FP(FP_SEG(iTabl)+(unsigned)(b1>>4),(unsigned)(b1&0x0F));
+	int far *p2=(int far *)MK_FP(FP_SEG(iTabl)+(unsigned)(b2>>4),(unsigned)(b2&0x0F));
+	dx=(long)abs(p2[0]-p1[0]);
+	dy=(long)abs(p2[1]-p1[1]);
+	dz=(long)(p2[2]-p1[2]);
 	dr=(dx>dy)? dx:dy; k=(dz>0)? sK1:sK2; dr+=(dz*k)/10; return(dr);
 	}
 
 
 inline void swap(unsigned long k1, unsigned long k2) {
 	int t;
-
-	k1*=3; k2*=3;
-	t=iTabl[k1]; iTabl[k1]=iTabl[k2]; iTabl[k2]=t;
-	t=iTabl[k1+1]; iTabl[k1+1]=iTabl[k2+1]; iTabl[k2+1]=t;
-	t=iTabl[k1+2]; iTabl[k1+2]=iTabl[k2+2]; iTabl[k2+2]=t;
+	unsigned long b1=(k1<<2)+(k1<<1)+FP_OFF(iTabl);
+	unsigned long b2=(k2<<2)+(k2<<1)+FP_OFF(iTabl);
+	int far *p1=(int far *)MK_FP(FP_SEG(iTabl)+(unsigned)(b1>>4),(unsigned)(b1&0x0F));
+	int far *p2=(int far *)MK_FP(FP_SEG(iTabl)+(unsigned)(b2>>4),(unsigned)(b2&0x0F));
+	t=p1[0]; p1[0]=p2[0]; p2[0]=t;
+	t=p1[1]; p1[1]=p2[1]; p2[1]=t;
+	t=p1[2]; p1[2]=p2[2]; p2[2]=t;
 	}
 
 
@@ -1398,14 +1453,21 @@ int minmax(void) {
 	xmin=iTabl[0]; xmax=xmin;
 	ymin=iTabl[1]; ymax=ymin;
 	zmin=iTabl[2]; zmax=zmin;
+	{ unsigned pseg=FP_SEG(iTabl), pofs=FP_OFF(iTabl);
+	int far *p;
+	pofs+=6;
 	for(long i=1; i<nmax; i++) {
-		if(xmin>iTabl[3*i]) xmin=iTabl[3*i];
-		if(xmax<iTabl[3*i]) xmax=iTabl[3*i];
-		if(ymin>iTabl[3*i+1]) ymin=iTabl[3*i+1];
-		if(ymax<iTabl[3*i+1]) ymax=iTabl[3*i+1];
-		if(zmin>iTabl[3*i+2]) zmin=iTabl[3*i+2];
-		if(zmax<iTabl[3*i+2]) zmax=iTabl[3*i+2];
+		if(pofs >= 0xFFF0u) { pseg+=(pofs>>4); pofs&=0x0F; }
+		p=(int far *)MK_FP(pseg,pofs);
+		if(xmin>p[0]) xmin=p[0];
+		if(xmax<p[0]) xmax=p[0];
+		if(ymin>p[1]) ymin=p[1];
+		if(ymax<p[1]) ymax=p[1];
+		if(zmin>p[2]) zmin=p[2];
+		if(zmax<p[2]) zmax=p[2];
+		pofs+=6;
 		}
+	}
 	zmin=(int)((double)zmin*nglas);
 	zmax=(int)((double)zmax*nglas);
 	if(((xptr+xmin)<10)||((xptr+xmax)>23500)||((yptr+ymin)<10)||
@@ -1488,12 +1550,17 @@ void htime(char tmpstr[]) {
 
 	if(nmax) {
 		getimage(160,464,460,474,bitmapmsg); progbar(nmax,0,1,160,464);
+		{ unsigned pseg=FP_SEG(iTabl), pofs=FP_OFF(iTabl);
+		int far *p;
 		for(i=0; i<nmax-1; i++) {
-			dx=abs(iTabl[i+3]-iTabl[i]); dy=abs(iTabl[i+4]-iTabl[i+1]);
-			dz=abs(iTabl[i+5]-iTabl[i+2]); t=(dx>dy)? dx:dy;
-			if(t<dz) t=dz;
-			tim+=(long)step_freq*t; progbar(nmax,i,0,160,464);
+			if(pofs >= 0xFFF0u) { pseg+=(pofs>>4); pofs&=0x0F; }
+			p=(int far *)MK_FP(pseg,pofs);
+			dx=p[3]-p[0]; dy=p[4]-p[1]; dz=p[5]-p[2];
+			t=seg_time(dx,dy,dz);
+			tim+=(long)l_period*t; progbar(nmax,i,0,160,464);
+			pofs+=2;
 			}
+		}
 		putimage(160,464,bitmapmsg,0); tim/=1000;
 		}
 		strcpy(tmpstr,"Time: "); strcat(tmpstr,itoa((int)tim/3600,str,10));

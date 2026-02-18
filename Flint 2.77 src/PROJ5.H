@@ -45,70 +45,71 @@
 					next parameters:	x_left, y_top, dx, dy
 ---------------------------------------------------------*/
 
-/* v2.77: Main screen - removed F6 Statist (v2.70) and F7 Info (v2.77) */
+/* v2.77: Main screen - removed F6 Statist (v2.70) and F7 Info (v2.77)
+   F9 XYZ moved into right column at old F7 slot */
 #define BNM_SCR 7
 static char *bnam_scr[] = {"F9 XYZ","F1 Config","F2 Convert",
 	"F3 DatLoad","F4 GlsLoad","F5 Start",
 	"F10 Exit"};
 static int btc_scr[] = {
-	1,1,40,430,90,18,
-	1,1,520,160,90,18,
-	1,1,520,190,90,18,
-	1,1,520,220,90,18,
-	1,1,520,280,90,18,
-	1,1,520,310,90,18,
+	1,1,520,380,90,18,
+	1,1,520,210,90,18,
+	1,1,520,240,90,18,
+	1,1,520,270,90,18,
+	1,1,520,320,90,18,
+	1,1,520,350,90,18,
 	1,1,520,430,90,18};
 
 /* v2.77: Config dialog
    v2.70: Gate delay +/- (was unused Delay), X button for positions
-   v2.71: Pump/Gate toggles replace Las.adjust
+   v2.71: Las.puls button removed; Pump/Gate toggles replace Las.adjust
    v2.73: dT display
    v2.77: sh_delay display
-   Total: 29 + 9*gl_nmb */
-#define BNM_CFG 29		// 29 + 9*gl_nmb
-static char *bnam_cfg[] = {"Ok","Cancel","Load .cfg","Las.puls",
+   Total: 28 + 9*gl_nmb */
+#define BNM_CFG 28		// 28 + 9*gl_nmb
+static char *bnam_cfg[] = {"Ok","Cancel","Load .cfg",
 	"Save .cfg","+","-","+","-","+","-","S+","S-","X+","X-","Y+",
-	"Y-","Z+","Z-","1","9","protect.open","work ptr","constant",
-	"variable","Pump","Gate","#","X","","","","","","","",""};
+	"Y-","Z+","Z-","1","9","protect.open","gate delay",
+	"laser pump","work ptr","constant","variable","#","X",
+	"","","","","","","","",""};
 static int btc_cfg[] = {
 	1,1,300,386,90,18,	// 0  Ok
 	1,1,400,386,90,18,	// 1  Cancel
 	1,1,120,125,90,18,	// 2  Load .cfg
-	1,0,120,180,90,18,	// 3  Las.puls
-	1,1,120,386,90,18,	// 4  Save .cfg
-	1,0,345,132,22,14,	// 5  + las.puls period
-	1,0,345,149,22,14,	// 6  -
-	1,0,345,177,22,14,	// 7  + gate delay (v2.70)
-	1,0,345,194,22,14,	// 8  -
-	1,0,345,237,22,14,	// 9  + step freq.
-	1,0,345,254,22,14,	// 10 -
-	1,0,465,132,22,14,	// 11 S+
-	1,0,465,149,22,14,	// 12 S-
-	1,0,465,177,22,14,	// 13 X+
-	1,0,465,194,22,14,	// 14 X-
-	1,0,465,222,22,14,	// 15 Y+
-	1,0,465,239,22,14,	// 16 Y-
-	1,0,465,267,22,14,	// 17 Z+
-	1,0,465,284,22,14,	// 18 Z-
-	3,0,120,90,10,10,		// 19 1
-	3,0,120,105,10,10,	// 20 9
-	3,0,120,160,10,10,	// 21 protect open
-	3,0,400,90,10,10,		// 22 work ptr
-	3,0,280,280,10,10,	// 23 constant
-	3,0,280,295,10,10,	// 24 variable
-	3,0,120,211,10,10,	// 25 Pump (v2.71, was Las.adjust)
-	3,0,120,226,10,10,	// 26 Gate (v2.71, new)
-	1,1,203,310,22,14,	// 27 Statistics reset
-	1,1,350,310,22,14,	// 28 X (clear positions, v2.70)
-	4,0,280,315,12,12,	// 29 pos 1
-	4,0,296,315,12,12,	// 30 pos 2
-	4,0,312,315,12,12,	// 31 pos 3
-	4,0,280,331,12,12,	// 32 pos 4
-	4,0,296,331,12,12,	// 33 pos 5
-	4,0,312,331,12,12,	// 34 pos 6
-	4,0,280,347,12,12,	// 35 pos 7
-	4,0,296,347,12,12,	// 36 pos 8
-	4,0,312,347,12,12};	// 37 pos 9
+	1,1,130,386,90,18,	// 3  Save .cfg
+	1,0,345,132,22,14,	// 4  + las.puls period
+	1,0,345,149,22,14,	// 5  -
+	1,0,345,177,22,14,	// 6  + gate delay (v2.70)
+	1,0,345,194,22,14,	// 7  -
+	1,0,345,237,22,14,	// 8  + step freq.
+	1,0,345,254,22,14,	// 9  -
+	1,0,465,132,22,14,	// 10 S+
+	1,0,465,149,22,14,	// 11 S-
+	1,0,465,177,22,14,	// 12 X+
+	1,0,465,194,22,14,	// 13 X-
+	1,0,465,222,22,14,	// 14 Y+
+	1,0,465,239,22,14,	// 15 Y-
+	1,0,465,267,22,14,	// 16 Z+
+	1,0,465,284,22,14,	// 17 Z-
+	3,0,120,90,10,10,		// 18 1
+	3,0,120,105,10,10,	// 19 9
+	3,0,120,160,10,10,	// 20 protect open
+	3,0,120,185,10,10,	// 21 gate delay (v2.71)
+	3,0,120,200,10,10,	// 22 laser pump (v2.71)
+	3,0,400,90,10,10,		// 23 work ptr
+	3,0,280,280,10,10,	// 24 constant
+	3,0,280,295,10,10,	// 25 variable
+	1,1,203,320,22,14,	// 26 Statistics reset
+	1,1,335,344,22,14,	// 27 X (clear positions, v2.70)
+	4,0,280,315,12,12,	// 28 pos 1
+	4,0,296,315,12,12,	// 29 pos 2
+	4,0,312,315,12,12,	// 30 pos 3
+	4,0,280,331,12,12,	// 31 pos 4
+	4,0,296,331,12,12,	// 32 pos 5
+	4,0,312,331,12,12,	// 33 pos 6
+	4,0,280,347,12,12,	// 34 pos 7
+	4,0,296,347,12,12,	// 35 pos 8
+	4,0,312,347,12,12};	// 36 pos 9
 
 #define BNM_OPN 12		// 12 + flag + k
 static char *bnam_opn[] = {"Ok","Cancel","up","dn","","","up","dn",
@@ -195,8 +196,8 @@ static char *bnam_strt[] = {" Ok"," Cancel","+","-",
 static int btc_strt[] = {
 	1,1,300,376,90,18,	// 0  Ok
 	1,1,400,376,90,18,	// 1  Cancel
-	1,0,345,150,22,14,	// 2  +
-	1,0,345,170,22,14,	// 3  -
+	1,0,345,140,22,14,	// 2  +
+	1,0,345,160,22,14,	// 3  -
 	3,0,120,130,10,10,	// 4  Beginning
 	3,0,120,150,10,10,	// 5  Point number
 	3,0,120,170,10,10,	// 6  Continuation
@@ -397,7 +398,7 @@ unsigned long ulService;
 void set_gr_cursor(int hot_spot_row, int hot_spot_column,
 		unsigned int far *scr_cur_masks);
 void ms_init(void);
-int ms_key_cmd(void);
+int ms_key_cmd(int f_beep);
 void beep(int tone, int duration);
 void out_time(int newt);
 void CurDir(void);
@@ -416,6 +417,8 @@ int wrt_bft(char filename[]);
 long rdbft_t(char filename[]);
 long rdbmp(char filename[]);
 int pi_ini(void);
+void program_pt2(int period, unsigned char gate);
+unsigned int read_pt2(void);
 void sh_open(unsigned int pos);
 void sh_close(void);
 int process(void);
@@ -426,7 +429,7 @@ void button(int btc[], int nmb, char buttxt[]);
 void buttonp(int btc[], int nmb, char buttxt[]);
 void ctlbt(int btxl, int btyl, int colctl, char ctltxt[]);
 int pressbt(int btc[], int nmb);
-int msgbox(char msgtxt[], int more);
+int msgbox(char msgtxt[], int more, int f_beep=0);
 int msg(int msgx, int msgy, int onoff, char msgtxt[]);
 int InrDcr(int param, int pmin, int pmax, int pstep, int updn);
 void sw_ctl(int flag, int param, int xpos, int ypos, int col);
@@ -436,7 +439,7 @@ void WndBkgr(int xl,int yt,int xr,int yb, int col,char txt[]);
 int dlgcfg(void);
 int dlged(void);
 void chdiska(void);
-int inp_dig(int xl, int yt, double min, double max, int ax);
+long inp_dig(int xl, int yt, double min, double max, int ax);
 void glload(int direct);
 int dlgload(void);
 int gselect(void);
@@ -455,7 +458,7 @@ int sort2(void);
 inline long cros(unsigned long k1, unsigned long k2);
 inline void swap(unsigned long k1, unsigned long k2);
 int minmax(void);
-unsigned int scan_ms(int btc[], char *bnam[], int nbt);
+unsigned int scan_ms(int btc[], char *bnam[], int nbt, int f_beep=0);
 void progbar(long nmb_max, long nmb, int set, int xl, int yt);
 void htime(char tmpstr[]);
 int dlgdim();

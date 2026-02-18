@@ -135,12 +135,29 @@ unsigned int LPeriod;				// Laser Period in 10's mcs
 extern unsigned long ulFlash;
 
 int msg(int msgx, int msgy, int onoff, char msgtxt[]);
-int msgbox(char msgtxt[], int more);
+int msgbox(char msgtxt[], int more, int f_beep=0);
 void draw(int flag, int all);
 void beep(int tone, int duration);
 void out_time(int newt);
 void progbar(long nmb_max, long nmb, int set, int xl, int yt);
 void glaspos(int xl, int yt, int cw);
+/* Forward declarations for functions in this file */
+void sh_open(unsigned int pos);
+void sh_close(void);
+int move_sen(int dir);
+int move(int x, int y, int z);
+
+/* v2.73: Segment time estimator for htime()
+   Returns number of l_period intervals needed for a move of (dx,dy,dz) steps */
+int seg_time(int adx, int ady, int adz) {
+	int t; long ms; int count;
+	t=(abs(adx)>abs(ady))? abs(adx):abs(ady);
+	if(t<abs(adz)) t=abs(adz);
+	ms=(long)t*1000/step_freq;
+	count=(int)(ms/l_period)+1;
+	if(ms%l_period > l_period-dT) count++;
+	return count;
+	}
 
 
 void program_pt2(int period, unsigned char gate) {
@@ -293,18 +310,16 @@ a:		if(!lpuls(flag)) {
 		outportb(ADRCMOS+1,0);											// CMOS increment
 		draw(f_xyz, 0);													// Draw pixel
 		lastn=i+1;
-		setcolor(BLACK); setfillstyle(1,COLBKL); bar(31,176,86,192);
-		ltoa(lastn,tmpstr,10); outtextxy(40,181,tmpstr);
+		setcolor(BLACK); setfillstyle(1,COLBKL); bar(31,206,86,222);
+		ltoa(lastn,tmpstr,10); outtextxy(40,211,tmpstr);
 		/* v2.70: show reiterations in real-time */
 		if(d_check) {
 			unsigned long ulRpt=0; unsigned int rk;
 			for(rk=0; rk<10; rk++) ulRpt+=nmrpt[rk];
-			setfillstyle(1,COLBKL); bar(31,200,86,216);
-			ltoa(ulRpt,tmpstr,10); outtextxy(40,205,tmpstr);
-			}
-		/* v2.77: Dr.check indicator */
-		if(d_check) {
-			setfillstyle(1,RED); bar(100,174,110,178);
+			if(ulRpt > 0) {
+				setfillstyle(1,COLBKL); bar(31,224,86,232);
+				ltoa(ulRpt,tmpstr,10); outtextxy(40,225,tmpstr);
+				}
 			}
 		progbar(nmax,i,0,160,464);
 		if(kbhit()) {
@@ -316,9 +331,9 @@ a:		if(!lpuls(flag)) {
 		}
 	/* Normal end */
 	outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
-	sh_close(); beep(1000,100); beep(2000,100); beep(1000,100);
+	sh_close();
 	msg(160,80,0,"");
-	msgbox("Ok.  TABLE END",0,1);		// v2.75: beep on completion
+	msgbox("Ok.  TABLE END",0,1);
 	lastn=0; return 1;
 	}
 
@@ -376,60 +391,62 @@ int move_sen(int dir) {
 	}
 
 
+/* v2.77: k2 calculator for move() - computes step frequency divider per axis
+   k2 = (seg_time_count * l_period - dT) * 100 / abs(delta)
+   Clamped to [100000/step_freq, 65500]. Returns k2min when f_const. */
+long calc_k2(int delta, int t) {
+	long k2, k2min, k2max=65500;
+	k2min=100000L/step_freq;
+	k2=k2min;
+	if(!f_const) {
+		k2=((long)t*l_period-dT)*100/abs(delta);
+		if(k2 < k2min) k2=k2min;
+		if(k2 > k2max) k2=k2max;
+		}
+	return k2;
+	}
+
+
 /* v2.72: replaced hardcoded 3 with dT for CPU correction
-   v2.76: removed out_time(1) call at end */
+   v2.76: removed out_time(1) call at end
+   v2.77: fixed k2 formula - uses seg_time() and calc_k2() per original binary */
 int move(int x, int y, int z) {
 	int dx,dy,dz,fxy,fz,done; unsigned char stspb;
-	long k2,k2min,k2max=65500; unsigned int i,t;
+	long k2; int t_seg;
 
-c:	i=0; t=0; fxy=0; fz=0; done=0;
+c:	fxy=0; fz=0; done=0;
 	dx=x-xcur; dy=y-ycur; dz=z-zcur;
-	k2=100000/step_freq; k2min=k2;
+	t_seg=seg_time(dx,dy,dz);
 	if(dx) {
-		if(!f_const) {
-			k2=(l_period-dT)*100/abs(dx);							// v2.72: dT
-			if(k2 < k2min) k2=k2min;
-			if(k2 > k2max) k2=k2max;
-			}
+		k2=calc_k2(dx,t_seg);
 		outportb(ADRPT0,(unsigned char)(k2%256));
 		outportb(ADRPT0,(unsigned char)(k2/256));
 		outportb(ADRPT0+1,(unsigned char)(abs(dx)%256));
 		outportb(ADRPT0+1,(unsigned char)(abs(dx)/256));
 		ctlw=(dx>0)? ctlw|XUP|XON:(ctlw&XDOWN)|XON;
-		i=(unsigned int)labs(dx*k2/100); fxy=1;
+		fxy=1;
 		}
 	else ctlw=ctlw&XOFF;
-	t=i;
 	if(dy) {
-		if(!f_const) {
-			k2=(l_period-dT)*100/abs(dy);							// v2.72: dT
-			if(k2 < k2min) k2=k2min;
-			if(k2 > k2max) k2=k2max;
-			}
+		k2=calc_k2(dy,t_seg);
 		outportb(ADRPT1,(unsigned char)(k2%256));
 		outportb(ADRPT1,(unsigned char)(k2/256));
 		outportb(ADRPT1+1,(unsigned char)(abs(dy)%256));
 		outportb(ADRPT1+1,(unsigned char)(abs(dy)/256));
 		ctlw=(dy>0)? ctlw|YUP|YON:(ctlw&YDOWN)|YON;
-		i=(unsigned int)labs(dy*k2/100); fxy=1;
+		fxy=1;
 		}
 	else ctlw=ctlw&YOFF;
-	if(t < i) t=i;
 	if(dz) {
-		if(!f_const) {
-			k2=(l_period-dT)*100/abs(dz);							// v2.72: dT
-			if(k2 < k2min) k2=k2min;
-			if(k2 > k2max) k2=k2max;
-			}
+		k2=calc_k2(dz,t_seg);
 		outportb(ADRPT0+2,(unsigned char)(k2%256));
 		outportb(ADRPT0+2,(unsigned char)(k2/256));
 		outportb(ADRPT1+2,(unsigned char)(abs(dz)%256));
 		outportb(ADRPT1+2,(unsigned char)(abs(dz)/256));
 		ctlw=(dz>0)? ctlw|ZUP|ZON:(ctlw&ZDOWN)|ZON;
-		i=(unsigned int)labs(dz*k2/100); fz=1;
+		fz=1;
 		}
 	else ctlw=ctlw&ZOFF;
-	if(t < i) t=i;
 	ctlw=ctlw&OSCON; outportb(ADRRG,ctlw);
 	if((!dx)&&(!dy)&&(!dz)) goto b;
 	if(!f_demo) {
@@ -450,8 +467,7 @@ c:	i=0; t=0; fxy=0; fz=0; done=0;
 				}
 			}
 		}
-b:	if(f_demo) delay(l_period-dT);									// v2.72: dT
-	else if((l_period-dT) > t) delay(l_period-dT-t);			// v2.72: dT
+b:	if(f_demo) delay(l_period);										// v2.77: fixed per binary
 	xcur=x; ycur=y; zcur=z;
 	/* v2.76: removed out_time(1) */
 	return 1;

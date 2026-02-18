@@ -68,7 +68,7 @@ void CurDir(void);
 void sort_fnm(void);
 void sort_dnm(void);
 void out_time(int newt);
-int msgbox(char msgtxt[], int more);
+int msgbox(char msgtxt[], int more, int f_beep=0);
 int msg(int msgx, int msgy, int onoff, char msgtxt[]);
 
 

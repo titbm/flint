@@ -91,7 +91,7 @@ int main() {
 	initgraph(&g_driver,&g_mode,"");				// ������������� �������������
 	g_error_code=graphresult();
 	if(g_error_code != grOk) {printf("graphics error"); return 255;}
-	if(!pi_ini()) f_demo=0; // Force full mode						 	// �������� ������
+	if(!pi_ini()) f_demo=1;						 	// �������� ������
 	ms_init();										 	// ������������� ����
 	set_gr_cursor(0,0,scr_cur_masks);
 	ulMax=(unsigned long)farcoreleft()-30000;	// ��������� ������ ��� iTabl[]
@@ -100,6 +100,7 @@ int main() {
 		if((iTabl=(int huge *)farmalloc(ulMax)) == NULL) {
 		printf("Allocation error"); goto b;
 		}
+	}
 	ulMax/=6;
 	FlashRd();
 	while(1) {

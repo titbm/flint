@@ -3,6 +3,16 @@ Proj5_32bit/*.obj
 Proj5_32bit/DEBUG.LOG
 Proj5_32bit/&1
 
+# Build artifacts (Flint 2.77 src)
+Flint 2.77 src/*.OBJ
+Flint 2.77 src/*.EXE
+Flint 2.77 src/LINK.RSP
+Flint 2.77 src/TURBOC.$LN
+Flint 2.77 src/BUILD/
+
+# Tools (DOSBox-X + Borland C++ 3.1)
+Tools/
+
 # IDE files
 *.bak
 *.tmp
