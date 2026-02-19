@@ -807,8 +807,8 @@ def gen_start():
 
     button(dr, img, 300, 376, 90, 18, " Ok")
     button(dr, img, 400, 376, 90, 18, " Cancel")
-    button(dr, img, 345, 150, 22, 14, "+")
-    button(dr, img, 345, 170, 22, 14, "-")
+    button(dr, img, 345, 140, 22, 14, "+")
+    button(dr, img, 345, 160, 22, 14, "-")
 
     dr.line([(103, 212), (517, 212)], fill=BLACK)
     dr.line([(236, 156), (275, 156)], fill=BLACK)
@@ -822,7 +822,6 @@ def gen_start():
     ctlbt(dr, img, 120, 245, BLACK, "Drawing check", filled=True, fill_color=C(COL_ON))
 
     draw_bgi_text(img, 120, 281, "After noise:", BLACK)
-    dr.rectangle([280, 148, 340, 164], outline=BLACK)
     dr.rectangle([120, 291, 380, 360], outline=BLACK)
 
     ctlbt(dr, img, 135, 300, BLACK, "Stop", filled=True, fill_color=C(COL_ON))

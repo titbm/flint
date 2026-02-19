@@ -15,7 +15,7 @@ Changes:
     - 3 new hotspots (Gate delay, Laser pump, Кнопка X)
 
   START section:
-    - 2 position changes (+ button top:140->150, - button top:160->170)
+    - (buttons already at correct positions: + at top:140, - at top:160)
 
   MSGBOX section:
     - 1 new hotspot (Nx button)
@@ -186,20 +186,20 @@ def apply_replacements(html: str) -> str:
     ))
 
     # ========================================================================
-    # START — Position Changes (2 items)
+    # START — no changes needed (buttons at correct positions 140/160)
     # ========================================================================
 
-    # + button: top:140->150
-    changes.append((
-        'style="left:345px;top:140px;width:22px;height:14px;" data-tip="+ \u2014',
-        'style="left:345px;top:150px;width:22px;height:14px;" data-tip="+ \u2014',
-    ))
+    # + button: already at correct position top:140
+    # changes.append((
+    #     'style="left:345px;top:140px;width:22px;height:14px;" data-tip="+ \u2014',
+    #     'style="left:345px;top:140px;width:22px;height:14px;" data-tip="+ \u2014',
+    # ))
 
-    # - button: top:160->170
-    changes.append((
-        'style="left:345px;top:160px;width:22px;height:14px;" data-tip="- \u2014',
-        'style="left:345px;top:170px;width:22px;height:14px;" data-tip="- \u2014',
-    ))
+    # - button: already at correct position top:160
+    # changes.append((
+    #     'style="left:345px;top:160px;width:22px;height:14px;" data-tip="- \u2014',
+    #     'style="left:345px;top:160px;width:22px;height:14px;" data-tip="- \u2014',
+    # ))
 
     # ========================================================================
     # MSGBOX — Add 1 new hotspot div before tooltip

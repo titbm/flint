@@ -1,6 +1,6 @@
 @echo off
 :: ═══════════════════════════════════════════════
-::   Компиляция FLINT 2.77
+::   Компиляция FLINT 2.61
 ::   Автоопределение среды:
 ::     DOS / Windows 9x — нативная компиляция
 ::     Windows NT+      — компиляция через DOSBox-X
@@ -17,15 +17,15 @@ if "%OS%"=="Windows_NT" goto NT_COMPILE
 
 :: ─────────────────────────────────────────────
 ::  DOS / Windows 9x — нативная компиляция
-::  Запускать из папки с исходниками
+::  Запускать из папки с исходниками (SRC)
 :: ─────────────────────────────────────────────
 echo ===================================
-echo   Компиляция FLINT 2.77
+echo   Компиляция FLINT 2.61
 echo ===================================
 
-:: Поиск компилятора: BCDIR (если задана) -> ..\Tools\BC45 -> C:\BC45
+:: Поиск компилятора: BCDIR (если задана) -> Tools\BC45 -> C:\BC45
 if not "%BCDIR%"=="" goto CHECK_BC
-if exist ..\Tools\BC45\BIN\BCC.EXE set BCDIR=..\Tools\BC45
+if exist ..\..\..\Tools\BC45\BIN\BCC.EXE set BCDIR=..\..\..\Tools\BC45
 if not "%BCDIR%"=="" goto CHECK_BC
 if exist C:\BC45\BIN\BCC.EXE set BCDIR=C:\BC45
 if not "%BCDIR%"=="" goto CHECK_BC
@@ -36,10 +36,6 @@ if not exist %BCDIR%\BIN\BCC.EXE goto NO_BC
 echo Компилятор: %BCDIR%
 set PATH=%BCDIR%\BIN;%PATH%
 echo.
-
-:: Путь к данным Flint 2.77 (FLINT.GLS, CFG, BFT_FILES)
-:: Можно задать заранее: SET FLINTDIR=C:\FLINT277
-if "%FLINTDIR%"=="" set FLINTDIR=..\!GENESIS\Flint 2.77
 
 :: Компиляция
 %BCDIR%\BGI\BGIOBJ /F %BCDIR%\BGI\EGAVGA EGAVGA
@@ -68,12 +64,11 @@ echo Сборка папки BUILD...
 if not exist BUILD mkdir BUILD
 copy PROJ5.EXE BUILD\ >nul
 del PROJ5.EXE
-if exist %FLINTDIR%\FLINT.GLS copy %FLINTDIR%\FLINT.GLS BUILD\ >nul
-if exist %FLINTDIR%\FLINT1.CFG copy %FLINTDIR%\FLINT1.CFG BUILD\ >nul
-if exist %FLINTDIR%\FLINT9.CFG copy %FLINTDIR%\FLINT9.CFG BUILD\ >nul
-if exist %FLINTDIR%\FLASH.DAT copy %FLINTDIR%\FLASH.DAT BUILD\ >nul
-if exist %FLINTDIR%\CONFIG.SYS copy %FLINTDIR%\CONFIG.SYS BUILD\ >nul
-if exist %FLINTDIR%\BFT_FILES xcopy /E /I %FLINTDIR%\BFT_FILES BUILD\BFT_FILES >nul
+copy ..\FLINT.GLS BUILD\ >nul
+copy ..\FLINT1.CFG BUILD\ >nul
+copy ..\FLINT9.CFG BUILD\ >nul
+if exist ..\FLASH.DAT copy ..\FLASH.DAT BUILD\ >nul
+if exist ..\BFT_FILES xcopy /E /I ..\BFT_FILES BUILD\BFT_FILES >nul
 
 :: Генерация BUILD\RUN.bat (только DOS)
 echo @echo off > BUILD\RUN.bat
@@ -110,12 +105,12 @@ goto END
 :NT_COMPILE
 chcp 65001 >nul
 echo ═══════════════════════════════════════════
-echo   Компиляция FLINT 2.77
+echo   Компиляция FLINT 2.61
 echo ═══════════════════════════════════════════
 
 set SRCDIR=%~dp0.
-set FLINTDIR=%~dp0..\!GENESIS\Flint 2.77
-set TOOLSDIR=%~dp0..\Tools
+set FLINTDIR=%~dp0..
+set TOOLSDIR=%~dp0..\..\..\Tools
 set BUILDDIR=%~dp0BUILD
 
 :: Проверяем наличие компилятора BC45
@@ -187,12 +182,11 @@ mkdir "%BUILDDIR%"
 :: Копируем скомпилированный EXE
 move /Y "%SRCDIR%\PROJ5.EXE" "%BUILDDIR%\" >nul
 
-:: Копируем данные из Flint 2.77
+:: Копируем данные из Flint 2.61
 copy /Y "%FLINTDIR%\FLINT.GLS"  "%BUILDDIR%\" >nul
 copy /Y "%FLINTDIR%\FLINT1.CFG" "%BUILDDIR%\" >nul
 copy /Y "%FLINTDIR%\FLINT9.CFG" "%BUILDDIR%\" >nul
 copy /Y "%FLINTDIR%\FLASH.DAT"  "%BUILDDIR%\" >nul 2>nul
-copy /Y "%FLINTDIR%\CONFIG.SYS" "%BUILDDIR%\" >nul 2>nul
 
 :: Копируем BFT-файлы, если есть
 if exist "%FLINTDIR%\BFT_FILES" (
@@ -208,8 +202,8 @@ if exist "%FLINTDIR%\BFT_FILES" (
     echo goto END
     echo :NT_RUN
     echo chcp 65001 ^>nul
-    echo set DOSBOX=%%~dp0..\..\Tools\DOSBox-X\dosbox-x.exe
-    echo set FLINTDIR=%%~dp0..\..\!GENESIS\Flint 2.77
+    echo set DOSBOX=%%~dp0..\..\..\..\Tools\DOSBox-X\dosbox-x.exe
+    echo set FLINTDIR=%%~dp0..\..
     echo if exist "%%DOSBOX%%" goto DOSBOX_OK
     echo for %%%%I in ^(dosbox-x.exe^) do if not "%%%%~$PATH:I"=="" set DOSBOX=%%%%~$PATH:I
     echo if exist "%%DOSBOX%%" goto DOSBOX_OK
