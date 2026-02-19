@@ -1,9 +1,9 @@
 # Build artifacts (Flint 2.77 32bit)
-Flint 2.77 (32bit)/*.obj
-Flint 2.77 (32bit)/*.exe
-Flint 2.77 (32bit)/*.err
-Flint 2.77 (32bit)/DEBUG.LOG
-Flint 2.77 (32bit)/BUILD/
+Flint 2.77 (32bit) src/*.obj
+Flint 2.77 (32bit) src/*.exe
+Flint 2.77 (32bit) src/*.err
+Flint 2.77 (32bit) src/DEBUG.LOG
+Flint 2.77 (32bit) src/BUILD/
 
 # Build artifacts (Flint 2.77 src)
 Flint 2.77 src/*.OBJ
