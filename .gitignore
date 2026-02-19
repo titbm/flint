@@ -1,7 +1,9 @@
-# Build artifacts (Proj5_32bit: промежуточные файлы)
-Proj5_32bit/*.obj
-Proj5_32bit/DEBUG.LOG
-Proj5_32bit/&1
+# Build artifacts (Flint 2.77 32bit)
+Flint 2.77 (32bit)/*.obj
+Flint 2.77 (32bit)/*.exe
+Flint 2.77 (32bit)/*.err
+Flint 2.77 (32bit)/DEBUG.LOG
+Flint 2.77 (32bit)/BUILD/
 
 # Build artifacts (Flint 2.77 src)
 Flint 2.77 src/*.OBJ
