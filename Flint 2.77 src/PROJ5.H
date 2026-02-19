@@ -134,14 +134,14 @@ static int btc_opn[] = {
 	4,0,450,282,60,18};	// dz
 
 #define BNM_ED 31
-static char *bnam_ed[] = {"Cancel","Data Save","Data Load","View XYZ",
+static char *bnam_ed[] = {"Cancel","Data Save","Data Load","F9 XYZ",
 	"0->Center","up","<-","dn","->","+","-","+","-","+","-","+","-","Sort",
-	"","","","","","mirror","Dimensions","C->Center","invert","","","",""};
+	"","","","","","X-mirror","Dimensions","C->Center","invert","","","",""};
 static int btc_ed[] = {
 	1,1,500,438,90,18,	// Cancel
 	1,1,391,438,90,18,	// Data Save
 	1,1,100,438,90,18,	// Data Load
-	1,1,500,250,90,18,	// View XYZ
+	1,1,500,250,90,18,	// F9 XYZ
 	1,1,500,384,90,18,	// 0->Center
 	1,0,534,348,22,14,	// up
 	1,0,508,358,22,14,	// <-
@@ -171,7 +171,7 @@ static int btc_ed[] = {
 	4,1,527,328,60,16};	// dB
 
 #define BNM_GLOAD 3
-static char *bnam_gload[] = {"Up","Down","Cancel"};
+static char *bnam_gload[] = {"PgUp Up","PgDn Down","Cancel"};
 static int btc_gload[] = {
 	1,1,300,207,90,18,	// Up
 	1,1,300,339,90,18,	// Down
