@@ -1,29 +1,29 @@
 @echo off
-:: ═══════════════════════════════════════════════
-::   Компиляция FLINT 2.77
-::   Автоопределение среды:
-::     DOS / Windows 9x — нативная компиляция
-::     Windows NT+      — компиляция через DOSBox-X
-:: ═══════════════════════════════════════════════
-:: Флаги компиляции:
+:: ===============================================
+::   Compiling FLINT 2.77
+::   Auto-detect environment:
+::     DOS / Windows 9x - native compilation
+::     Windows NT+      - compile via DOSBox-X
+:: ===============================================
+:: Compiler flags:
 ::   -ml   Large memory model (far code + far data)
-::   -O1   Оптимизация по размеру
-::   -3    Генерация 386 инструкций
-:: Линковка:
-::   TLINK /c /x — case-sensitive, no map
-::   Библиотеки: GRAPHICS EMU MATHL CL
-:: ═══════════════════════════════════════════════
+::   -O1   Optimize for size
+::   -3    Generate 386 instructions
+:: Linker:
+::   TLINK /c /x - case-sensitive, no map
+::   Libraries: GRAPHICS EMU MATHL CL
+:: ===============================================
 if "%OS%"=="Windows_NT" goto NT_COMPILE
 
-:: ─────────────────────────────────────────────
-::  DOS / Windows 9x — нативная компиляция
-::  Запускать из папки с исходниками
-:: ─────────────────────────────────────────────
+:: ---------------------------------------------
+::  DOS / Windows 9x - native compilation
+::  Run from source directory
+:: ---------------------------------------------
 echo ===================================
-echo   Компиляция FLINT 2.77
+echo   Compiling FLINT 2.77
 echo ===================================
 
-:: Поиск компилятора: BCDIR (если задана) -> ..\Tools\BC45 -> C:\BC45
+:: Locate compiler: BCDIR (if set) -> ..\Tools\BC45 -> C:\BC45
 if not "%BCDIR%"=="" goto CHECK_BC
 if exist ..\Tools\BC45\BIN\BCC.EXE set BCDIR=..\Tools\BC45
 if not "%BCDIR%"=="" goto CHECK_BC
@@ -33,38 +33,38 @@ goto NO_BC
 
 :CHECK_BC
 if not exist %BCDIR%\BIN\BCC.EXE goto NO_BC
-echo Компилятор: %BCDIR%
+echo Compiler: %BCDIR%
 set PATH=%BCDIR%\BIN;%PATH%
 echo.
 
-:: Путь к данным Flint 2.77 (FLINT.GLS, CFG, BFT_FILES)
-:: Можно задать заранее: SET FLINTDIR=C:\FLINT277
+:: Path to Flint 2.77 data (FLINT.GLS, CFG, BFT_FILES)
+:: Can be set in advance: SET FLINTDIR=C:\FLINT277
 if "%FLINTDIR%"=="" set FLINTDIR=..\!GENESIS\Flint 2.77
 
-:: Компиляция
+:: Compile
 %BCDIR%\BGI\BGIOBJ /F %BCDIR%\BGI\EGAVGA EGAVGA
 %BCDIR%\BIN\BCC -c -ml -O1 -3 -I%BCDIR%\INCLUDE PROJ5.CPP
 %BCDIR%\BIN\BCC -c -ml -O1 -3 -I%BCDIR%\INCLUDE PIC.CPP
 %BCDIR%\BIN\BCC -c -ml -O1 -3 -I%BCDIR%\INCLUDE MSKEYC.CPP
 %BCDIR%\BIN\BCC -c -ml -O1 -3 -I%BCDIR%\INCLUDE RDWRF.CPP
 
-:: Линковка
+:: Link
 echo %BCDIR%\LIB\C0L PROJ5 PIC MSKEYC RDWRF EGAVGA+ > LINK.RSP
 echo ,PROJ5.EXE+ >> LINK.RSP
 echo ,+ >> LINK.RSP
 echo ,GRAPHICS EMU MATHL CL >> LINK.RSP
 %BCDIR%\BIN\TLINK /c /x /L%BCDIR%\LIB @LINK.RSP
 
-:: Очистка
+:: Cleanup
 if exist *.OBJ del *.OBJ
 if exist LINK.RSP del LINK.RSP
 
 if not exist PROJ5.EXE goto COMPILE_FAIL
 echo.
-echo *** Компиляция успешна ***
+echo *** Compilation successful ***
 
-:: Сборка папки BUILD
-echo Сборка папки BUILD...
+:: Build output directory
+echo Building output directory...
 if not exist BUILD mkdir BUILD
 copy PROJ5.EXE BUILD\ >nul
 del PROJ5.EXE
@@ -75,7 +75,7 @@ if exist %FLINTDIR%\FLASH.DAT copy %FLINTDIR%\FLASH.DAT BUILD\ >nul
 if exist %FLINTDIR%\CONFIG.SYS copy %FLINTDIR%\CONFIG.SYS BUILD\ >nul
 if exist %FLINTDIR%\BFT_FILES xcopy /E /I %FLINTDIR%\BFT_FILES BUILD\BFT_FILES >nul
 
-:: Генерация BUILD\RUN.bat (только DOS)
+:: Generate BUILD\RUN.bat (DOS only)
 echo @echo off > BUILD\RUN.bat
 echo if not exist PROJ5.EXE goto NO_EXE >> BUILD\RUN.bat
 echo PROJ5.EXE >> BUILD\RUN.bat
@@ -86,63 +86,62 @@ echo pause >> BUILD\RUN.bat
 echo :END >> BUILD\RUN.bat
 
 echo.
-echo Готово! Папка BUILD создана.
-echo Для запуска: BUILD\RUN.bat
+echo Done! BUILD directory created.
+echo To run: BUILD\RUN.bat
 pause
 goto END
 
 :NO_BC
-echo ОШИБКА: Компилятор Borland C++ не найден.
-echo Укажите путь: SET BCDIR=C:\BC45
-echo и запустите скрипт повторно.
+echo ERROR: Borland C++ compiler not found.
+echo Set path: SET BCDIR=C:\BC45
+echo and re-run this script.
 pause
 goto END
 
 :COMPILE_FAIL
 echo.
-echo ОШИБКА: Компиляция не удалась.
+echo ERROR: Compilation failed.
 pause
 goto END
 
-:: ─────────────────────────────────────────────
-::  Windows NT+ — компиляция через DOSBox-X
-:: ─────────────────────────────────────────────
+:: ---------------------------------------------
+::  Windows NT+ - compile via DOSBox-X
+:: ---------------------------------------------
 :NT_COMPILE
-chcp 65001 >nul
-echo ═══════════════════════════════════════════
-echo   Компиляция FLINT 2.77
-echo ═══════════════════════════════════════════
+echo ===========================================
+echo   Compiling FLINT 2.77
+echo ===========================================
 
 set SRCDIR=%~dp0.
 set FLINTDIR=%~dp0..\!GENESIS\Flint 2.77
 set TOOLSDIR=%~dp0..\Tools
 set BUILDDIR=%~dp0BUILD
 
-:: Проверяем наличие компилятора BC45
+:: Check for BC45 compiler
 if exist "%TOOLSDIR%\BC45\BIN\BCC.EXE" (
     set BCDIR=%TOOLSDIR%\BC45
     set BCNAME=Borland C++ 4.5
 ) else (
-    echo ОШИБКА: Компилятор не найден.
-    echo Нужен Borland C++ 4.5 в %TOOLSDIR%\BC45\
+    echo ERROR: Compiler not found.
+    echo Need Borland C++ 4.5 in %TOOLSDIR%\BC45\
     pause & exit /b 1
 )
 
-:: Поиск DOSBox-X: сначала в Tools, затем в PATH
+:: Locate DOSBox-X: first in Tools, then in PATH
 set DOSBOX=%TOOLSDIR%\DOSBox-X\dosbox-x.exe
 if exist "%DOSBOX%" goto DOSBOX_OK
 for %%I in (dosbox-x.exe) do if not "%%~$PATH:I"=="" set DOSBOX=%%~$PATH:I
 if exist "%DOSBOX%" goto DOSBOX_OK
-echo ОШИБКА: DOSBox-X не найден.
-echo Установите DOSBox-X или поместите его в Tools\DOSBox-X\
+echo ERROR: DOSBox-X not found.
+echo Install DOSBox-X or place it in Tools\DOSBox-X\
 pause & exit /b 1
 :DOSBOX_OK
 
-echo Компилятор: %BCNAME% (%BCDIR%)
-echo Исходники:  %SRCDIR%
+echo Compiler: %BCNAME% (%BCDIR%)
+echo Sources:  %SRCDIR%
 echo.
 
-:: Генерируем временный ~BUILD.BAT
+:: Generate temporary ~BUILD.BAT
 >"%SRCDIR%\~BUILD.BAT" (
     echo @echo off
     echo C:\BGI\BGIOBJ /F C:\BGI\EGAVGA D:\EGAVGA
@@ -161,7 +160,7 @@ echo.
     echo DEL D:\LINK.RSP
 )
 
-:: DOSBox-X: C: = компилятор, D: = исходники
+:: DOSBox-X: C: = compiler, D: = sources
 "%DOSBOX%" -conf NUL ^
   -set "machine=svga_s3" ^
   -set "memsize=16" ^
@@ -175,31 +174,31 @@ DEL "%SRCDIR%\~BUILD.BAT" >nul 2>nul
 
 echo.
 if not exist "%SRCDIR%\PROJ5.EXE" (
-    echo ОШИБКА: Компиляция не удалась. Проверьте вывод DOSBox-X.
+    echo ERROR: Compilation failed. Check DOSBox-X output.
     pause & exit /b 1
 )
 
-:: Собираем готовую папку BUILD с EXE и данными для запуска
-echo Сборка папки BUILD...
+:: Build output directory with EXE and data files
+echo Building output directory...
 if exist "%BUILDDIR%" rmdir /S /Q "%BUILDDIR%"
 mkdir "%BUILDDIR%"
 
-:: Копируем скомпилированный EXE
+:: Copy compiled EXE
 move /Y "%SRCDIR%\PROJ5.EXE" "%BUILDDIR%\" >nul
 
-:: Копируем данные из Flint 2.77
+:: Copy data from Flint 2.77
 copy /Y "%FLINTDIR%\FLINT.GLS"  "%BUILDDIR%\" >nul
 copy /Y "%FLINTDIR%\FLINT1.CFG" "%BUILDDIR%\" >nul
 copy /Y "%FLINTDIR%\FLINT9.CFG" "%BUILDDIR%\" >nul
 copy /Y "%FLINTDIR%\FLASH.DAT"  "%BUILDDIR%\" >nul 2>nul
 copy /Y "%FLINTDIR%\CONFIG.SYS" "%BUILDDIR%\" >nul 2>nul
 
-:: Копируем BFT-файлы, если есть
+:: Copy BFT files if present
 if exist "%FLINTDIR%\BFT_FILES" (
     xcopy /E /I /Y "%FLINTDIR%\BFT_FILES" "%BUILDDIR%\BFT_FILES" >nul
 )
 
-:: Генерируем двухрежимный RUN.bat внутри BUILD
+:: Generate dual-mode RUN.bat inside BUILD
 >"%BUILDDIR%\RUN.bat" (
     echo @echo off
     echo if "%%OS%%"=="Windows_NT" goto NT_RUN
@@ -207,7 +206,6 @@ if exist "%FLINTDIR%\BFT_FILES" (
     echo PROJ5.EXE
     echo goto END
     echo :NT_RUN
-    echo chcp 65001 ^>nul
     echo set DOSBOX=%%~dp0..\..\Tools\DOSBox-X\dosbox-x.exe
     echo set FLINTDIR=%%~dp0..\..\!GENESIS\Flint 2.77
     echo if exist "%%DOSBOX%%" goto DOSBOX_OK
@@ -235,8 +233,8 @@ if exist "%FLINTDIR%\BFT_FILES" (
 )
 
 echo.
-echo Готово! Папка BUILD создана: %BUILDDIR%
-echo Для запуска — двойной клик на BUILD\RUN.bat
+echo Done! BUILD directory created: %BUILDDIR%
+echo To run - double-click BUILD\RUN.bat
 pause
 goto END
 

@@ -1,30 +1,30 @@
 @echo off
-:: ═══════════════════════════════════════════════
-::   Компиляция FLINT+ v2.77 (32-bit)
-::   Автоопределение среды:
-::     DOS / Windows 9x — Watcom binw (DOS)
-::     Windows NT+      — Watcom binnt (Win32)
-:: ═══════════════════════════════════════════════
-:: Компилятор: Open Watcom C++ wpp386
-:: Флаги:
-::   -bt=dos  Целевая платформа DOS
+:: ===============================================
+::   Compiling FLINT+ v2.77 (32-bit)
+::   Auto-detect environment:
+::     DOS / Windows 9x - Watcom binw (DOS)
+::     Windows NT+      - Watcom binnt (Win32)
+:: ===============================================
+:: Compiler: Open Watcom C++ wpp386
+:: Flags:
+::   -bt=dos  Target platform DOS
 ::   -mf      Flat memory model 32-bit
-::   -ox      Максимальная оптимизация
-::   -w3      Уровень предупреждений 3
-:: Линковка:
-::   wlink system dos4g — расширитель памяти DOS/4GW
-:: ═══════════════════════════════════════════════
+::   -ox      Maximum optimization
+::   -w3      Warning level 3
+:: Linker:
+::   wlink system dos4g - DOS/4GW extender
+:: ===============================================
 if "%OS%"=="Windows_NT" goto NT_COMPILE
 
-:: ─────────────────────────────────────────────
-::  DOS / Windows 9x — нативная компиляция
-::  Запускать из папки с исходниками
-:: ─────────────────────────────────────────────
+:: ---------------------------------------------
+::  DOS / Windows 9x - native compilation
+::  Run from source directory
+:: ---------------------------------------------
 echo ===================================
-echo   Компиляция FLINT+ v2.77 (32-bit)
+echo   Compiling FLINT+ v2.77 (32-bit)
 echo ===================================
 
-:: Поиск Watcom: WATCOM (если задана) -> ..\Tools\WATCOM -> C:\WATCOM
+:: Locate Watcom: WATCOM (if set) -> ..\Tools\WATCOM -> C:\WATCOM
 if not "%WATCOM%"=="" goto CHECK_WATCOM
 if exist ..\Tools\WATCOM\binw\wpp386.exe set WATCOM=..\Tools\WATCOM
 if not "%WATCOM%"=="" goto CHECK_WATCOM
@@ -34,41 +34,40 @@ goto NO_WATCOM
 
 :CHECK_WATCOM
 if not exist %WATCOM%\binw\wpp386.exe goto NO_WATCOM
-echo Компилятор: Open Watcom C++ (%WATCOM%)
+echo Compiler: Open Watcom C++ (%WATCOM%)
 
-:: Настройка окружения Watcom (DOS — используем binw)
+:: Set up Watcom environment (DOS - use binw)
 set PATH=%WATCOM%\binw;%PATH%
 set INCLUDE=%WATCOM%\h
 set LIB=%WATCOM%\lib386\dos
 echo.
 
-:: Путь к данным Flint 2.77
+:: Path to Flint 2.77 data
 if "%FLINTDIR%"=="" set FLINTDIR=..\!GENESIS\Flint 2.77
 
-:: Компиляция
-echo Компиляция...
+:: Compile
+echo Compiling...
 wmake -f MAKEFILE
 if errorlevel 1 goto COMPILE_FAIL
 
 if not exist PROJ5.EXE goto COMPILE_FAIL
 echo.
-echo *** Компиляция успешна ***
+echo *** Compilation successful ***
 
-:: Сборка папки BUILD
-echo Сборка папки BUILD...
+:: Build output directory
+echo Building output directory...
 if not exist BUILD mkdir BUILD
 copy PROJ5.EXE BUILD\ >nul
 del PROJ5.EXE
 
-:: Копируем DOS/4GW
+:: Copy DOS/4GW
 if exist %WATCOM%\binw\dos4gw.exe copy %WATCOM%\binw\dos4gw.exe BUILD\ >nul
 
-:: Удаляем промежуточные файлы
+:: Remove intermediate files
 if exist *.OBJ del *.OBJ
 if exist *.ERR del *.ERR
 if exist DEBUG.LOG del DEBUG.LOG
 
-:: Копируем данные из Flint 2.77
 if exist %FLINTDIR%\FLINT.GLS copy %FLINTDIR%\FLINT.GLS BUILD\ >nul
 if exist %FLINTDIR%\FLINT1.CFG copy %FLINTDIR%\FLINT1.CFG BUILD\ >nul
 if exist %FLINTDIR%\FLINT9.CFG copy %FLINTDIR%\FLINT9.CFG BUILD\ >nul
@@ -76,7 +75,7 @@ if exist %FLINTDIR%\FLASH.DAT copy %FLINTDIR%\FLASH.DAT BUILD\ >nul
 if exist %FLINTDIR%\CONFIG.SYS copy %FLINTDIR%\CONFIG.SYS BUILD\ >nul
 if exist %FLINTDIR%\BFT_FILES xcopy /E /I %FLINTDIR%\BFT_FILES BUILD\BFT_FILES >nul
 
-:: Генерация BUILD\RUN.bat (только DOS — без dosbox-x.conf)
+:: Generate BUILD\RUN.bat (DOS only - no dosbox-x.conf)
 echo @echo off > BUILD\RUN.bat
 echo if not exist PROJ5.EXE goto NO_EXE >> BUILD\RUN.bat
 echo if not exist DOS4GW.EXE goto NO_DOS4GW >> BUILD\RUN.bat
@@ -92,34 +91,33 @@ echo pause >> BUILD\RUN.bat
 echo :END >> BUILD\RUN.bat
 
 echo.
-echo Готово! Папка BUILD создана.
-echo Для запуска: BUILD\RUN.bat
+echo Done! BUILD directory created.
+echo To run: BUILD\RUN.bat
 pause
 goto END
 
 :NO_WATCOM
-echo ОШИБКА: Open Watcom C++ не найден.
-echo Укажите путь: SET WATCOM=C:\WATCOM
-echo и запустите скрипт повторно.
+echo ERROR: Open Watcom C++ not found.
+echo Set path: SET WATCOM=C:\WATCOM
+echo and re-run this script.
 pause
 goto END
 
 :COMPILE_FAIL
 echo.
-echo ОШИБКА: Компиляция не удалась.
+echo ERROR: Compilation failed.
 if exist *.OBJ del *.OBJ
 if exist *.ERR del *.ERR
 pause
 goto END
 
-:: ─────────────────────────────────────────────
-::  Windows NT+ — нативная компиляция (Watcom)
-:: ─────────────────────────────────────────────
+:: ---------------------------------------------
+::  Windows NT+ - native compilation (Watcom)
+:: ---------------------------------------------
 :NT_COMPILE
-chcp 65001 >nul
-echo ═══════════════════════════════════════════
-echo   Компиляция FLINT+ v2.77 (32-bit)
-echo ═══════════════════════════════════════════
+echo ===========================================
+echo   Compiling FLINT+ v2.77 (32-bit)
+echo ===========================================
 
 set "SRCDIR=%~dp0."
 set "FLINTDIR=%~dp0..\!GENESIS\Flint 2.77"
@@ -127,66 +125,66 @@ set "TOOLSDIR=%~dp0..\Tools"
 set "BUILDDIR=%~dp0BUILD"
 set "WATCOM=%~dp0..\Tools\WATCOM"
 
-:: ────────────────────────────────────────────
-:: Компилятор: Open Watcom C++ wpp386
-:: Флаги:
-::   -bt=dos  Целевая платформа DOS
+:: --------------------------------------------
+:: Compiler: Open Watcom C++ wpp386
+:: Flags:
+::   -bt=dos  Target platform DOS
 ::   -mf      Flat memory model 32-bit
-::   -ox      Максимальная оптимизация
-::   -w3      Уровень предупреждений 3
-:: Линковка:
-::   wlink system dos4g — расширитель памяти DOS/4GW
-:: ────────────────────────────────────────────
+::   -ox      Maximum optimization
+::   -w3      Warning level 3
+:: Linker:
+::   wlink system dos4g - DOS/4GW extender
+:: --------------------------------------------
 
-rem --- Поиск Watcom ---
+rem --- Locate Watcom ---
 if not exist "%WATCOM%\binnt\wpp386.exe" goto :no_watcom
 
-rem --- Настройка окружения Watcom ---
+rem --- Set up Watcom environment ---
 set "PATH=%WATCOM%\binnt;%WATCOM%\binw;%PATH%"
 set "INCLUDE=%WATCOM%\h"
 set "WATCOM_DIR=%WATCOM%"
 set "LIB=%WATCOM%\lib386\dos"
 
-echo Компилятор: Open Watcom C++
-echo Исходники:  %SRCDIR%
+echo Compiler: Open Watcom C++
+echo Sources:  %SRCDIR%
 echo.
 
-rem --- Компиляция ---
+rem --- Compile ---
 cd /d "%SRCDIR%"
-echo Компиляция...
+echo Compiling...
 wmake -f MAKEFILE
 if errorlevel 1 goto :compile_fail
 
 echo.
 if not exist "%SRCDIR%\proj5.exe" goto :no_exe
 
-:: Собираем готовую папку BUILD с EXE и данными для запуска
-echo Сборка папки BUILD...
+:: Build output directory with EXE and data files
+echo Building output directory...
 if exist "%BUILDDIR%" rmdir /S /Q "%BUILDDIR%"
 mkdir "%BUILDDIR%"
 
-:: Копируем скомпилированный EXE и DOS/4GW
+:: Copy compiled EXE and DOS/4GW
 move /Y "%SRCDIR%\proj5.exe" "%BUILDDIR%\" >nul
 copy /Y "%WATCOM%\binw\dos4gw.exe" "%BUILDDIR%\" >nul
 
-:: Удаляем промежуточные файлы
+:: Remove intermediate files
 del /Q "%SRCDIR%\*.obj" >nul 2>nul
 del /Q "%SRCDIR%\*.err" >nul 2>nul
 del /Q "%SRCDIR%\DEBUG.LOG" >nul 2>nul
 
-:: Копируем данные из Flint 2.77
+:: Copy data from Flint 2.77
 copy /Y "%FLINTDIR%\FLINT.GLS"  "%BUILDDIR%\" >nul
 copy /Y "%FLINTDIR%\FLINT1.CFG" "%BUILDDIR%\" >nul
 copy /Y "%FLINTDIR%\FLINT9.CFG" "%BUILDDIR%\" >nul
 copy /Y "%FLINTDIR%\FLASH.DAT"  "%BUILDDIR%\" >nul 2>nul
 copy /Y "%FLINTDIR%\CONFIG.SYS" "%BUILDDIR%\" >nul 2>nul
 
-:: Копируем BFT-файлы, если есть
+:: Copy BFT files if present
 if not exist "%FLINTDIR%\BFT_FILES" goto :skip_bft
 xcopy /E /I /Y "%FLINTDIR%\BFT_FILES" "%BUILDDIR%\BFT_FILES" >nul
 :skip_bft
 
-:: Генерируем dosbox-x.conf внутри BUILD
+:: Generate dosbox-x.conf inside BUILD
 >"%BUILDDIR%\dosbox-x.conf" echo [dosbox]
 >>"%BUILDDIR%\dosbox-x.conf" echo memsize=64
 >>"%BUILDDIR%\dosbox-x.conf" echo machine=svga_s3
@@ -199,7 +197,7 @@ xcopy /E /I /Y "%FLINTDIR%\BFT_FILES" "%BUILDDIR%\BFT_FILES" >nul
 >>"%BUILDDIR%\dosbox-x.conf" echo [render]
 >>"%BUILDDIR%\dosbox-x.conf" echo aspect=true
 
-:: Генерируем двухрежимный RUN.bat внутри BUILD
+:: Generate dual-mode RUN.bat inside BUILD
 >"%BUILDDIR%\RUN.bat" echo @echo off
 >>"%BUILDDIR%\RUN.bat" echo if "%%OS%%"=="Windows_NT" goto NT_RUN
 >>"%BUILDDIR%\RUN.bat" echo if not exist PROJ5.EXE goto NO_EXE
@@ -207,7 +205,7 @@ xcopy /E /I /Y "%FLINTDIR%\BFT_FILES" "%BUILDDIR%\BFT_FILES" >nul
 >>"%BUILDDIR%\RUN.bat" echo PROJ5.EXE
 >>"%BUILDDIR%\RUN.bat" echo goto END
 >>"%BUILDDIR%\RUN.bat" echo :NT_RUN
->>"%BUILDDIR%\RUN.bat" echo chcp 65001 ^>nul
+
 >>"%BUILDDIR%\RUN.bat" echo set "FLINTDIR=%%~dp0..\..\!GENESIS\Flint 2.77"
 >>"%BUILDDIR%\RUN.bat" echo set "DOSBOX=%%~dp0..\..\Tools\DOSBox-X\dosbox-x.exe"
 >>"%BUILDDIR%\RUN.bat" echo if exist "%%DOSBOX%%" goto DOSBOX_OK
@@ -228,27 +226,27 @@ xcopy /E /I /Y "%FLINTDIR%\BFT_FILES" "%BUILDDIR%\BFT_FILES" >nul
 >>"%BUILDDIR%\RUN.bat" echo :END
 
 echo.
-echo ═══════════════════════════════════════════
-echo   Готово! Папка BUILD создана.
-echo   Для запуска — двойной клик на BUILD\RUN.bat
-echo ═══════════════════════════════════════════
+echo ===========================================
+echo   Done! BUILD directory created.
+echo   To run - double-click BUILD\RUN.bat
+echo ===========================================
 pause
 goto END
 
 :no_watcom
-echo ОШИБКА: Open Watcom не найден в %WATCOM%
-echo Нужен wpp386.exe в %WATCOM%\binnt\
+echo ERROR: Open Watcom not found in %WATCOM%
+echo Need wpp386.exe in %WATCOM%\binnt\
 pause
 exit /b 1
 
 :compile_fail
 echo.
-echo ОШИБКА: Компиляция не удалась!
+echo ERROR: Compilation failed!
 pause
 exit /b 1
 
 :no_exe
-echo ОШИБКА: proj5.exe не создан. Проверьте вывод компилятора.
+echo ERROR: proj5.exe was not created. Check compiler output.
 pause
 exit /b 1
 
