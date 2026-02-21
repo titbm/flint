@@ -221,6 +221,11 @@ static int btc_msg[] = {
 	1,1,340,322,22,14,	// No
 	1,1,266,322,22,14};	// Next
 
+#define BNM_MSG1 1
+static char *bnam_msg1[] = {"Ok"};
+static int btc_msg1[] = {
+	1,1,269,322,22,14};	// Ok (centered)
+
 /* v2.77: Info dialog removed, version shown in MainScreen */
 
 #define BNM_SORT 9
@@ -433,6 +438,7 @@ void buttonp(int btc[], int nmb, char buttxt[]);
 void ctlbt(int btxl, int btyl, int colctl, char ctltxt[]);
 int pressbt(int btc[], int nmb);
 int msgbox(char msgtxt[], int more, int f_beep=0);
+void msgbox1(char msgtxt[]);
 int msg(int msgx, int msgy, int onoff, char msgtxt[]);
 int InrDcr(int param, int pmin, int pmax, int pstep, int updn);
 void sw_ctl(int flag, int param, int xpos, int ypos, int col);

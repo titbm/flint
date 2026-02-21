@@ -231,6 +231,17 @@ int msgbox(char msgtxt[], int more, int f_beep) {
 	}
 
 
+void msgbox1(char msgtxt[]) {
+	getimage(180,290,385,345,bitmapmsg);
+	setfillstyle(1,BLACK); bar(184,294,384,344);
+	setfillstyle(1,COL_ON); bar(180,290,380,340);
+	setcolor(BLACK); outtextxy(190,297,msgtxt);
+	draw_bt(btc_msg1,bnam_msg1,BNM_MSG1);
+	scan_ms(btc_msg1, bnam_msg1, BNM_MSG1, 0);
+	putimage(180,290,bitmapmsg, 0);
+	}
+
+
 /* v2.77: infobox() removed - version shown directly in mainscr */
 
 
@@ -1019,7 +1030,8 @@ int dlgstart(void) {
 		int i=scan_ms(btc_strt,bnam_strt,BNM_STRT,0);
 		switch(i) {
 			case 0:														// Ok
-a:				m=minmax();
+a:				if(!LCtl) { msgbox1("Laser is not enabled."); goto b; }
+				m=minmax();
 				if(m == 1) {
 					if(st_nmbnew < nmax) {
 						start_nmb=st_nmbnew;
