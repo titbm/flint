@@ -133,6 +133,7 @@ extern int d_check;
 extern int f_noise;
 extern int dT;						// v2.73: CPU time correction (ms)
 extern int sh_delay;				// v2.77: EM shutter delay (ms)
+extern int f_metal;				// v2.78: metal mode flag
 unsigned char LCtl;					// Laser Control Word
 unsigned int LPeriod;				// Laser Period in 10's mcs
 extern unsigned long ulFlash;
@@ -147,6 +148,7 @@ void glaspos(int xl, int yt, int cw);
 /* Forward declarations for functions in this file */
 void sh_open(unsigned int pos);
 void sh_close(void);
+int lpuls_metal(int flag);
 int move_sen(int dir);
 int move(int x, int y, int z);
 
@@ -256,6 +258,51 @@ int lpuls(int flag) {
 	}
 
 
+/* v2.78: Direct PC6 pulse for metal engraving mode.
+   Same d_check/retry/EM-shutter logic as lpuls(), but fires
+   via PC6 bit instead of PT2 timer. No pump needed. */
+int lpuls_metal(int flag) {
+	unsigned int i,k,dsens,mask,wrkpos,shft;
+	unsigned int prevwrkpos;
+
+	if(f_demo) {
+		ulFlash++; return 1;
+		}
+	prevwrkpos=errnmb;
+	mask=(gl_nmb)? glpos9:0x0200;
+	if(d_check && errnmb) {
+		wrkpos=errnmb & mask;
+		}
+	else wrkpos=mask;
+	if(flag) sh_open(wrkpos);
+	for(i=0; i<11; i++) {
+		if(kbhit()) {
+			if(getch() == ESC) {errnmb=wrkpos; return 0;}
+			}
+		/* Fire: direct PC6 pulse */
+		outportb(ADRPPI+2,inportb(ADRPPI+2)&PULS_ON);
+		delay(1);
+		outportb(ADRPPI+2,inportb(ADRPPI+2)|PULS_OFF);
+		ulFlash++;
+		delay(1);
+		if(!d_check) return 1;
+		dsens=((unsigned int)inportb(ADRPPI2)+
+					(unsigned int)inportb(ADRPPI2+2)*256)&0x03ff;
+		wrkpos-=(dsens & wrkpos);
+		if(!wrkpos) {
+			if(i || errnmb) sh_open(mask);
+			errnmb=0; return 1;
+			}
+		if(i == 10) break;
+		shft=0x0001;
+		for(k=0; k<10; k++) {if(wrkpos & shft) nmrpt[k]+=1; shft*=2;}
+		delay(0);
+		if(wrkpos != prevwrkpos) {sh_open(wrkpos); prevwrkpos=wrkpos;}
+		}
+	errnmb=wrkpos; return 0;
+	}
+
+
 /* v2.77: configurable sh_delay instead of fixed SH_TIME=50 */
 void sh_open(unsigned int pos) {
 	outportb(ADRPPI2+1,(unsigned char)(pos%256)^0xff);		// PB: EM1-EM8
@@ -297,7 +344,22 @@ int process(void) {
 			msgbox("KPU/End sens.error",0,1);
 			return 0;
 			}
-a:		if(!lpuls(flag)) {
+a:		if(f_metal) {
+			if(!lpuls_metal(flag)) {
+				outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
+				sh_close(); msg(160,80,0,"");
+				if(gl_nmb) glaspos(280,315,1);
+				k=msgbox("Check laser. Retry: Ok",1,1);
+				if(!k) return 0;
+				msg(160,80,1,"For STOP: press ESC");
+				flag=1;
+				if(k == 1) goto a;
+				errnmb=0;
+				}
+			else flag=0;
+			}
+		else {
+a2:		if(!lpuls(flag)) {
 			outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
 			sh_close(); msg(160,80,0,"");
 			/* v2.70: highlight failed positions red */
@@ -306,10 +368,11 @@ a:		if(!lpuls(flag)) {
 			if(!k) return 0;
 			msg(160,80,1,"For STOP: press ESC");
 			flag=1;
-			if(k == 1) goto a;
-			errnmb=0;										// for Next
+			if(k == 1) goto a2;
+			errnmb=0;												// for Next
 			}
 		else flag=0;
+		}
 		outportb(ADRCMOS+1,0);											// CMOS increment
 		draw(f_xyz, 0);													// Draw pixel
 		lastn=i+1;

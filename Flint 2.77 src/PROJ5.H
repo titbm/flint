@@ -66,11 +66,12 @@ static int btc_scr[] = {
    v2.73: dT display
    v2.77: sh_delay display
    Total: 28 + 9*gl_nmb */
-#define BNM_CFG 28		// 28 + 9*gl_nmb
+#define BNM_CFG 30		// 30 + 9*gl_nmb
 static char *bnam_cfg[] = {"Ok","Cancel","Load .cfg",
 	"Save .cfg","+","-","+","-","+","-","S+","S-","X+","X-","Y+",
 	"Y-","Z+","Z-","1","9","protect.open","gate delay",
-	"laser pump","work ptr","constant","variable","#","X",
+	"laser pump","work ptr","constant","variable","Reset","X",
+	"Shot","metal mode",
 	"","","","","","","","",""};
 static int btc_cfg[] = {
 	1,1,300,386,90,18,	// 0  Ok
@@ -99,17 +100,19 @@ static int btc_cfg[] = {
 	3,0,400,90,10,10,		// 23 work ptr
 	3,0,280,280,10,10,	// 24 constant
 	3,0,280,295,10,10,	// 25 variable
-	1,1,203,320,22,14,	// 26 Statistics reset
+	1,1,180,320,46,14,	// 26 Statistics reset (v2.78: wider)
 	1,1,335,344,22,14,	// 27 X (clear positions, v2.70)
-	4,0,280,315,12,12,	// 28 pos 1
-	4,0,296,315,12,12,	// 29 pos 2
-	4,0,312,315,12,12,	// 30 pos 3
-	4,0,280,331,12,12,	// 31 pos 4
-	4,0,296,331,12,12,	// 32 pos 5
-	4,0,312,331,12,12,	// 33 pos 6
-	4,0,280,347,12,12,	// 34 pos 7
-	4,0,296,347,12,12,	// 35 pos 8
-	4,0,312,347,12,12};	// 36 pos 9
+	1,1,130,320,46,14,	// 28 Shot (v2.78: direct PC6 pulse)
+	3,0,120,225,10,10,	// 29 metal mode (v2.78)
+	4,0,280,315,12,12,	// 30 pos 1
+	4,0,296,315,12,12,	// 31 pos 2
+	4,0,312,315,12,12,	// 32 pos 3
+	4,0,280,331,12,12,	// 33 pos 4
+	4,0,296,331,12,12,	// 34 pos 5
+	4,0,312,331,12,12,	// 35 pos 6
+	4,0,280,347,12,12,	// 36 pos 7
+	4,0,296,347,12,12,	// 37 pos 8
+	4,0,312,347,12,12};	// 38 pos 9
 
 #define BNM_OPN 12		// 12 + flag + k
 static char *bnam_opn[] = {"Ok","Cancel","up","dn","","","up","dn",
@@ -378,6 +381,7 @@ int tout;
 int dT;							// v2.73: CPU time correction in ms
 int sh_delay;						// v2.77: EM shutter delay in ms
 int f_gate;						// v2.71: gate on/off state
+int f_metal;						// v2.78: metal mode on/off
 extern char path[];
 char wrkpath[MAXPATH];
 char wrkfile[13];
@@ -429,6 +433,7 @@ void sh_close(void);
 int process(void);
 int move_sen(int dir);
 int move(int x, int y, int z);
+int lpuls_metal(int flag);
 
 void button(int btc[], int nmb, char buttxt[]);
 void buttonp(int btc[], int nmb, char buttxt[]);

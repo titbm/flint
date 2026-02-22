@@ -337,7 +337,6 @@ int dlgcfg(void) {
 	gd_new=gate_delay;								// v2.70
 	WndBkgr(100,60,520,410,COLDLG,"Configuration");
 	draw_bt(btc_cfg,bnam_cfg,BNM_CFG+9*gl_nmbnew);
-	outtextxy(160,324,"Reset");
 	outtextxy(130,255,"Flash nmb"); rectangle(130,265,226,281);
 	outtextxy(130,287,"Service date"); rectangle(130,297,226,313);
 	outtextxy(270,100,".cfg");
@@ -369,6 +368,7 @@ int dlgcfg(void) {
 		/* v2.71: Gate and Pump toggles (v2.77: gate before pump) */
 		sw_ctl(f_gate,1,120,185,COLDLG);						// Gate
 		sw_ctl(LCtl,3,120,200,COLDLG);						// Pump
+		sw_ctl(f_metal,1,120,225,COLDLG);					// v2.78: Metal mode
 		if(f_rdcfg) {
 			RdCfg(gl_nmbnew); xptrnew=xptr; yptrnew=yptr; zptrnew=zptr;
 			stepnew=step; lpnew=l_period; sfnew=step_freq; f_constnew=f_const;
@@ -525,15 +525,21 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 					ulFlash=0; FlashWr();
 					} break;
 			case 27: glp9new=0; break;								// X clear positions
-			case 28: glp9new ^= 0x0001; break;					// Glass positions
-			case 29: glp9new ^= 0x0002; break;
-			case 30: glp9new ^= 0x0004; break;
-			case 31: glp9new ^= 0x0008; break;
-			case 32: glp9new ^= 0x0010; break;
-			case 33: glp9new ^= 0x0020; break;
-			case 34: glp9new ^= 0x0040; break;
-			case 35: glp9new ^= 0x0080; break;
-			case 36: glp9new ^= 0x0100; break;
+			case 28:													// v2.78: Shot (direct PC6 pulse)
+				outportb(ADRPPI+2,inportb(ADRPPI+2)&PULS_ON);
+				delay(1);
+				outportb(ADRPPI+2,inportb(ADRPPI+2)|PULS_OFF);
+				ulFlash++; break;
+			case 29: f_metal=!f_metal; break;					// v2.78: Metal toggle
+			case 30: glp9new ^= 0x0001; break;					// Glass positions
+			case 31: glp9new ^= 0x0002; break;
+			case 32: glp9new ^= 0x0004; break;
+			case 33: glp9new ^= 0x0008; break;
+			case 34: glp9new ^= 0x0010; break;
+			case 35: glp9new ^= 0x0020; break;
+			case 36: glp9new ^= 0x0040; break;
+			case 37: glp9new ^= 0x0080; break;
+			case 38: glp9new ^= 0x0100; break;
 			case 255:
 				if(pkey == 13) goto a;
 				if(pkey == 27) goto b;
@@ -1075,7 +1081,7 @@ int dlgstart(void) {
 		int i=scan_ms(btc_strt,bnam_strt,BNM_STRT,0);
 		switch(i) {
 			case 0:														// Ok
-a:				if(!LCtl) { msgbox1("Laser is not enabled."); goto b; }
+a:				if(!f_metal && !LCtl) { msgbox1("Laser is not enabled."); goto b; }
 				m=minmax();
 				if(m == 1) {
 					if(st_nmbnew < nmax) {
