@@ -175,9 +175,11 @@ void program_pt2(int period, unsigned char gate) {
 
 
 unsigned int read_pt2(void) {
+	unsigned int low, high;
 	outportb(ADRPT2+3,0);								// Counter Latch ch0
-	return (unsigned int)inportb(ADRPT2)+
-			 (unsigned int)inportb(ADRPT2)*256;
+	low = (unsigned int)inportb(ADRPT2);
+	high = (unsigned int)inportb(ADRPT2);
+	return low + high*256;
 	}
 
 
