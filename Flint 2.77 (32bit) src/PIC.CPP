@@ -239,7 +239,21 @@ int lpuls(int flag) {
 		/* Fire: program gate delay */
 		program_pt2(l_period,(unsigned char)gate_delay);
 		ulFlash++;
-		delay(1);
+		
+		/* The timer 0 wraps around to l_period*100 and triggers timer 1.
+		   Wait for the hardware trigger to occur: */
+		while(read_pt2() <= 33) ;
+		
+		/* Wait exactly gate_delay + 1.5ms (150 ticks) AFTER the trigger 
+		   to guarantee the laser has fired and the sensor has reacted. */
+		{
+			unsigned int start_val = l_period * 100;
+			unsigned int wait_ticks = gate_delay + 150;
+			while((start_val - read_pt2()) < wait_ticks) {
+				if(kbhit()) break;
+			}
+		}
+
 		/* Safe reset: gate minimum */
 		program_pt2(l_period,1);
 		if(!d_check) return 1;
