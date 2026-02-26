@@ -527,7 +527,7 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 			case 27: glp9new=0; break;								// X clear positions
 			case 28:													// v2.78: Shot (direct PC6 pulse)
 				outportb(ADRPPI+2,inportb(ADRPPI+2)&PULS_ON);
-				delay(1);
+				{unsigned int t=read_pt2(); while((t-read_pt2())<100) if(kbhit()) break;}
 				outportb(ADRPPI+2,inportb(ADRPPI+2)|PULS_OFF);
 				ulFlash++; break;
 			case 29: f_metal=!f_metal; break;					// v2.78: Metal toggle

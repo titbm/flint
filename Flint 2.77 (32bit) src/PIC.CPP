@@ -297,10 +297,10 @@ int lpuls_metal(int flag) {
 			}
 		/* Fire: direct PC6 pulse */
 		outportb(ADRPPI+2,inportb(ADRPPI+2)&PULS_ON);
-		delay(1);
+		{unsigned int t=read_pt2(); while((t-read_pt2())<100) if(kbhit()) break;}
 		outportb(ADRPPI+2,inportb(ADRPPI+2)|PULS_OFF);
 		ulFlash++;
-		delay(1);
+		{unsigned int t=read_pt2(); while((t-read_pt2())<100) if(kbhit()) break;}
 		if(!d_check) return 1;
 		dsens=((unsigned int)inportb(ADRPPI2)+
 					(unsigned int)inportb(ADRPPI2+2)*256)&0x03ff;
@@ -539,7 +539,7 @@ c:	fxy=0; fz=0; done=0;
 			outportb(ADRRG,ctlw);
 			if((!fxy) && (!fz)) done=1;
 			if((stspb & 0x3f) != 0x3f) {
-				delay(1);
+				{unsigned int t=read_pt2(); while((t-read_pt2())<100) if(kbhit()) break;}
 				stspb=inportb(ADRPPI+1);
 				if((stspb & 0x3f) != 0x3f) goto a;
 				else {
