@@ -60,10 +60,6 @@ PT0:	ch.0: 	K2x ( =2-65535)
 PT1:	ch.0: 	K2y ( =2-65535)
 		ch.1: 	Ydistance ( =1-65535)
 		ch.2: 	Zdistance ( =1-65535)
-PPI2:	PA0..7,PC0,PC1(inp):	Sens1..10
-		PC2,PC3(inp):			reserved
-		PB0..7,PC4..6(out):	Shutt1..10
-		PC7(out):				reserved
 PT2:	ch.0:		Laser Frequency (Tlas = K1*10mcs  655ms max)
 		ch.1:		EOShutt-Pump Delay (Tsh = K2*10mcs)
 		ch.2:		Global Delay (K3*10mcs)
@@ -236,7 +232,21 @@ int lpuls(int flag) {
 		/* Fire: program gate delay */
 		program_pt2(l_period,(unsigned char)gate_delay);
 		ulFlash++;
-		delay(1);
+		
+		/* The timer 0 wraps around to l_period*100 and triggers timer 1.
+		   Wait for the hardware trigger to occur: */
+		while(read_pt2() <= 33) ;
+		
+		/* Wait exactly gate_delay + 1.5ms (150 ticks) AFTER the trigger 
+		   to guarantee the laser has fired and the sensor has reacted. */
+		{
+			unsigned int start_val = l_period * 100;
+			unsigned int wait_ticks = gate_delay + 150;
+			while((start_val - read_pt2()) < wait_ticks) {
+				if(kbhit()) break;
+			}
+		}
+
 		/* Safe reset: gate minimum */
 		program_pt2(l_period,1);
 		if(!d_check) return 1;
@@ -562,4 +572,4 @@ a:	ctlw=ctlw&XOFF&YOFF&ZOFF;
 		if((!fxy) && (!fz)) done=1;
 		}
 	ctlw=ctlw&XOFF&YOFF&ZOFF; outportb(ADRRG,ctlw); do_ptr=0; return 0;
-	}
+}
