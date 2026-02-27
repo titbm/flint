@@ -145,6 +145,7 @@ void beep(int tone, int duration);
 void out_time(int newt);
 void progbar(long nmb_max, long nmb, int set, int xl, int yt);
 void glaspos(int xl, int yt, int cw);
+void show_reit(int mode);
 /* Forward declarations for functions in this file */
 void sh_open(unsigned int pos);
 void sh_close(void);
@@ -182,20 +183,7 @@ unsigned int read_pt2(void) {
 	return low + high*256;
 	}
 
-void hw_delay(unsigned int ms) {
-	unsigned int ticks = ms * 100;
-	unsigned int start_val = read_pt2();
-	unsigned int elapsed = 0;
-	unsigned int lp_ticks = (unsigned int)l_period * 100;
-	if (lp_ticks == 0) lp_ticks = 2000;
-	while(elapsed < ticks) {
-		unsigned int current = read_pt2();
-		if (start_val >= current) elapsed += (start_val - current);
-		else elapsed += (start_val + lp_ticks - current);
-		start_val = current;
-		if (kbhit()) break;
-	}
-}
+
 
 
 int pi_ini(void) {
@@ -255,7 +243,7 @@ int lpuls(int flag) {
 		program_pt2(l_period,(unsigned char)gate_delay);
 		ulFlash++;
 		
-		hw_delay(1);
+		delay(1);
 
 		/* Safe reset: gate minimum */
 		program_pt2(l_period,1);
@@ -270,7 +258,7 @@ int lpuls(int flag) {
 		if(i == 10) break;
 		shft=0x0001;
 		for(k=0; k<10; k++) {if(wrkpos & shft) nmrpt[k]+=1; shft*=2;}
-		delay(0);
+		show_reit(0);
 		if(wrkpos != prevwrkpos) {sh_open(wrkpos); prevwrkpos=wrkpos;}
 		}
 	errnmb=wrkpos; return 0;
@@ -300,10 +288,10 @@ int lpuls_metal(int flag) {
 			}
 		/* Fire: direct PC6 pulse */
 		outportb(ADRPPI+2,inportb(ADRPPI+2)&PULS_ON);
-		hw_delay(1);
+		delay(1);
 		outportb(ADRPPI+2,inportb(ADRPPI+2)|PULS_OFF);
 		ulFlash++;
-		hw_delay(1);
+		delay(1);
 		if(!d_check) return 1;
 		dsens=((unsigned int)inportb(ADRPPI2)+
 					(unsigned int)inportb(ADRPPI2+2)*256)&0x03ff;
@@ -315,7 +303,7 @@ int lpuls_metal(int flag) {
 		if(i == 10) break;
 		shft=0x0001;
 		for(k=0; k<10; k++) {if(wrkpos & shft) nmrpt[k]+=1; shft*=2;}
-		delay(0);
+		show_reit(0);
 		if(wrkpos != prevwrkpos) {sh_open(wrkpos); prevwrkpos=wrkpos;}
 		}
 	errnmb=wrkpos; return 0;
@@ -542,7 +530,7 @@ c:	fxy=0; fz=0; done=0;
 			outportb(ADRRG,ctlw);
 			if((!fxy) && (!fz)) done=1;
 			if((stspb & 0x3f) != 0x3f) {
-				hw_delay(1);
+				delay(1);
 				stspb=inportb(ADRPPI+1);
 				if((stspb & 0x3f) != 0x3f) goto a;
 				else {
