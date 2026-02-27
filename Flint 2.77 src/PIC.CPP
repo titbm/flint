@@ -245,7 +245,12 @@ int lpuls(int flag) {
 	unsigned int prevwrkpos;
 
 	if(f_demo) {
-		ulFlash++; return 1;
+		ulFlash++;
+#ifdef TRACE
+		sprintf(_tbuf,"[LPULS] demo ok fl=%lu",ulFlash);
+		tlog_write(_tbuf);
+#endif
+		return 1;
 		}
 	prevwrkpos=errnmb;
 	mask=(gl_nmb)? glpos9:0x0200;
@@ -310,7 +315,12 @@ int lpuls_metal(int flag) {
 	unsigned int prevwrkpos;
 
 	if(f_demo) {
-		ulFlash++; return 1;
+		ulFlash++;
+#ifdef TRACE
+		sprintf(_tbuf,"[METAL] demo ok fl=%lu",ulFlash);
+		tlog_write(_tbuf);
+#endif
+		return 1;
 		}
 	prevwrkpos=errnmb;
 	mask=(gl_nmb)? glpos9:0x0200;
