@@ -130,8 +130,8 @@ int main() {
 	initgraph(&g_driver,&g_mode,"");
 	g_error_code=graphresult();
 	if(g_error_code != grOk) {printf("graphics error"); return 255;}
-	if(!pi_ini()) f_demo=1;
 	tlog_open();
+	if(!pi_ini()) f_demo=1;
 	ms_init();
 	set_gr_cursor(0,0,scr_cur_masks);
 	/* 32-bit DOS/4GW: use malloc() for flat memory model.
