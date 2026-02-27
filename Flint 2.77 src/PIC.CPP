@@ -470,7 +470,12 @@ a2:		if(!lpuls(flag)) {
 		if(kbhit()) {
 			if(getch() == ESC) {
 				outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
-				sh_close(); msg(160,80,0,""); return 0;
+				sh_close(); msg(160,80,0,"");
+#ifdef TRACE
+				sprintf(_tbuf,"[PROC] ESC pt=%ld/%ld fl=%lu",i,nmax,ulFlash);
+				tlog_write(_tbuf);
+#endif
+				return 0;
 				}
 			}
 		}
