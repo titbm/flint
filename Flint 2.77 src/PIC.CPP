@@ -25,6 +25,12 @@
 #include <stdlib.h>
 #include <graphics.h>
 
+/* SENSOR_SIM: demo-mode sensor simulation for offline debugging.
+   When defined, d_check retry loop runs with simulated sensor responses:
+   first SENSOR_SIM shots "miss" (dsens=0), then sensor fires (detected).
+   Set to 0..10. Comment out to disable (demo is then instant return 1). */
+/* #define SENSOR_SIM 2 */
+
 #define ADRPT0 0x300
 #define ADRPT1 ADRPT0+4			// 0x304
 #define ADRPPI ADRPT0+8			// 0x308
@@ -217,6 +223,28 @@ int lpuls(int flag) {
 	unsigned int prevwrkpos;
 
 	if(f_demo) {
+#ifdef SENSOR_SIM
+		if(d_check) {
+			/* Simulate retry loop: first SENSOR_SIM shots miss, then detect */
+			prevwrkpos=errnmb;
+			mask=(gl_nmb)? glpos9:0x0200;
+			wrkpos=(errnmb)? errnmb & mask : mask;
+			for(i=0; i<11; i++) {
+				if(kbhit()) { if(getch()==ESC) {errnmb=wrkpos; return 0;} }
+				delay(l_period);					// simulate PT2 wait + pulse time
+				ulFlash++;
+				dsens=(i>=(unsigned int)SENSOR_SIM)? wrkpos:0; // sim sensor
+				wrkpos-=(dsens & wrkpos);
+				if(!wrkpos) { errnmb=0; return 1; }
+				if(i == 10) break;
+				shft=0x0001;
+				for(k=0; k<10; k++) {if(wrkpos & shft) nmrpt[k]+=1; shft*=2;}
+				show_reit(0);
+				if(wrkpos != prevwrkpos) prevwrkpos=wrkpos;
+				}
+			errnmb=wrkpos; return 0;
+			}
+#endif
 		ulFlash++; return 1;
 		}
 	prevwrkpos=errnmb;
@@ -266,6 +294,28 @@ int lpuls_metal(int flag) {
 	unsigned int prevwrkpos;
 
 	if(f_demo) {
+#ifdef SENSOR_SIM
+		if(d_check) {
+			/* Simulate retry loop: first SENSOR_SIM shots miss, then detect */
+			prevwrkpos=errnmb;
+			mask=(gl_nmb)? glpos9:0x0200;
+			wrkpos=(errnmb)? errnmb & mask : mask;
+			for(i=0; i<11; i++) {
+				if(kbhit()) { if(getch()==ESC) {errnmb=wrkpos; return 0;} }
+				delay(2);							// simulate pulse time
+				ulFlash++;
+				dsens=(i>=(unsigned int)SENSOR_SIM)? wrkpos:0; // sim sensor
+				wrkpos-=(dsens & wrkpos);
+				if(!wrkpos) { errnmb=0; return 1; }
+				if(i == 10) break;
+				shft=0x0001;
+				for(k=0; k<10; k++) {if(wrkpos & shft) nmrpt[k]+=1; shft*=2;}
+				show_reit(0);
+				if(wrkpos != prevwrkpos) prevwrkpos=wrkpos;
+				}
+			errnmb=wrkpos; return 0;
+			}
+#endif
 		ulFlash++; return 1;
 		}
 	prevwrkpos=errnmb;
