@@ -23,13 +23,29 @@
 #include <conio.h>
 #include <dos.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <graphics.h>
 
-/* SENSOR_SIM: demo-mode sensor simulation for offline debugging.
-   When defined, d_check retry loop runs with simulated sensor responses:
-   first SENSOR_SIM shots "miss" (dsens=0), then sensor fires (detected).
-   Set to 0..10. Comment out to disable (demo is then instant return 1). */
-/* #define SENSOR_SIM 2 */
+/*------------------------------------------------------------------
+  TRACE: runtime diagnostic log for remote debugging.
+  Writes FLINT.LOG next to EXE with timestamped hardware events.
+  Comment out #define TRACE to disable for production builds.
+------------------------------------------------------------------*/
+#define TRACE
+
+#ifdef TRACE
+FILE *tlog = NULL;
+static char _tbuf[160];
+void tlog_open(void)  { tlog=fopen("FLINT.LOG","w"); }
+void tlog_close(void) { if(tlog){fclose(tlog); tlog=NULL;} }
+void tlog_write(const char *s) {
+	if(tlog){fputs(s,tlog); fputc('\n',tlog); fflush(tlog);}
+	}
+#else
+void tlog_open(void)  {}
+void tlog_close(void) {}
+void tlog_write(const char *s) {}
+#endif
 
 #define ADRPT0 0x300
 #define ADRPT1 ADRPT0+4			// 0x304
@@ -210,8 +226,14 @@ int pi_ini(void) {
 	outportb(ADRPT2+3,0xb8);	// PT2.ch.2:mode4,binary,lb,hb
 	program_pt2(l_period,1);		// init safe timer values
 	/* v2.75: Removed endSensor check from pi_ini, only check K1 readback */
-	if(inportb(ADRPPI) != 150) return 0;
-	return 1;
+	{	int hw = (inportb(ADRPPI) == 150);
+#ifdef TRACE
+		sprintf(_tbuf,"[INI] hw=%d K1=%d lper=%d gate=%d shd=%d dchk=%d",
+			hw,(int)inportb(ADRPPI),l_period,gate_delay,sh_delay,d_check);
+		tlog_write(_tbuf);
+#endif
+		return hw;
+	}
 	}
 
 
@@ -223,28 +245,6 @@ int lpuls(int flag) {
 	unsigned int prevwrkpos;
 
 	if(f_demo) {
-#ifdef SENSOR_SIM
-		if(d_check) {
-			/* Simulate retry loop: first SENSOR_SIM shots miss, then detect */
-			prevwrkpos=errnmb;
-			mask=(gl_nmb)? glpos9:0x0200;
-			wrkpos=(errnmb)? errnmb & mask : mask;
-			for(i=0; i<11; i++) {
-				if(kbhit()) { if(getch()==ESC) {errnmb=wrkpos; return 0;} }
-				delay(l_period);					// simulate PT2 wait + pulse time
-				ulFlash++;
-				dsens=(i>=(unsigned int)SENSOR_SIM)? wrkpos:0; // sim sensor
-				wrkpos-=(dsens & wrkpos);
-				if(!wrkpos) { errnmb=0; return 1; }
-				if(i == 10) break;
-				shft=0x0001;
-				for(k=0; k<10; k++) {if(wrkpos & shft) nmrpt[k]+=1; shft*=2;}
-				show_reit(0);
-				if(wrkpos != prevwrkpos) prevwrkpos=wrkpos;
-				}
-			errnmb=wrkpos; return 0;
-			}
-#endif
 		ulFlash++; return 1;
 		}
 	prevwrkpos=errnmb;
@@ -268,11 +268,22 @@ int lpuls(int flag) {
 
 		/* Safe reset: gate minimum */
 		program_pt2(l_period,1);
-		if(!d_check) return 1;
+		if(!d_check) {
+#ifdef TRACE
+			sprintf(_tbuf,"[LPULS] ok i=0 nodchk fl=%lu",ulFlash);
+			tlog_write(_tbuf);
+#endif
+			return 1;
+			}
 		dsens=((unsigned int)inportb(ADRPPI2)+
 					(unsigned int)inportb(ADRPPI2+2)*256)&0x03ff;
 		wrkpos-=(dsens & wrkpos);
 		if(!wrkpos) {
+#ifdef TRACE
+			sprintf(_tbuf,"[LPULS] ok i=%u dsens=%04X mask=%04X fl=%lu",
+				i,dsens,mask,ulFlash);
+			tlog_write(_tbuf);
+#endif
 			if(i || errnmb) sh_open(mask);
 			errnmb=0; return 1;
 			}
@@ -282,6 +293,11 @@ int lpuls(int flag) {
 		show_reit(0);
 		if(wrkpos != prevwrkpos) {sh_open(wrkpos); prevwrkpos=wrkpos;}
 		}
+#ifdef TRACE
+	sprintf(_tbuf,"[LPULS] FAIL i=10 wrkpos=%04X dsens=%04X mask=%04X fl=%lu",
+		wrkpos,dsens,mask,ulFlash);
+	tlog_write(_tbuf);
+#endif
 	errnmb=wrkpos; return 0;
 	}
 
@@ -294,28 +310,6 @@ int lpuls_metal(int flag) {
 	unsigned int prevwrkpos;
 
 	if(f_demo) {
-#ifdef SENSOR_SIM
-		if(d_check) {
-			/* Simulate retry loop: first SENSOR_SIM shots miss, then detect */
-			prevwrkpos=errnmb;
-			mask=(gl_nmb)? glpos9:0x0200;
-			wrkpos=(errnmb)? errnmb & mask : mask;
-			for(i=0; i<11; i++) {
-				if(kbhit()) { if(getch()==ESC) {errnmb=wrkpos; return 0;} }
-				delay(2);							// simulate pulse time
-				ulFlash++;
-				dsens=(i>=(unsigned int)SENSOR_SIM)? wrkpos:0; // sim sensor
-				wrkpos-=(dsens & wrkpos);
-				if(!wrkpos) { errnmb=0; return 1; }
-				if(i == 10) break;
-				shft=0x0001;
-				for(k=0; k<10; k++) {if(wrkpos & shft) nmrpt[k]+=1; shft*=2;}
-				show_reit(0);
-				if(wrkpos != prevwrkpos) prevwrkpos=wrkpos;
-				}
-			errnmb=wrkpos; return 0;
-			}
-#endif
 		ulFlash++; return 1;
 		}
 	prevwrkpos=errnmb;
@@ -335,11 +329,22 @@ int lpuls_metal(int flag) {
 		outportb(ADRPPI+2,inportb(ADRPPI+2)|PULS_OFF);
 		ulFlash++;
 		delay(1);
-		if(!d_check) return 1;
+		if(!d_check) {
+#ifdef TRACE
+			sprintf(_tbuf,"[METAL] ok i=0 nodchk fl=%lu",ulFlash);
+			tlog_write(_tbuf);
+#endif
+			return 1;
+			}
 		dsens=((unsigned int)inportb(ADRPPI2)+
 					(unsigned int)inportb(ADRPPI2+2)*256)&0x03ff;
 		wrkpos-=(dsens & wrkpos);
 		if(!wrkpos) {
+#ifdef TRACE
+			sprintf(_tbuf,"[METAL] ok i=%u dsens=%04X mask=%04X fl=%lu",
+				i,dsens,mask,ulFlash);
+			tlog_write(_tbuf);
+#endif
 			if(i || errnmb) sh_open(mask);
 			errnmb=0; return 1;
 			}
@@ -349,6 +354,11 @@ int lpuls_metal(int flag) {
 		show_reit(0);
 		if(wrkpos != prevwrkpos) {sh_open(wrkpos); prevwrkpos=wrkpos;}
 		}
+#ifdef TRACE
+	sprintf(_tbuf,"[METAL] FAIL i=10 wrkpos=%04X dsens=%04X mask=%04X fl=%lu",
+		wrkpos,dsens,mask,ulFlash);
+	tlog_write(_tbuf);
+#endif
 	errnmb=wrkpos; return 0;
 	}
 
@@ -378,6 +388,11 @@ int process(void) {
 	long i; int xnew,ynew,znew,k; char tmpstr[20];
 	int flag;
 
+#ifdef TRACE
+	sprintf(_tbuf,"[PROC] START n=%ld/%ld metal=%d dchk=%d lper=%d gate=%d shd=%d",
+		start_nmb,nmax,f_metal,d_check,l_period,gate_delay,sh_delay);
+	tlog_write(_tbuf);
+#endif
 	msg(160,80,1,"For STOP: press ESC");
 	if(f_ptr || (!do_ptr)) move_sen(0);
 	outportb(ADRPPI+2,inportb(ADRPPI+2)&PR_OPEN);				// Protect-open
@@ -391,6 +406,10 @@ int process(void) {
 		if(!move(xnew,ynew,znew)) {
 			outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
 			sh_close(); msg(160,80,0,"");
+#ifdef TRACE
+			sprintf(_tbuf,"[PROC] MOVE ERR pt=%ld x=%d y=%d z=%d",i,xnew,ynew,znew);
+			tlog_write(_tbuf);
+#endif
 			msgbox("KPU/End sens.error",0,1);
 			return 0;
 			}
@@ -448,6 +467,10 @@ a2:		if(!lpuls(flag)) {
 	/* Normal end */
 	outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
 	sh_close();
+#ifdef TRACE
+	sprintf(_tbuf,"[PROC] END ok n=%ld fl=%lu",nmax,ulFlash);
+	tlog_write(_tbuf);
+#endif
 	msg(160,80,0,"");
 	msgbox("Ok.  TABLE END",0,1);
 	lastn=0; return 1;
@@ -587,7 +610,13 @@ b:	if(f_demo) delay(l_period);										// v2.77: fixed per binary
 	xcur=x; ycur=y; zcur=z;
 	/* v2.76: removed out_time(1) */
 	return 1;
-a:	ctlw=ctlw&XOFF&YOFF&ZOFF;
+a:
+#ifdef TRACE
+	sprintf(_tbuf,"[MOVE] ERR sens=%02X x=%d y=%d z=%d cur=%d,%d,%d",
+		(int)stspb,x,y,z,xcur,ycur,zcur);
+	tlog_write(_tbuf);
+#endif
+	ctlw=ctlw&XOFF&YOFF&ZOFF;
 	outportb(ADRRG,ctlw); fxy=0; fz=0;
 	if((stspb & 0x03) != 0x03) {
 		outportb(ADRPT0,0xc8); outportb(ADRPT0,0x00);

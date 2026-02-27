@@ -77,6 +77,11 @@ extern unsigned int LPeriod;
 /* v2.73: segment time estimator (PIC.CPP) */
 int seg_time(int adx, int ady, int adz);
 
+/* Trace log (PIC.CPP) */
+extern void tlog_open(void);
+extern void tlog_close(void);
+extern void tlog_write(const char *);
+
 
 int main() {
 	int i, k, g_mode, g_error_code, all, g_driver=DETECT;
@@ -113,6 +118,7 @@ int main() {
 	g_error_code=graphresult();
 	if(g_error_code != grOk) {printf("graphics error"); return 255;}
 	if(!pi_ini()) f_demo=1;
+	tlog_open();
 	ms_init();
 	set_gr_cursor(0,0,scr_cur_masks);
 	ulMax=(unsigned long)farcoreleft()-30000;
@@ -159,6 +165,7 @@ e:				if(msgbox("Exit?",0,0)) {
 b:					closegraph();
 					/* v2.72: safe shutdown - LRG off */
 					outportb(LRG, 0);
+					tlog_close();
 					return 0;
 					}
 				k=0; break;
@@ -481,7 +488,9 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 					delay(1);
 					outportb(ADRPPI+2,inportb(ADRPPI+2)|PULS_OFF);
 				}
-				ulFlash++; break;
+				ulFlash++;
+				tlog_write("[SHOT] fire");
+				break;
 			case 29: f_metal=!f_metal; break;					// v2.78: Metal toggle
 			case 30: glp9new ^= 0x0001; break;					// Glass positions
 			case 31: glp9new ^= 0x0002; break;
