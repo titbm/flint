@@ -530,12 +530,24 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 #endif
 				break;
 			case 20: pr_open=(pr_open)? 0:1;						// Protect open/close
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] PROTECT %s",pr_open ? "OPEN" : "CLOSE");
+				tlog_write(_tbuf);
+#endif
 				if(pr_open) {
 					outportb(ADRPPI+2,inportb(ADRPPI+2)&PR_OPEN); sh_open(0x03ff);
 					}
 				else {outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE); sh_close();}
 				break;
 			case 21:													// v2.71: Gate toggle
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] GATE %s",f_gate ? "OFF" : "ON");
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] PUMP %s",LCtl ? "OFF" : "ON");
+				tlog_write(_tbuf);
+#endif
+				tlog_write(_tbuf);
+#endif
 				f_gate=!f_gate; f_pt2=1; break;
 			case 22:													// v2.71: Pump toggle
 				LCtl=(LCtl)? 0:3; outportb(LRG,LCtl); break;
@@ -544,6 +556,9 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 					if(msgbox("GLASS: n,size is true?",0,0)) f_make=1;
 					else ptr_work=0;
 					} break;
+#ifdef TRACE
+					tlog_write("[CONFIG] RESET statistics");
+#endif
 			case 24: f_constnew=1; break;							// Constant
 			case 25: f_constnew=0; break;							// Variable
 			case 26:													// # Statistics reset
