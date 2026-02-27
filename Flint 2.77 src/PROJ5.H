@@ -428,6 +428,7 @@ long rdbmp(char filename[]);
 int pi_ini(void);
 void program_pt2(int period, unsigned char gate);
 unsigned int read_pt2(void);
+void hw_delay(unsigned int ms);
 void sh_open(unsigned int pos);
 void sh_close(void);
 int process(void);

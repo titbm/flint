@@ -478,7 +478,7 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 			case 28:													// v2.78: Shot (direct PC6 pulse)
 				if(!f_demo) {
 					outportb(ADRPPI+2,inportb(ADRPPI+2)&PULS_ON);
-					{unsigned int t=read_pt2(); while((t-read_pt2())<100) if(kbhit()) break;}
+					hw_delay(1);
 					outportb(ADRPPI+2,inportb(ADRPPI+2)|PULS_OFF);
 				}
 				ulFlash++; break;

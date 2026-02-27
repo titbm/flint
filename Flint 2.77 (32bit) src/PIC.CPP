@@ -182,6 +182,21 @@ unsigned int read_pt2(void) {
 	return low + high*256;
 	}
 
+void hw_delay(unsigned int ms) {
+	unsigned int ticks = ms * 100;
+	unsigned int start_val = read_pt2();
+	unsigned int elapsed = 0;
+	unsigned int lp_ticks = (unsigned int)l_period * 100;
+	if (lp_ticks == 0) lp_ticks = 2000;
+	while(elapsed < ticks) {
+		unsigned int current = read_pt2();
+		if (start_val >= current) elapsed += (start_val - current);
+		else elapsed += (start_val + lp_ticks - current);
+		start_val = current;
+		if (kbhit()) break;
+	}
+}
+
 
 int pi_ini(void) {
 	ctlw = (XUP|YUP|ZUP)&XOFF&YOFF&ZOFF&OSCON;
@@ -240,19 +255,7 @@ int lpuls(int flag) {
 		program_pt2(l_period,(unsigned char)gate_delay);
 		ulFlash++;
 		
-		/* The timer 0 wraps around to l_period*100 and triggers timer 1.
-		   Wait for the hardware trigger to occur: */
-		while(read_pt2() <= 33) ;
-		
-		/* Wait exactly gate_delay + 1.5ms (150 ticks) AFTER the trigger 
-		   to guarantee the laser has fired and the sensor has reacted. */
-		{
-			unsigned int start_val = l_period * 100;
-			unsigned int wait_ticks = gate_delay + 150;
-			while((start_val - read_pt2()) < wait_ticks) {
-				if(kbhit()) break;
-			}
-		}
+		hw_delay(1);
 
 		/* Safe reset: gate minimum */
 		program_pt2(l_period,1);
@@ -297,10 +300,10 @@ int lpuls_metal(int flag) {
 			}
 		/* Fire: direct PC6 pulse */
 		outportb(ADRPPI+2,inportb(ADRPPI+2)&PULS_ON);
-		{unsigned int t=read_pt2(); while((t-read_pt2())<100) if(kbhit()) break;}
+		hw_delay(1);
 		outportb(ADRPPI+2,inportb(ADRPPI+2)|PULS_OFF);
 		ulFlash++;
-		{unsigned int t=read_pt2(); while((t-read_pt2())<100) if(kbhit()) break;}
+		hw_delay(1);
 		if(!d_check) return 1;
 		dsens=((unsigned int)inportb(ADRPPI2)+
 					(unsigned int)inportb(ADRPPI2+2)*256)&0x03ff;
@@ -539,7 +542,7 @@ c:	fxy=0; fz=0; done=0;
 			outportb(ADRRG,ctlw);
 			if((!fxy) && (!fz)) done=1;
 			if((stspb & 0x3f) != 0x3f) {
-				{unsigned int t=read_pt2(); while((t-read_pt2())<100) if(kbhit()) break;}
+				hw_delay(1);
 				stspb=inportb(ADRPPI+1);
 				if((stspb & 0x3f) != 0x3f) goto a;
 				else {
