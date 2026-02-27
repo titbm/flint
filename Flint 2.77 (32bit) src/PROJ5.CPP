@@ -453,7 +453,12 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 				sh_close(); nmb_pbt=255; f_gate=0;
 				program_pt2(l_period, 1);
 				setdisk(path[0]-'A'); chdir(path); FlashWr(); return i;
-			case 2: f_rdcfg=1; f_make=1; f_pt2=1; break;		// Load .cfg
+			case 2: f_rdcfg=1; f_make=1; f_pt2=1;
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] LOAD glass=%d",gl_nmbnew);
+				tlog_write(_tbuf);
+#endif
+				break;		// Load .cfg
 			case 3:														// Save .cfg
 				/* v2.77: save 10-11 field format */
 				if(msgbox("Are you sure?",0,0)) {
@@ -513,9 +518,17 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 			case 17: zptrnew=InrDcr(zptrnew,0,11000,stepnew,0);	// Zptr-
 				f_make=1; break;
 			case 18: gl_nmbnew=0; f_rdcfg=1; f_make=1; errnmb=0;
-				f_pt2=1; break;
+				f_pt2=1;
+#ifdef TRACE
+				tlog_write("[CONFIG] GLASS 1");
+#endif
+				break;
 			case 19: gl_nmbnew=1; f_rdcfg=1; f_make=1; errnmb=0;
-				f_pt2=1; break;
+				f_pt2=1;
+#ifdef TRACE
+				tlog_write("[CONFIG] GLASS 9");
+#endif
+				break;
 			case 20: pr_open=(pr_open)? 0:1;						// Protect open/close
 				if(pr_open) {
 					outportb(ADRPPI+2,inportb(ADRPPI+2)&PR_OPEN); sh_open(0x03ff);
@@ -550,7 +563,12 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 				ulFlash++;
 				tlog_write("[SHOT] fire");
 				break;
-			case 29: f_metal=!f_metal; break;					// v2.78: Metal toggle
+			case 29: f_metal=!f_metal;
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] METAL %s",f_metal ? "ON" : "OFF");
+				tlog_write(_tbuf);
+#endif
+				break;					// v2.78: Metal toggle
 			case 30: glp9new ^= 0x0001; break;					// Glass positions
 			case 31: glp9new ^= 0x0002; break;
 			case 32: glp9new ^= 0x0004; break;
