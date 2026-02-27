@@ -148,7 +148,12 @@ a:				if(dlgopen(strtmp,"Data load",0)) {
 					msg(250,300,0,"");
 					if(!nmax) {msgbox("Not flinttab file",0,0); goto a;}
 					else {
-						if(nmax > 0) {f_data=1; strcpy(wrkfile,strtmp);}
+						if(nmax > 0) {f_data=1; strcpy(wrkfile,strtmp);
+					#ifdef TRACE
+						sprintf(_tbuf,"[DATA] LOAD file=%s points=%ld",strtmp,nmax);
+						tlog_write(_tbuf);
+					#endif
+						}
 						else {msgbox("Buffer overflow",0,0); goto a;}
 						}
 					tout=1;
@@ -402,6 +407,10 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 			case 3:														// Save .cfg
 				/* v2.77: save 10-11 field format */
 				if(msgbox("Are you sure?",0,0)) {
+#ifdef TRACE
+					sprintf(_tbuf,"[CONFIG] SAVE x=%d y=%d z=%d step=%d lper=%d gate=%d",xptrnew,yptrnew,zptrnew,stepnew,lpnew,gd_new);
+					tlog_write(_tbuf);
+#endif
 					itoa(xptrnew,tmpstr,10);
 					strcpy(cfgmas,tmpstr); strcat(cfgmas,cret);
 					itoa(yptrnew,tmpstr,10);
@@ -1060,6 +1069,10 @@ a:				if(!f_metal && !LCtl) { msgbox1("Laser is not enabled."); goto b; }
 						if((f_start == 1)||(!start_nmb)) outportb(ADRCMOS,0);
 						outportb(ADRPPI+2,inportb(ADRPPI+2)&STEP_ON);
 						delay(30);
+#ifdef TRACE
+						sprintf(_tbuf,"[START] st=%ld fstart=%d metal=%d dchk=%d",start_nmb,f_start,f_metal,d_check);
+						tlog_write(_tbuf);
+#endif
 						k=process();
 						outportb(ADRPPI+2,inportb(ADRPPI+2)|STEP_OFF);
 						FlashWr();
