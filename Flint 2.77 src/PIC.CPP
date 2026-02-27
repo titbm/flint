@@ -36,8 +36,14 @@
 #ifdef TRACE
 FILE *tlog = NULL;
 static char _tbuf[160];
-void tlog_open(void)  { tlog=fopen("FLINT.LOG","w"); }
-void tlog_close(void) { if(tlog){fclose(tlog); tlog=NULL;} }
+void tlog_open(void)  {
+	tlog=fopen("FLINT.LOG","w");
+	if(tlog) {
+		fprintf(tlog,"=== FLINT 2.77 Trace Log Start ===\n");
+		fflush(tlog);
+	}
+}
+void tlog_close(void) { if(tlog){fprintf(tlog,"=== Trace Log End ===\n"); fclose(tlog); tlog=NULL;} }
 void tlog_write(const char *s) {
 	if(tlog){fputs(s,tlog); fputc('\n',tlog); fflush(tlog);}
 	}
@@ -244,6 +250,11 @@ int lpuls(int flag) {
 	unsigned int i,k,dsens,mask,wrkpos,shft;
 	unsigned int prevwrkpos;
 
+#ifdef TRACE
+	sprintf(_tbuf,"[LPULS] CALL flag=%d dchk=%d metal=%d",flag,d_check,f_metal);
+	tlog_write(_tbuf);
+#endif
+
 	if(f_demo) {
 		ulFlash++;
 #ifdef TRACE
@@ -313,6 +324,11 @@ int lpuls(int flag) {
 int lpuls_metal(int flag) {
 	unsigned int i,k,dsens,mask,wrkpos,shft;
 	unsigned int prevwrkpos;
+
+#ifdef TRACE
+	sprintf(_tbuf,"[METAL] CALL flag=%d dchk=%d",flag,d_check);
+	tlog_write(_tbuf);
+#endif
 
 	if(f_demo) {
 		ulFlash++;
