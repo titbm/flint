@@ -71,6 +71,8 @@
 #pragma hdrstop
 #include "proj5.h"
 
+#define TRACE
+
 #define BITMAP_MSG_SIZE  65536UL
 #define BGMAP_SIZE       4096UL
 
@@ -96,6 +98,7 @@ int seg_time(int adx, int ady, int adz);
 extern void tlog_open(void);
 extern void tlog_close(void);
 extern void tlog_write(const char *);
+extern char _tbuf[];
 
 
 int main() {

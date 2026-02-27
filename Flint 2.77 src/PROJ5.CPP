@@ -70,6 +70,8 @@
 #pragma hdrstop
 #include "proj5.h"
 
+#define TRACE
+
 /* v2.77: extern from PIC.CPP for pump/gate control */
 extern unsigned char LCtl;
 extern unsigned int LPeriod;
@@ -81,6 +83,7 @@ int seg_time(int adx, int ady, int adz);
 extern void tlog_open(void);
 extern void tlog_close(void);
 extern void tlog_write(const char *);
+extern char _tbuf[];
 
 
 int main() {

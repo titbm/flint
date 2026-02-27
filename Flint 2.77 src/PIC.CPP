@@ -35,7 +35,7 @@
 
 #ifdef TRACE
 FILE *tlog = NULL;
-static char _tbuf[160];
+char _tbuf[160];
 void tlog_open(void)  {
 	tlog=fopen("FLINT.LOG","w");
 	if(tlog) {
