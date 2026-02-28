@@ -493,29 +493,31 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 				else {outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE); sh_close();}
 				break;
 			case 21:													// v2.71: Gate toggle
+				f_gate=!f_gate; f_pt2=1;
 #ifdef TRACE
-				sprintf(_tbuf,"[CONFIG] GATE %s",f_gate ? "OFF" : "ON");
-#ifdef TRACE
-				sprintf(_tbuf,"[CONFIG] PUMP %s",LCtl ? "OFF" : "ON");
+				sprintf(_tbuf,"[CONFIG] GATE %s",f_gate ? "ON" : "OFF");
 				tlog_write(_tbuf);
 #endif
-				tlog_write(_tbuf);
-#endif
-				f_gate=!f_gate; f_pt2=1; break;
+				break;
 			case 22:													// v2.71: Pump toggle
-				LCtl=(LCtl)? 0:3; outportb(LRG,LCtl); break;
+				LCtl=(LCtl)? 0:3; outportb(LRG,LCtl);
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] PUMP %s",LCtl ? "ON" : "OFF");
+				tlog_write(_tbuf);
+#endif
+				break;
 			case 23: ptr_work=(ptr_work)? 0:1;					// Work ptr on/off
 				if(ptr_work) {
 					if(msgbox("GLASS: n,size is true?",0,0)) f_make=1;
 					else ptr_work=0;
 					} break;
-#ifdef TRACE
-					tlog_write("[CONFIG] RESET statistics");
-#endif
 			case 24: f_constnew=1; break;							// Constant
 			case 25: f_constnew=0; break;							// Variable
 			case 26:													// # Statistics reset
 				if(msgbox("Are you sure?",0,0)) {
+#ifdef TRACE
+					tlog_write("[CONFIG] RESET statistics");
+#endif
 					getdate(&dd);
 					ulService=((unsigned long)dd.da_day<<24)+
 					((unsigned long)dd.da_mon<<16)+dd.da_year;
