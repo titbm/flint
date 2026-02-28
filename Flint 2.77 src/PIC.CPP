@@ -272,7 +272,13 @@ int lpuls(int flag) {
 	if(flag) sh_open(wrkpos);
 	for(i=0; i<11; i++) {
 		if(kbhit()) {
-			if(getch() == ESC) {errnmb=wrkpos; return 0;}
+			if(getch() == ESC) {
+#ifdef TRACE
+				sprintf(_tbuf,"[LPULS] ESC i=%u wrkpos=%04X",i,wrkpos);
+				tlog_write(_tbuf);
+#endif
+				errnmb=wrkpos; return 0;
+				}
 			}
 		/* Wait for PT2 counter to near-complete */
 		while((read_pt2()-2) & 0xFFE0) ;
@@ -304,6 +310,10 @@ int lpuls(int flag) {
 			errnmb=0; return 1;
 			}
 		if(i == 10) break;
+#ifdef TRACE
+		sprintf(_tbuf,"[LPULS] retry i=%u dsens=%04X wrk=%04X",i,dsens,wrkpos);
+		tlog_write(_tbuf);
+#endif
 		shft=0x0001;
 		for(k=0; k<10; k++) {if(wrkpos & shft) nmrpt[k]+=1; shft*=2;}
 		show_reit(0);
@@ -347,7 +357,13 @@ int lpuls_metal(int flag) {
 	if(flag) sh_open(wrkpos);
 	for(i=0; i<11; i++) {
 		if(kbhit()) {
-			if(getch() == ESC) {errnmb=wrkpos; return 0;}
+			if(getch() == ESC) {
+#ifdef TRACE
+				sprintf(_tbuf,"[METAL] ESC i=%u wrkpos=%04X",i,wrkpos);
+				tlog_write(_tbuf);
+#endif
+				errnmb=wrkpos; return 0;
+				}
 			}
 		/* Fire: direct PC6 pulse */
 		outportb(ADRPPI+2,inportb(ADRPPI+2)&PULS_ON);
@@ -375,6 +391,10 @@ int lpuls_metal(int flag) {
 			errnmb=0; return 1;
 			}
 		if(i == 10) break;
+#ifdef TRACE
+		sprintf(_tbuf,"[METAL] retry i=%u dsens=%04X wrk=%04X",i,dsens,wrkpos);
+		tlog_write(_tbuf);
+#endif
 		shft=0x0001;
 		for(k=0; k<10; k++) {if(wrkpos & shft) nmrpt[k]+=1; shft*=2;}
 		show_reit(0);
@@ -445,6 +465,10 @@ a:		if(f_metal) {
 				sh_close(); msg(160,80,0,"");
 				if(gl_nmb) glaspos(280,315,1);
 				k=msgbox("Check laser. Retry: Ok",1,1);
+#ifdef TRACE
+				sprintf(_tbuf,"[PROC] METAL FAIL pt=%ld retry=%d",i,k);
+				tlog_write(_tbuf);
+#endif
 				if(!k) return 0;
 				msg(160,80,1,"For STOP: press ESC");
 				flag=1;
@@ -460,6 +484,10 @@ a2:		if(!lpuls(flag)) {
 			/* v2.70: highlight failed positions red */
 			if(gl_nmb) glaspos(280,315,1);
 			k=msgbox("Check laser. Retry: Ok",1,1);
+#ifdef TRACE
+			sprintf(_tbuf,"[PROC] LPULS FAIL pt=%ld retry=%d",i,k);
+			tlog_write(_tbuf);
+#endif
 			if(!k) return 0;
 			msg(160,80,1,"For STOP: press ESC");
 			flag=1;

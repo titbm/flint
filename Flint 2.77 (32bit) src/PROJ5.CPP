@@ -390,6 +390,10 @@ int dlgcfg(void) {
 			gd_new=gate_delay;
 			if(gl_nmbnew) glp9new=glpos9;
 			f_rdcfg=0;
+#ifdef TRACE
+			sprintf(_tbuf,"[CONFIG] LOADED lper=%d gate=%d sfq=%d shd=%d const=%d",l_period,gate_delay,step_freq,sh_delay,f_const);
+			tlog_write(_tbuf);
+#endif
 			}
 		setfillstyle(1,COLDLG); bar(280,313,330,363);		// 9 glass positions
 		setfillstyle(1,COL_ON);
@@ -448,7 +452,12 @@ int dlgcfg(void) {
 a:				l_period=lpnew; step_freq=sfnew; f_const=f_constnew;
 				gate_delay=gd_new;								// v2.70
 				xptr=xptrnew; yptr=yptrnew; zptr=zptrnew;
-				step=stepnew; gl_nmb=gl_nmbnew; glpos9=glp9new; i=1; goto c;
+				step=stepnew; gl_nmb=gl_nmbnew; glpos9=glp9new;
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] OK lper=%d gate=%d sfq=%d shd=%d const=%d metal=%d",l_period,gate_delay,step_freq,sh_delay,f_const,f_metal);
+				tlog_write(_tbuf);
+#endif
+				i=1; goto c;
 			case 1:														// Esc/Cancel
 b:				i=0;
 c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
@@ -466,7 +475,7 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 				/* v2.77: save 10-11 field format */
 				if(msgbox("Are you sure?",0,0)) {
 #ifdef TRACE
-					sprintf(_tbuf,"[CONFIG] SAVE x=%d y=%d z=%d step=%d lper=%d gate=%d",xptrnew,yptrnew,zptrnew,stepnew,lpnew,gd_new);
+					sprintf(_tbuf,"[CONFIG] SAVE x=%d y=%d z=%d step=%d lper=%d gate=%d sfq=%d shd=%d",xptrnew,yptrnew,zptrnew,stepnew,lpnew,gd_new,sfnew,sh_delay);
 					tlog_write(_tbuf);
 #endif
 					itoa(xptrnew,tmpstr,10);
@@ -581,7 +590,10 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 					outportb(ADRPPI+2,inportb(ADRPPI+2)|PULS_OFF);
 				}
 				ulFlash++;
-				tlog_write("[SHOT] fire");
+#ifdef TRACE
+				sprintf(_tbuf,"[SHOT] fire demo=%d pump=%d gate=%d fl=%lu",f_demo,LCtl,f_gate,ulFlash);
+				tlog_write(_tbuf);
+#endif
 				break;
 			case 29: f_metal=!f_metal;
 #ifdef TRACE
