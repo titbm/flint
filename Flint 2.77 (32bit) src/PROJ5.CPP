@@ -184,6 +184,13 @@ int main() {
 		all=1; k=1;
 		/* v2.77: BNM_SCR=7 (removed F6 Statist, F7 Info) */
 		i=scan_ms(btc_scr,bnam_scr,BNM_SCR,0);
+#ifdef TRACE
+		if(i != 255 || pkey) {
+			static const char *_mn[]={"F9 XYZ","F1 Config","F2 Convert","F3 DatLoad","F4 GlsLoad","F5 Start","F10 Exit"};
+			sprintf(_tbuf,"[UI] MAIN btn=%d (%s) pkey=%d",i,(i<7)?_mn[i]:"key",pkey);
+			tlog_write(_tbuf);
+		}
+#endif
 		switch(i) {
 			case 0:														// F9 XYZ
 c:				f_xyz=(f_xyz > 2)? 0:f_xyz+1; all=0; break;
@@ -223,6 +230,9 @@ e:				if(msgbox("Exit?",0,0)) {
 b:					closegraph();
 					/* v2.72: safe shutdown - LRG off */
 					outportb(LRG, 0);
+#ifdef TRACE
+					tlog_write("[HW] LRG <- 00 (shutdown)");
+#endif
 					tlog_close();
 					return 0;
 					}
@@ -464,6 +474,10 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 				outportb(ADRPPI+2,inportb(ADRPPI+2)|STEP_OFF|PR_CLOSE);
 				sh_close(); nmb_pbt=255; f_gate=0;
 				program_pt2(l_period, 1);
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] EXIT LCtl=%u gate_val=%d (gate reset to 1)",(unsigned)LCtl,gate_delay);
+				tlog_write(_tbuf);
+#endif
 				setdisk(path[0]-'A'); chdir(path); FlashWr(); return i;
 			case 2: f_rdcfg=1; f_make=1; f_pt2=1;
 #ifdef TRACE
@@ -506,28 +520,92 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 					else wrfile("flint1.cfg",cfgmas,80);
 					} break;
 			case 4: lpnew=InrDcr(lpnew,20,655,5,1);				// LasPeriod+
-				f_pt2=1; break;
+				f_pt2=1;
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] LPERIOD %d",lpnew);
+				tlog_write(_tbuf);
+#endif
+				break;
 			case 5: lpnew=InrDcr(lpnew,20,655,5,0);				// LasPeriod-
-				f_pt2=1; break;
+				f_pt2=1;
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] LPERIOD %d",lpnew);
+				tlog_write(_tbuf);
+#endif
+				break;
 			case 6: gd_new=InrDcr(gd_new,1,50,1,1);				// GateDelay+
-				f_pt2=1; break;
+				f_pt2=1;
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] GATEDLY %d (%dus)",gd_new,gd_new*10);
+				tlog_write(_tbuf);
+#endif
+				break;
 			case 7: gd_new=InrDcr(gd_new,1,50,1,0);				// GateDelay-
-				f_pt2=1; break;
-			case 8: sfnew=InrDcr(sfnew,100,2000,100,1); break;	// StepFreq+
-			case 9: sfnew=InrDcr(sfnew,100,2000,100,0); break;	// StepFreq-
-			case 10: stepnew=InrDcr(stepnew,10,1000,10,1); break;	// StepSize+
-			case 11: stepnew=InrDcr(stepnew,10,1000,10,0); break;	// StepSize-
+				f_pt2=1;
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] GATEDLY %d (%dus)",gd_new,gd_new*10);
+				tlog_write(_tbuf);
+#endif
+				break;
+			case 8: sfnew=InrDcr(sfnew,100,2000,100,1);
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] STEPFREQ %d",sfnew);
+				tlog_write(_tbuf);
+#endif
+				break;	// StepFreq+
+			case 9: sfnew=InrDcr(sfnew,100,2000,100,0);
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] STEPFREQ %d",sfnew);
+				tlog_write(_tbuf);
+#endif
+				break;	// StepFreq-
+			case 10: stepnew=InrDcr(stepnew,10,1000,10,1);
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] STEPSIZE %d",stepnew);
+				tlog_write(_tbuf);
+#endif
+				break;	// StepSize+
+			case 11: stepnew=InrDcr(stepnew,10,1000,10,0);
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] STEPSIZE %d",stepnew);
+				tlog_write(_tbuf);
+#endif
+				break;	// StepSize-
 			case 12: xptrnew=InrDcr(xptrnew,0,23500,stepnew,1);	// Xptr+
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] XPTR %d",xptrnew);
+				tlog_write(_tbuf);
+#endif
 				f_make=1; break;
 			case 13: xptrnew=InrDcr(xptrnew,0,23500,stepnew,0);	// Xptr-
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] XPTR %d",xptrnew);
+				tlog_write(_tbuf);
+#endif
 				f_make=1; break;
 			case 14: yptrnew=InrDcr(yptrnew,0,23500,stepnew,1);	// Yptr+
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] YPTR %d",yptrnew);
+				tlog_write(_tbuf);
+#endif
 				f_make=1; break;
 			case 15: yptrnew=InrDcr(yptrnew,0,23500,stepnew,0);	// Yptr-
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] YPTR %d",yptrnew);
+				tlog_write(_tbuf);
+#endif
 				f_make=1; break;
 			case 16: zptrnew=InrDcr(zptrnew,0,11000,stepnew,1);	// Zptr+
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] ZPTR %d",zptrnew);
+				tlog_write(_tbuf);
+#endif
 				f_make=1; break;
 			case 17: zptrnew=InrDcr(zptrnew,0,11000,stepnew,0);	// Zptr-
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] ZPTR %d",zptrnew);
+				tlog_write(_tbuf);
+#endif
 				f_make=1; break;
 			case 18: gl_nmbnew=0; f_rdcfg=1; f_make=1; errnmb=0;
 				f_pt2=1;
@@ -563,15 +641,29 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 #ifdef TRACE
 				sprintf(_tbuf,"[CONFIG] PUMP %s",LCtl ? "ON" : "OFF");
 				tlog_write(_tbuf);
+				sprintf(_tbuf,"[HW] LRG <- %02X (D0=pump D1=EOshutter)",(unsigned)LCtl);
+				tlog_write(_tbuf);
 #endif
 				break;
 			case 23: ptr_work=(ptr_work)? 0:1;					// Work ptr on/off
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] WORKPTR %s",ptr_work ? "ON" : "OFF");
+				tlog_write(_tbuf);
+#endif
 				if(ptr_work) {
 					if(msgbox("GLASS: n,size is true?",0,0)) f_make=1;
 					else ptr_work=0;
 					} break;
-			case 24: f_constnew=1; break;							// Constant
-			case 25: f_constnew=0; break;							// Variable
+			case 24: f_constnew=1;
+#ifdef TRACE
+				tlog_write("[CONFIG] SPEED constant");
+#endif
+				break;							// Constant
+			case 25: f_constnew=0;
+#ifdef TRACE
+				tlog_write("[CONFIG] SPEED variable");
+#endif
+				break;							// Variable
 			case 26:													// # Statistics reset
 				if(msgbox("Are you sure?",0,0)) {
 #ifdef TRACE
@@ -582,7 +674,11 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 					((unsigned long)dd.da_mon<<16)+dd.da_year;
 					ulFlash=0; FlashWr();
 					} break;
-			case 27: glp9new=0; break;								// X clear positions
+			case 27: glp9new=0;
+#ifdef TRACE
+				tlog_write("[CONFIG] CLEAR glass positions");
+#endif
+				break;								// X clear positions
 			case 28:													// v2.78: Shot (direct PC6 pulse)
 				if(!f_demo) {
 					outportb(ADRPPI+2,inportb(ADRPPI+2)&PULS_ON);
@@ -601,15 +697,21 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 				tlog_write(_tbuf);
 #endif
 				break;					// v2.78: Metal toggle
-			case 30: glp9new ^= 0x0001; break;					// Glass positions
-			case 31: glp9new ^= 0x0002; break;
-			case 32: glp9new ^= 0x0004; break;
-			case 33: glp9new ^= 0x0008; break;
-			case 34: glp9new ^= 0x0010; break;
-			case 35: glp9new ^= 0x0020; break;
-			case 36: glp9new ^= 0x0040; break;
-			case 37: glp9new ^= 0x0080; break;
-			case 38: glp9new ^= 0x0100; break;
+			case 30: glp9new ^= 0x0001; goto _gllog;					// Glass positions
+			case 31: glp9new ^= 0x0002; goto _gllog;
+			case 32: glp9new ^= 0x0004; goto _gllog;
+			case 33: glp9new ^= 0x0008; goto _gllog;
+			case 34: glp9new ^= 0x0010; goto _gllog;
+			case 35: glp9new ^= 0x0020; goto _gllog;
+			case 36: glp9new ^= 0x0040; goto _gllog;
+			case 37: glp9new ^= 0x0080; goto _gllog;
+			case 38: glp9new ^= 0x0100;
+_gllog:
+#ifdef TRACE
+				sprintf(_tbuf,"[CONFIG] GLASPOS %03X",glp9new);
+				tlog_write(_tbuf);
+#endif
+				break;
 			case 255:
 				if(pkey == 13) goto a;
 				if(pkey == 27) goto b;
@@ -1045,6 +1147,10 @@ long inp_dig(int xl, int yt, double min, double max, int ax) {
 
 
 void glload(int direct) {
+#ifdef TRACE
+	sprintf(_tbuf,"[GLLOAD] dir=%d (%s)",direct,direct ? "DOWN" : "UP");
+	tlog_write(_tbuf);
+#endif
 	msg(260,270,1,"Please wait");
 	outportb(ADRPPI+2,inportb(ADRPPI+2)&STEP_ON); delay(30);
 	move_sen(direct); outportb(ADRPPI+2,inportb(ADRPPI+2)|STEP_OFF);
@@ -1062,8 +1168,16 @@ int dlgload(void) {
 	while(1) {
 		int i=scan_ms(btc_gload,bnam_gload,BNM_GLOAD,0);
 		switch(i) {
-			case 0: glload(0); do_ptr=1; return 0;				// Up
-			case 1: glload(1); do_ptr=0; return 0;				// Down
+			case 0:
+#ifdef TRACE
+				tlog_write("[UI] GLASSLOAD UP");
+#endif
+				glload(0); do_ptr=1; return 0;				// Up
+			case 1:
+#ifdef TRACE
+				tlog_write("[UI] GLASSLOAD DOWN");
+#endif
+				glload(1); do_ptr=0; return 0;				// Down
 a:			case 2: nmb_pbt=255; return 1;						// Cancel
 			case 255:
 				if(pkey == 27) goto a;								// Esc
@@ -1127,7 +1241,7 @@ c:				nmb_pbt=255; setdisk(path[0]-'A'); chdir(path); return i;
    6-Continuation,7-CMOS,8-EndSens,9-DrCheck,10-Stop,11-Reboot,12-Ignore,
    13-Input area */
 int dlgstart(void) {
-	char tmpstr[10],str[23]; int k,m,s,c,f_start; long st_nmbnew=lastn;
+	char tmpstr[10],str[23]; int k,m,f_start; long st_nmbnew=lastn;
 	f_start=2;
 	WndBkgr(100,100,520,400,COLDLG,"Start");
 	draw_bt(btc_strt,bnam_strt,BNM_STRT);
@@ -1165,7 +1279,7 @@ a:				if(!f_metal && !LCtl) { msgbox1("Laser is not enabled."); goto b; }
 						outportb(ADRPPI+2,inportb(ADRPPI+2)&STEP_ON);
 						delay(30);
 #ifdef TRACE
-						sprintf(_tbuf,"[START] st=%ld fstart=%d metal=%d dchk=%d",start_nmb,f_start,f_metal,d_check);
+						sprintf(_tbuf,"[START] st=%ld fstart=%d metal=%d dchk=%d LCtl=%u gate=%d",start_nmb,f_start,f_metal,d_check,(unsigned)LCtl,gate_delay);
 						tlog_write(_tbuf);
 #endif
 						k=process();
@@ -1189,18 +1303,55 @@ b:				nmb_pbt=255; return 0;
 				st_nmbnew=(st_nmbnew<1)? 0:(st_nmbnew-1);
 				} break;
 			/* v2.70: ++ and -- removed (were cases 4,5 in v2.61) */
-			case 4: f_start=0; st_nmbnew=0; break;				// Beginning
-			case 5: f_start=1; break;								// Point number
-			case 6: f_start=2; st_nmbnew=lastn; break;		// Continuation
+			case 4: f_start=0; st_nmbnew=0;
+#ifdef TRACE
+				tlog_write("[STRT] MODE beginning");
+#endif
+				break;				// Beginning
+			case 5: f_start=1;
+#ifdef TRACE
+				tlog_write("[STRT] MODE point_number");
+#endif
+				break;								// Point number
+			case 6: f_start=2; st_nmbnew=lastn;
+#ifdef TRACE
+				tlog_write("[STRT] MODE continuation");
+#endif
+				break;		// Continuation
 			case 7: f_start=3;										// Saved in CMOS
 				st_nmbnew=(long)inportb(ADRCMOS+2)+(long)inportb(ADRCMOS+3)*256;
+#ifdef TRACE
+				sprintf(_tbuf,"[STRT] MODE cmos pt=%ld",st_nmbnew);
+				tlog_write(_tbuf);
+#endif
 				break;
-			case 8: f_ptr=(f_ptr)? 0:1; break;					// End Sensors
+			case 8: f_ptr=(f_ptr)? 0:1;
+#ifdef TRACE
+				sprintf(_tbuf,"[STRT] ENDSENS %s",f_ptr ? "ON" : "OFF");
+				tlog_write(_tbuf);
+#endif
+				break;					// End Sensors
 			case 9: d_check=(d_check)? 0:1;						// Drawing Check
+#ifdef TRACE
+				sprintf(_tbuf,"[STRT] DCHECK %s",d_check ? "ON" : "OFF");
+				tlog_write(_tbuf);
+#endif
 				if(!d_check) errnmb=0; break;
-			case 10: f_noise=2; break;								// Stop
-			case 11: f_noise=1; break;								// Ptr auto reboot
-			case 12: f_noise=0; break;								// Ignore
+			case 10: f_noise=2;
+#ifdef TRACE
+				tlog_write("[STRT] NOISE stop");
+#endif
+				break;								// Stop
+			case 11: f_noise=1;
+#ifdef TRACE
+				tlog_write("[STRT] NOISE reboot");
+#endif
+				break;								// Ptr auto reboot
+			case 12: f_noise=0;
+#ifdef TRACE
+				tlog_write("[STRT] NOISE ignore");
+#endif
+				break;								// Ignore
 			case 13:														// v2.70: Direct input
 				if((f_start == 1) && nmax) {
 					long r = inp_dig(281,149,1.0,(double)nmax,3);

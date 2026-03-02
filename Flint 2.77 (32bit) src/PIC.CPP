@@ -195,9 +195,18 @@ int seg_time(int adx, int ady, int adz) {
 
 
 void program_pt2(int period, unsigned char gate) {
-	unsigned int val=(unsigned int)period*100;
-	outportb(ADRPT2,(unsigned char)(val%256));
-	outportb(ADRPT2,(unsigned char)(val/256));
+	/* Original 16-bit binary uses signed int*int multiplication which
+	   overflows for period>327, then signed /256 and %256 produce
+	   different byte split than unsigned.  Emulate that behavior. */
+	short sval=(short)((short)period*(short)100);
+#ifdef TRACE
+	sprintf(_tbuf,"[HW] PT2 ch0=%d (lo=%02X hi=%02X) ch1=%u (%uus)",
+		(int)sval,(unsigned)(unsigned char)(sval%256),(unsigned)(unsigned char)(sval/256),
+		(unsigned)gate,(unsigned)gate*10);
+	tlog_write(_tbuf);
+#endif
+	outportb(ADRPT2,(unsigned char)(sval%256));
+	outportb(ADRPT2,(unsigned char)(sval/256));
 	outportb(ADRPT2+1,gate);
 	outportb(ADRPT2+1,0);
 	}
@@ -218,6 +227,9 @@ int pi_ini(void) {
 	ctlw = (XUP|YUP|ZUP)&XOFF&YOFF&ZOFF&OSCON;
 	outportb(ADRRG,ctlw);
 	LCtl=0; outportb(LRG,LCtl);
+#ifdef TRACE
+	tlog_write("[HW] LRG <- 00 (init)");
+#endif
 	outportb(ADRPPI+3,0x82);	// PPI:mode0,PA-out,PB-inp,PC-out
 	outportb(ADRPPI,150);		// K1=150:F1=100kHz
 	outportb(ADRPPI+2,0xfd);	// stepM-off,endS-en.,las-en.,puls-off,protect
@@ -289,11 +301,36 @@ int lpuls(int flag) {
 			}
 		/* Wait for PT2 counter to near-complete */
 		while((read_pt2()-2) & 0xFFE0) ;
+#ifdef TRACE
+		{ unsigned int _sync_pt2 = read_pt2();
+		  sprintf(_tbuf,"[LPULS] FIRE i=%u sync=%u cyc=%u gate=%u LCtl=%u",
+		          i, _sync_pt2, (unsigned)l_period*100, (unsigned)gate_delay, (unsigned)LCtl);
+		  tlog_write(_tbuf);
+		}
+#endif
 		/* Fire: program gate delay */
 		program_pt2(l_period,(unsigned char)gate_delay);
 		ulFlash++;
-		
-		delay(1);
+
+		/* Hardware-timed wait: guarantee Q-switch has fired before reset.
+		   After sync ch0 was near zero. program_pt2 loaded new values.
+		   ch0 finishes old cycle (<=330us) -> triggers ch1 -> reloads
+		   to l_period*100. ch1 counts gate_delay ticks (gate*10us).
+		   We wait for ch0 reload (proves trigger happened), then for
+		   enough counts to pass that ch1 has reached zero. */
+		{ unsigned int target = (unsigned int)l_period * 100
+		                        - gate_delay - 10;
+		  while(read_pt2() < 100) ;      /* wait for ch0 reload  */
+		  while(read_pt2() > target) ;   /* wait past gate region */
+#ifdef TRACE
+		  { unsigned int _post_pt2 = read_pt2();
+		    unsigned int _elap = (unsigned int)l_period*100 - _post_pt2;
+		    sprintf(_tbuf,"[LPULS] WAIT i=%u target=%u post=%u elapsed=%u ~%uus fl=%lu",
+		            i, target, _post_pt2, _elap, _elap*10, ulFlash);
+		    tlog_write(_tbuf);
+		  }
+#endif
+		}
 
 		/* Safe reset: gate minimum */
 		program_pt2(l_period,1);
@@ -309,8 +346,8 @@ int lpuls(int flag) {
 		wrkpos-=(dsens & wrkpos);
 		if(!wrkpos) {
 #ifdef TRACE
-			sprintf(_tbuf,"[LPULS] ok i=%u dsens=%04X mask=%04X fl=%lu",
-				i,dsens,mask,ulFlash);
+			sprintf(_tbuf,"[LPULS] ok i=%u dsens=%04X mask=%04X fl=%lu LCtl=%u",
+				i,dsens,mask,ulFlash,(unsigned)LCtl);
 			tlog_write(_tbuf);
 #endif
 			if(i || errnmb) sh_open(mask);
@@ -318,8 +355,11 @@ int lpuls(int flag) {
 			}
 		if(i == 10) break;
 #ifdef TRACE
-		sprintf(_tbuf,"[LPULS] retry i=%u dsens=%04X wrk=%04X",i,dsens,wrkpos);
-		tlog_write(_tbuf);
+		{ unsigned int _rpt2 = read_pt2();
+		  sprintf(_tbuf,"[LPULS] retry i=%u dsens=%04X wrk=%04X pt2=%u LCtl=%u",
+		          i,dsens,wrkpos,_rpt2,(unsigned)LCtl);
+		  tlog_write(_tbuf);
+		}
 #endif
 		shft=0x0001;
 		for(k=0; k<10; k++) {if(wrkpos & shft) nmrpt[k]+=1; shft*=2;}
@@ -327,9 +367,11 @@ int lpuls(int flag) {
 		if(wrkpos != prevwrkpos) {sh_open(wrkpos); prevwrkpos=wrkpos;}
 		}
 #ifdef TRACE
-	sprintf(_tbuf,"[LPULS] FAIL i=10 wrkpos=%04X dsens=%04X mask=%04X fl=%lu",
-		wrkpos,dsens,mask,ulFlash);
-	tlog_write(_tbuf);
+	{ unsigned int _fpt2 = read_pt2();
+	  sprintf(_tbuf,"[LPULS] FAIL i=10 wrkpos=%04X dsens=%04X mask=%04X fl=%lu pt2=%u LCtl=%u",
+		wrkpos,dsens,mask,ulFlash,_fpt2,(unsigned)LCtl);
+	  tlog_write(_tbuf);
+	}
 #endif
 	errnmb=wrkpos; return 0;
 	}
@@ -418,6 +460,11 @@ int lpuls_metal(int flag) {
 
 /* v2.77: configurable sh_delay instead of fixed SH_TIME=50 */
 void sh_open(unsigned int pos) {
+#ifdef TRACE
+	sprintf(_tbuf,"[HW] SH_OPEN pos=%04X PB=%02X shd=%d",
+		pos,(unsigned)((unsigned char)(pos%256)^0xff),sh_delay);
+	tlog_write(_tbuf);
+#endif
 	outportb(ADRPPI2+1,(unsigned char)(pos%256)^0xff);		// PB: EM1-EM8
 	if(pos & 0x0100) outportb(ADRPPI2+3,0x08);				// PC4=0: EM9-on
 	else outportb(ADRPPI2+3,0x09);
@@ -429,6 +476,9 @@ void sh_open(unsigned int pos) {
 
 
 void sh_close(void) {
+#ifdef TRACE
+	tlog_write("[HW] SH_CLOSE all-off");
+#endif
 	outportb(ADRPPI2+1,0xff); outportb(ADRPPI2+3,0x09);	// PB0-PB7=1,PC4=1
 	outportb(ADRPPI2+3,0x0b); outportb(ADRPPI2+3,0x0d);	// PC5,PC6=1
 	}
@@ -457,6 +507,9 @@ int process(void) {
 	msg(160,80,1,"For STOP: press ESC");
 	if(f_ptr || (!do_ptr)) move_sen(0);
 	outportb(ADRPPI+2,inportb(ADRPPI+2)&PR_OPEN);				// Protect-open
+#ifdef TRACE
+	tlog_write("[HW] PPI2 PR_OPEN");
+#endif
 	flag=1;
 
 	progbar(nmax,start_nmb,1,160,464);
@@ -474,6 +527,9 @@ int process(void) {
 #endif
 		if(!move(xnew,ynew,znew)) {
 			outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
+#ifdef TRACE
+			tlog_write("[HW] PPI2 PR_CLOSE");
+#endif
 			sh_close(); msg(160,80,0,"");
 #ifdef TRACE
 			sprintf(_tbuf,"[PROC] MOVE ERR pt=%ld x=%d y=%d z=%d",i,xnew,ynew,znew);
@@ -485,6 +541,9 @@ int process(void) {
 a:		if(f_metal) {
 			if(!lpuls_metal(flag)) {
 				outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
+#ifdef TRACE
+				tlog_write("[HW] PPI2 PR_CLOSE");
+#endif
 				sh_close(); msg(160,80,0,"");
 				show_reit(1);
 				k=msgbox("Check laser. Retry: Ok",1,1);
@@ -503,6 +562,9 @@ a:		if(f_metal) {
 		else {
 a2:		if(!lpuls(flag)) {
 			outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
+#ifdef TRACE
+			tlog_write("[HW] PPI2 PR_CLOSE");
+#endif
 			sh_close(); msg(160,80,0,"");
 			show_reit(1);
 			k=msgbox("Check laser. Retry: Ok",1,1);
@@ -527,6 +589,9 @@ a2:		if(!lpuls(flag)) {
 		if(kbhit()) {
 			if(getch() == ESC) {
 				outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
+#ifdef TRACE
+				tlog_write("[HW] PPI2 PR_CLOSE");
+#endif
 				sh_close(); msg(160,80,0,"");
 #ifdef TRACE
 				sprintf(_tbuf,"[PROC] ESC pt=%ld/%ld fl=%lu",i,nmax,ulFlash);
@@ -538,6 +603,9 @@ a2:		if(!lpuls(flag)) {
 		}
 	/* Normal end */
 	outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
+#ifdef TRACE
+	tlog_write("[HW] PPI2 PR_CLOSE");
+#endif
 	sh_close();
 #ifdef TRACE
 	sprintf(_tbuf,"[PROC] END ok n=%ld fl=%lu",nmax,ulFlash);
@@ -567,6 +635,10 @@ int move_sen(int dir) {
 		tw=(ctlw|XUP|YUP)&XOFF&YOFF&ZOFF&ZDOWN&OSCON;
 		}
 	outportb(ADRRG,ctlw);
+#ifdef TRACE
+	sprintf(_tbuf,"[HW] SEN_GO dir=%d RG=%02X target=%02X",dir,(int)ctlw,(int)tw);
+	tlog_write(_tbuf);
+#endif
 	if(!f_demo) {
 		while(ctlw != tw) {
 			stspb=inportb(ADRPPI+1);
@@ -585,6 +657,10 @@ int move_sen(int dir) {
 	outportb(ADRPT1+2,0xc8); outportb(ADRPT1+2,0x00);			// dZ=200
 	if(!dir) {ctlw=(XON|YON|ZON|YUP|ZUP)&XDOWN&OSCON; outportb(ADRRG,ctlw);}
 	else {ctlw=(XON|YON|ZON|ZUP)&XDOWN&YDOWN&OSCON; outportb(ADRRG,ctlw);}
+#ifdef TRACE
+	sprintf(_tbuf,"[HW] SEN_RET RG=%02X",(int)ctlw);
+	tlog_write(_tbuf);
+#endif
 	fxy=1; fz=1; done=0;
 	if(!f_demo) {
 		while(!done) {
@@ -596,6 +672,9 @@ int move_sen(int dir) {
 			}
 		}
 	outportb(ADRRG,0x80);
+#ifdef TRACE
+	tlog_write("[HW] RG IDLE 80");
+#endif
 	if(!dir) {xcur=23300; ycur=200; zcur=200;}
 	do_ptr = !dir;
 	return 1;
@@ -669,6 +748,10 @@ c:	fxy=0; fz=0; done=0;
 		}
 	else ctlw=ctlw&ZOFF;
 	ctlw=ctlw&OSCON; outportb(ADRRG,ctlw);
+#ifdef TRACE
+	sprintf(_tbuf,"[HW] RG OUT %02X fxy=%d fz=%d",(int)ctlw,fxy,fz);
+	tlog_write(_tbuf);
+#endif
 	if((!dx)&&(!dy)&&(!dz)) goto b;
 	if(!f_demo) {
 		while(!done) {
@@ -700,6 +783,10 @@ a:
 #endif
 	ctlw=ctlw&XOFF&YOFF&ZOFF;
 	outportb(ADRRG,ctlw); fxy=0; fz=0;
+#ifdef TRACE
+	sprintf(_tbuf,"[HW] RG STOP %02X sens=%02X",(int)ctlw,(int)stspb);
+	tlog_write(_tbuf);
+#endif
 	if((stspb & 0x03) != 0x03) {
 		outportb(ADRPT0,0xc8); outportb(ADRPT0,0x00);
 		outportb(ADRPT0+1,0xc8); outportb(ADRPT0+1,0x00);
@@ -716,6 +803,10 @@ a:
 		ctlw=(dz<0)? ctlw|ZUP|ZON:(ctlw&ZDOWN)|ZON; fz=1;
 		}
 	ctlw=ctlw&OSCON; outportb(ADRRG,ctlw); done=0;
+#ifdef TRACE
+	sprintf(_tbuf,"[HW] RG RECOVER %02X",(int)ctlw);
+	tlog_write(_tbuf);
+#endif
 	while(!done) {
 		stspb=inportb(ADRPPI+1);
 		if(fxy && ((stspb & 0x80) == 0x80)) {ctlw=ctlw&XOFF&YOFF; fxy=0;}
@@ -723,5 +814,10 @@ a:
 		outportb(ADRRG,ctlw);
 		if((!fxy) && (!fz)) done=1;
 		}
-	ctlw=ctlw&XOFF&YOFF&ZOFF; outportb(ADRRG,ctlw); do_ptr=0; return 0;
+	ctlw=ctlw&XOFF&YOFF&ZOFF; outportb(ADRRG,ctlw);
+#ifdef TRACE
+	sprintf(_tbuf,"[HW] RG END %02X",(int)ctlw);
+	tlog_write(_tbuf);
+#endif
+	do_ptr=0; return 0;
 	}
