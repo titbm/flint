@@ -374,7 +374,7 @@ int gl_nmb;
 unsigned int glpos9;
 unsigned int nmrpt[10];			// v2.74: merged first/next counters -> 10
 int d_check;
-int rpt_active;					// v2.77: bitmask of active glass positions during processing
+// int rpt_active;				// REMOVED: reconstruction error, binary uses errnmb here
 int f_noise;
 int f_sort;
 int sK1, sK2;

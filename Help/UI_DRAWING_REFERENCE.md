@@ -350,7 +350,7 @@ if gl_nmb (9-glass mode):
             rectangle(k*42+10, i*16+404, k*42+50, i*16+418)
             
             if mode:
-                color = (rpt_active & mask) ? COL_ON : BLACK
+                color = (errnmb & mask) ? COL_ON : BLACK
                 setfillstyle(1, color)
             
             bar(k*42+11, i*16+405, k*42+49, i*16+417)

@@ -438,6 +438,14 @@ int process(void) {
 	sprintf(_tbuf,"[PROC] START n=%ld/%ld metal=%d dchk=%d lper=%d gate=%d shd=%d",
 		start_nmb,nmax,f_metal,d_check,l_period,gate_delay,sh_delay);
 	tlog_write(_tbuf);
+	sprintf(_tbuf,"[PROC] CFG xptr=%d yptr=%d zptr=%d zsize=%d nglas=%.4f step=%u sf=%d dT=%d fc=%d demo=%d",
+		xptr,yptr,zptr,zsize,nglas,step,step_freq,dT,f_const,f_demo);
+	tlog_write(_tbuf);
+	{	int _refr=(int)(zsize*10*(1-1/nglas));
+		sprintf(_tbuf,"[PROC] CALC refr_ofs=%d z_base=%d (11000-zptr-refr_ofs)",
+			_refr,11000-zptr-_refr);
+		tlog_write(_tbuf);
+	}
 #endif
 	msg(160,80,1,"For STOP: press ESC");
 	if(f_ptr || (!do_ptr)) move_sen(0);
@@ -449,6 +457,14 @@ int process(void) {
 		xnew=23500-xptr-iTabl[3*i];
 		ynew=yptr+iTabl[3*i+1];
 		znew=11000-zptr-zsize*10*(1-1/nglas)-iTabl[3*i+2];
+#ifdef TRACE
+		{	int _dx=xnew-xcur, _dy=ynew-ycur, _dz=znew-zcur;
+			sprintf(_tbuf,"[PT] i=%ld raw=%d,%d,%d xyz=%d,%d,%d d=%d,%d,%d",
+				i,(int)iTabl[3*i],(int)iTabl[3*i+1],(int)iTabl[3*i+2],
+				xnew,ynew,znew,_dx,_dy,_dz);
+			tlog_write(_tbuf);
+		}
+#endif
 		if(!move(xnew,ynew,znew)) {
 			outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
 			sh_close(); msg(160,80,0,"");
@@ -463,7 +479,7 @@ a:		if(f_metal) {
 			if(!lpuls_metal(flag)) {
 				outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
 				sh_close(); msg(160,80,0,"");
-				if(gl_nmb) glaspos(280,315,1);
+				show_reit(1);
 				k=msgbox("Check laser. Retry: Ok",1,1);
 #ifdef TRACE
 				sprintf(_tbuf,"[PROC] METAL FAIL pt=%ld retry=%d",i,k);
@@ -481,8 +497,7 @@ a:		if(f_metal) {
 a2:		if(!lpuls(flag)) {
 			outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
 			sh_close(); msg(160,80,0,"");
-			/* v2.70: highlight failed positions red */
-			if(gl_nmb) glaspos(280,315,1);
+			show_reit(1);
 			k=msgbox("Check laser. Retry: Ok",1,1);
 #ifdef TRACE
 			sprintf(_tbuf,"[PROC] LPULS FAIL pt=%ld retry=%d",i,k);
@@ -501,15 +516,6 @@ a2:		if(!lpuls(flag)) {
 		lastn=i+1;
 		setcolor(BLACK); setfillstyle(1,COLBKL); bar(31,206,86,222);
 		ltoa(lastn,tmpstr,10); outtextxy(40,211,tmpstr);
-		/* v2.70: show reiterations in real-time */
-		if(d_check) {
-			unsigned long ulRpt=0; unsigned int rk;
-			for(rk=0; rk<10; rk++) ulRpt+=nmrpt[rk];
-			if(ulRpt > 0) {
-				setfillstyle(1,COLBKL); bar(31,224,86,232);
-				ltoa(ulRpt,tmpstr,10); outtextxy(40,225,tmpstr);
-				}
-			}
 		progbar(nmax,i,0,160,464);
 		if(kbhit()) {
 			if(getch() == ESC) {
@@ -584,7 +590,7 @@ int move_sen(int dir) {
 		}
 	outportb(ADRRG,0x80);
 	if(!dir) {xcur=23300; ycur=200; zcur=200;}
-	else do_ptr=0;
+	do_ptr = !dir;
 	return 1;
 	}
 
@@ -615,6 +621,16 @@ int move(int x, int y, int z) {
 c:	fxy=0; fz=0; done=0;
 	dx=x-xcur; dy=y-ycur; dz=z-zcur;
 	t_seg=seg_time(dx,dy,dz);
+#ifdef TRACE
+	{	long _k2x=0,_k2y=0,_k2z=0;
+		if(dx) _k2x=calc_k2(dx,t_seg);
+		if(dy) _k2y=calc_k2(dy,t_seg);
+		if(dz) _k2z=calc_k2(dz,t_seg);
+		sprintf(_tbuf,"[MOV] dx=%d dy=%d dz=%d tseg=%d k2x=%ld k2y=%ld k2z=%ld",
+			dx,dy,dz,t_seg,_k2x,_k2y,_k2z);
+		tlog_write(_tbuf);
+	}
+#endif
 	if(dx) {
 		k2=calc_k2(dx,t_seg);
 		outportb(ADRPT0,(unsigned char)(k2%256));

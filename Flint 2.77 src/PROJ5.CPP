@@ -98,7 +98,7 @@ int main() {
 	nmax=0; tout=0;
 	do_ptr=0;
 	f_ptr=0;
-	strcpy(glstype,"K8");
+	memset(glstype, 0, sizeof(glstype));
 	nglas=1.506;
 	xsize=500; ysize=500; zsize=500;
 	xofs=0; yofs=0; zofs=0;
@@ -387,7 +387,7 @@ int dlgcfg(void) {
 		if(ptr_work && f_make) {
 			outportb(ADRPPI+2,inportb(ADRPPI+2)&STEP_ON);
 			msg(260,300,1,"Please wait"); delay(30);
-			if(!do_ptr) {move_sen(0); do_ptr=1;}
+			if(!do_ptr) move_sen(0);
 			x=23500-xptrnew;
 			y=yptrnew; d=(1-1/nglas)*10*zsize; z=11000-zptrnew-(int)d;
 			if(!move(x,y,z)) {
@@ -896,7 +896,7 @@ f:				if(dlgopen(tmpstr,"Data load",2)) {
 			case 5:
 				if(!f_view) yofs=InrDcr(yofs,-23500,23500,25,1);
 				else if(f_view == 1) xofs=InrDcr(xofs,-23500,23500,25,!f_mirror);
-				else zofs=InrDcr(zofs,-11000,11000,25,1);
+				else zofs=InrDcr(zofs,-12000,12000,25,1);	// v2.74: 120mm
 				chpic0=1; break;
 			case 6:
 				if(!h) xofs=InrDcr(xofs,-23500,23500,25,f_mirror);
@@ -905,7 +905,7 @@ f:				if(dlgopen(tmpstr,"Data load",2)) {
 			case 7:
 				if(!f_view) yofs=InrDcr(yofs,-23500,23500,25,0);
 				else if(f_view == 1) xofs=InrDcr(xofs,-23500,23500,25,f_mirror);
-				else zofs=InrDcr(zofs,-11000,11000,25,0);
+				else zofs=InrDcr(zofs,-12000,12000,25,0);	// v2.74: 120mm
 				chpic0=1; break;
 			case 8:
 				if(!h) xofs=InrDcr(xofs,-23500,23500,25,!f_mirror);
@@ -919,8 +919,8 @@ f:				if(dlgopen(tmpstr,"Data load",2)) {
 			case 12: xsize = InrDcr(xsize,10,2350,1,0); break;
 			case 13: ysize = InrDcr(ysize,10,2350,1,1); break;
 			case 14: ysize = InrDcr(ysize,10,2350,1,0); break;
-			case 15: zsize = InrDcr(zsize,10,1100,1,1); break;
-			case 16: zsize = InrDcr(zsize,10,1100,1,0); break;
+			case 15: zsize = InrDcr(zsize,10,1200,1,1); break;	// v2.74: 120mm
+			case 16: zsize = InrDcr(zsize,10,1200,1,0); break;	// v2.74: 120mm
 			case 17: dlgsort(); break;
 			case 18:
 				if(inp_dig(501,86,0.999,2.001,0)>0) strcpy(glstype,"");
@@ -929,7 +929,7 @@ f:				if(dlgopen(tmpstr,"Data load",2)) {
 				if(k>0) xsize=k; break;
 			case 20: k=inp_dig(501,158,0.9,235.1,1);
 				if(k>0) ysize=k; break;
-			case 21: k=inp_dig(501,194,0.9,110.1,1);
+			case 21: k=inp_dig(501,194,0.9,120.1,1);	// v2.74: 120mm
 				if(k>0) zsize=k; break;
 			case 22: gselect(); goto b;
 			case 23: f_mirror=(f_mirror)? 0:1; break;
@@ -1249,7 +1249,7 @@ void show_reit(int mode) {
 			for(k=0; k<3; k++) {
 				rectangle(k*42+10, i*16+404, k*42+50, i*16+418);
 				if(mode) {
-					color=(rpt_active & mask)? COL_ON : BLACK;
+					color=(errnmb & mask)? COL_ON : BLACK;
 					setfillstyle(1,color);
 					}
 				bar(k*42+11, i*16+405, k*42+49, i*16+417);
@@ -1648,7 +1648,7 @@ void htime(char tmpstr[]) {
 			if(pofs >= 0xFFF0u) { pseg+=(pofs>>4); pofs&=0x0F; }
 			p=(int far *)MK_FP(pseg,pofs);
 			dx=p[3]-p[0]; dy=p[4]-p[1]; dz=p[5]-p[2];
-			t=seg_time(dx,dy,dz);
+			t=seg_time(abs(dx),abs(dy),abs(dz));
 			tim+=(long)l_period*t; progbar(nmax,i,0,160,464);
 			pofs+=2;
 			}
