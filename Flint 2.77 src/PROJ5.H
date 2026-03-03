@@ -434,6 +434,7 @@ void sh_close(void);
 int process(void);
 int move_sen(int dir);
 int move(int x, int y, int z);
+int lpuls(int flag);
 int lpuls_metal(int flag);
 
 void button(int btc[], int nmb, char buttxt[]);

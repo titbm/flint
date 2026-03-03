@@ -529,7 +529,11 @@ int process(void) {
 			return 0;
 			}
 a:		if(f_metal) {
-			if(!lpuls_metal(flag)) {
+			/* v2.78: pump on/off per point to avoid parasitic shots during move */
+			LCtl = PUMP_ON | SHUT_ON;
+			outportb(LRG, LCtl);
+			if(!lpuls(flag)) {
+				LCtl = 0; outportb(LRG, LCtl);
 				outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
 #ifdef TRACE
 				tlog_write("[HW] PPI2 PR_CLOSE");
@@ -548,6 +552,7 @@ a:		if(f_metal) {
 				errnmb=0;
 				}
 			else flag=0;
+			LCtl = 0; outportb(LRG, LCtl);
 			}
 		else {
 a2:		if(!lpuls(flag)) {

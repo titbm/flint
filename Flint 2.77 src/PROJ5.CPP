@@ -588,6 +588,7 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 				break;
 			case 22:													// v2.71: Pump toggle
 				LCtl=(LCtl)? 0:3; outportb(LRG,LCtl);
+				if(LCtl && f_metal) f_metal=0;	// pump on disables metal
 #ifdef TRACE
 				sprintf(_tbuf,"[CONFIG] PUMP %s",LCtl ? "ON" : "OFF");
 				tlog_write(_tbuf);
@@ -629,21 +630,33 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 				tlog_write("[CONFIG] CLEAR glass positions");
 #endif
 				break;								// X clear positions
-			case 28:													// v2.78: Shot (direct PC6 pulse)
-				if(!f_demo) {
-					outportb(ADRPPI+2,inportb(ADRPPI+2)&PULS_ON);
-					delay(1);
-					outportb(ADRPPI+2,inportb(ADRPPI+2)|PULS_OFF);
+			case 28:													// v2.78: Shot (single pulse with pump)
+				{	unsigned char savedLCtl = LCtl;
+					LCtl = PUMP_ON | SHUT_ON;
+					outportb(LRG, LCtl);
+					outportb(ADRPPI+2,inportb(ADRPPI+2)&PR_OPEN);
+					{ int saved_dchk = d_check;
+					  d_check = 0;
+					  lpuls(1);
+					  d_check = saved_dchk;
+					}
+					sh_close();
+					outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
+					LCtl = 0;
+					outportb(LRG, LCtl);
 				}
 				ulFlash++;
 #ifdef TRACE
-				sprintf(_tbuf,"[SHOT] fire demo=%d pump=%d gate=%d fl=%lu",f_demo,LCtl,f_gate,ulFlash);
+				sprintf(_tbuf,"[SHOT] fire demo=%d fl=%lu",f_demo,ulFlash);
 				tlog_write(_tbuf);
 #endif
 				break;
 			case 29: f_metal=!f_metal;
+				if(f_metal && LCtl) {
+					LCtl=0; outportb(LRG,LCtl);	// pump off: managed per-point in metal
+				}
 #ifdef TRACE
-				sprintf(_tbuf,"[CONFIG] METAL %s",f_metal ? "ON" : "OFF");
+				sprintf(_tbuf,"[CONFIG] METAL %s LCtl=%u",f_metal ? "ON" : "OFF",(unsigned)LCtl);
 				tlog_write(_tbuf);
 #endif
 				break;					// v2.78: Metal toggle
