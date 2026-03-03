@@ -85,10 +85,6 @@ extern void tlog_close(void);
 extern void tlog_write(const char *);
 extern char _tbuf[];
 
-#ifdef HW_SIM
-extern void sim_close(void);
-#endif
-
 
 int main() {
 	int i, k, g_mode, g_error_code, all, g_driver=DETECT;
@@ -188,9 +184,6 @@ b:					closegraph();
 					tlog_write("[HW] LRG <- 00 (shutdown)");
 #endif
 					tlog_close();
-#ifdef HW_SIM
-					sim_close();
-#endif
 					return 0;
 					}
 				k=0; break;

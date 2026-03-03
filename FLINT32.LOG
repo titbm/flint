@@ -1,0 +1,541 @@
+=== FLINT 2.77 Trace Log Start ===
+[INI] hw=1 K1=150 lper=35 gate=23 shd=100 dchk=1
+[CONFIG] PUMP ON
+[CONFIG] OK lper=35 gate=23 sfq=2000 shd=100 const=0 metal=0
+[DATA] LOAD file=cub3.bft points=1000
+[START] st=0 fstart=2 metal=0 dchk=1
+[PROC] START n=0/1000 metal=0 dchk=1 lper=35 gate=23 shd=100
+[PROC] CFG xptr=680 yptr=330 zptr=150 zsize=305 nglas=1.5060 step=10 sf=2000 dT=6 fc=0 demo=0
+[PROC] CALC refr_ofs=1024 z_base=9826 (11000-zptr-refr_ofs)
+[PT] i=0 raw=1838,1338,1045 xyz=20982,1668,8780 d=-2318,1468,8580
+[MOV] dx=-2318 dy=1468 dz=8580 tseg=123 k2x=185 k2y=292 k2z=50
+[LPULS] CALL flag=1 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] retry i=1 dsens=0000 wrk=0002
+[LPULS] retry i=2 dsens=0000 wrk=0002
+[LPULS] retry i=3 dsens=0000 wrk=0002
+[LPULS] retry i=4 dsens=0000 wrk=0002
+[LPULS] retry i=5 dsens=0000 wrk=0002
+[LPULS] retry i=6 dsens=0000 wrk=0002
+[LPULS] retry i=7 dsens=0000 wrk=0002
+[LPULS] retry i=8 dsens=0000 wrk=0002
+[LPULS] retry i=9 dsens=0000 wrk=0002
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41749
+[PROC] LPULS FAIL pt=0 retry=0
+[START] st=0 fstart=2 metal=0 dchk=1
+[PROC] START n=0/1000 metal=0 dchk=1 lper=35 gate=23 shd=100
+[PROC] CFG xptr=680 yptr=330 zptr=150 zsize=305 nglas=1.5060 step=10 sf=2000 dT=6 fc=0 demo=0
+[PROC] CALC refr_ofs=1024 z_base=9826 (11000-zptr-refr_ofs)
+[PT] i=0 raw=1838,1338,1045 xyz=20982,1668,8780 d=0,0,0
+[MOV] dx=0 dy=0 dz=0 tseg=1 k2x=0 k2y=0 k2z=0
+[LPULS] CALL flag=1 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41750
+[PT] i=1 raw=1874,1338,1045 xyz=20946,1668,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41751
+[PT] i=2 raw=1910,1338,1045 xyz=20910,1668,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41753
+[PT] i=3 raw=1946,1338,1045 xyz=20874,1668,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41754
+[PT] i=4 raw=1982,1338,1045 xyz=20838,1668,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41756
+[PT] i=5 raw=2018,1338,1045 xyz=20802,1668,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41757
+[PT] i=6 raw=2054,1338,1045 xyz=20766,1668,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41759
+[PT] i=7 raw=2090,1338,1045 xyz=20730,1668,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41760
+[PT] i=8 raw=2126,1338,1045 xyz=20694,1668,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41762
+[PT] i=9 raw=2162,1338,1045 xyz=20658,1668,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41763
+[PT] i=10 raw=1838,1374,1045 xyz=20982,1704,8780 d=324,36,0
+[MOV] dx=324 dy=36 dz=0 tseg=5 k2x=52 k2y=469 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41764
+[PT] i=11 raw=1874,1374,1045 xyz=20946,1704,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41766
+[PT] i=12 raw=1910,1374,1045 xyz=20910,1704,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41768
+[PT] i=13 raw=1946,1374,1045 xyz=20874,1704,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41770
+[PT] i=14 raw=1982,1374,1045 xyz=20838,1704,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41772
+[PT] i=15 raw=2018,1374,1045 xyz=20802,1704,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41774
+[PT] i=16 raw=2054,1374,1045 xyz=20766,1704,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41776
+[PT] i=17 raw=2090,1374,1045 xyz=20730,1704,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41778
+[PT] i=18 raw=2126,1374,1045 xyz=20694,1704,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41780
+[PT] i=19 raw=2162,1374,1045 xyz=20658,1704,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41782
+[PT] i=20 raw=1838,1410,1045 xyz=20982,1740,8780 d=324,36,0
+[MOV] dx=324 dy=36 dz=0 tseg=5 k2x=52 k2y=469 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41784
+[PT] i=21 raw=1874,1410,1045 xyz=20946,1740,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41785
+[PT] i=22 raw=1910,1410,1045 xyz=20910,1740,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41787
+[PT] i=23 raw=1946,1410,1045 xyz=20874,1740,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41788
+[PT] i=24 raw=1982,1410,1045 xyz=20838,1740,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41790
+[PT] i=25 raw=2018,1410,1045 xyz=20802,1740,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41791
+[PT] i=26 raw=2054,1410,1045 xyz=20766,1740,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41793
+[PT] i=27 raw=2090,1410,1045 xyz=20730,1740,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41794
+[PT] i=28 raw=2126,1410,1045 xyz=20694,1740,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41796
+[PT] i=29 raw=2162,1410,1045 xyz=20658,1740,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41797
+[PT] i=30 raw=1838,1446,1045 xyz=20982,1776,8780 d=324,36,0
+[MOV] dx=324 dy=36 dz=0 tseg=5 k2x=52 k2y=469 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41798
+[PT] i=31 raw=1874,1446,1045 xyz=20946,1776,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41800
+[PT] i=32 raw=1910,1446,1045 xyz=20910,1776,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41802
+[PT] i=33 raw=1946,1446,1045 xyz=20874,1776,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41804
+[PT] i=34 raw=1982,1446,1045 xyz=20838,1776,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41806
+[PT] i=35 raw=2018,1446,1045 xyz=20802,1776,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41808
+[PT] i=36 raw=2054,1446,1045 xyz=20766,1776,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41810
+[PT] i=37 raw=2090,1446,1045 xyz=20730,1776,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41812
+[PT] i=38 raw=2126,1446,1045 xyz=20694,1776,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41814
+[PT] i=39 raw=2162,1446,1045 xyz=20658,1776,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41816
+[PT] i=40 raw=1838,1482,1045 xyz=20982,1812,8780 d=324,36,0
+[MOV] dx=324 dy=36 dz=0 tseg=5 k2x=52 k2y=469 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41818
+[PT] i=41 raw=1874,1482,1045 xyz=20946,1812,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41819
+[PT] i=42 raw=1910,1482,1045 xyz=20910,1812,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41821
+[PT] i=43 raw=1946,1482,1045 xyz=20874,1812,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41822
+[PT] i=44 raw=1982,1482,1045 xyz=20838,1812,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41824
+[PT] i=45 raw=2018,1482,1045 xyz=20802,1812,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41825
+[PT] i=46 raw=2054,1482,1045 xyz=20766,1812,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41827
+[PT] i=47 raw=2090,1482,1045 xyz=20730,1812,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41828
+[PT] i=48 raw=2126,1482,1045 xyz=20694,1812,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41830
+[PT] i=49 raw=2162,1482,1045 xyz=20658,1812,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41831
+[PT] i=50 raw=1838,1518,1045 xyz=20982,1848,8780 d=324,36,0
+[MOV] dx=324 dy=36 dz=0 tseg=5 k2x=52 k2y=469 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41832
+[PT] i=51 raw=1874,1518,1045 xyz=20946,1848,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41834
+[PT] i=52 raw=1910,1518,1045 xyz=20910,1848,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41836
+[PT] i=53 raw=1946,1518,1045 xyz=20874,1848,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41838
+[PT] i=54 raw=1982,1518,1045 xyz=20838,1848,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41840
+[PT] i=55 raw=2018,1518,1045 xyz=20802,1848,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41842
+[PT] i=56 raw=2054,1518,1045 xyz=20766,1848,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41844
+[PT] i=57 raw=2090,1518,1045 xyz=20730,1848,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41846
+[PT] i=58 raw=2126,1518,1045 xyz=20694,1848,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41848
+[PT] i=59 raw=2162,1518,1045 xyz=20658,1848,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41850
+[PT] i=60 raw=1838,1554,1045 xyz=20982,1884,8780 d=324,36,0
+[MOV] dx=324 dy=36 dz=0 tseg=5 k2x=52 k2y=469 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41852
+[PT] i=61 raw=1874,1554,1045 xyz=20946,1884,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41853
+[PT] i=62 raw=1910,1554,1045 xyz=20910,1884,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41855
+[PT] i=63 raw=1946,1554,1045 xyz=20874,1884,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41856
+[PT] i=64 raw=1982,1554,1045 xyz=20838,1884,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41858
+[PT] i=65 raw=2018,1554,1045 xyz=20802,1884,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41859
+[PT] i=66 raw=2054,1554,1045 xyz=20766,1884,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41861
+[PT] i=67 raw=2090,1554,1045 xyz=20730,1884,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41862
+[PT] i=68 raw=2126,1554,1045 xyz=20694,1884,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41864
+[PT] i=69 raw=2162,1554,1045 xyz=20658,1884,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41865
+[PT] i=70 raw=1838,1590,1045 xyz=20982,1920,8780 d=324,36,0
+[MOV] dx=324 dy=36 dz=0 tseg=5 k2x=52 k2y=469 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41866
+[PT] i=71 raw=1874,1590,1045 xyz=20946,1920,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41868
+[PT] i=72 raw=1910,1590,1045 xyz=20910,1920,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41870
+[PT] i=73 raw=1946,1590,1045 xyz=20874,1920,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41872
+[PT] i=74 raw=1982,1590,1045 xyz=20838,1920,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41874
+[PT] i=75 raw=2018,1590,1045 xyz=20802,1920,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41876
+[PT] i=76 raw=2054,1590,1045 xyz=20766,1920,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41878
+[PT] i=77 raw=2090,1590,1045 xyz=20730,1920,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41880
+[PT] i=78 raw=2126,1590,1045 xyz=20694,1920,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41882
+[PT] i=79 raw=2162,1590,1045 xyz=20658,1920,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41884
+[PT] i=80 raw=1838,1626,1045 xyz=20982,1956,8780 d=324,36,0
+[MOV] dx=324 dy=36 dz=0 tseg=5 k2x=52 k2y=469 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41886
+[PT] i=81 raw=1874,1626,1045 xyz=20946,1956,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41887
+[PT] i=82 raw=1910,1626,1045 xyz=20910,1956,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41889
+[PT] i=83 raw=1946,1626,1045 xyz=20874,1956,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41890
+[PT] i=84 raw=1982,1626,1045 xyz=20838,1956,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41892
+[PT] i=85 raw=2018,1626,1045 xyz=20802,1956,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41893
+[PT] i=86 raw=2054,1626,1045 xyz=20766,1956,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41895
+[PT] i=87 raw=2090,1626,1045 xyz=20730,1956,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41896
+[PT] i=88 raw=2126,1626,1045 xyz=20694,1956,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41898
+[PT] i=89 raw=2162,1626,1045 xyz=20658,1956,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41899
+[PT] i=90 raw=1838,1662,1045 xyz=20982,1992,8780 d=324,36,0
+[MOV] dx=324 dy=36 dz=0 tseg=5 k2x=52 k2y=469 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41900
+[PT] i=91 raw=1874,1662,1045 xyz=20946,1992,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41902
+[PT] i=92 raw=1910,1662,1045 xyz=20910,1992,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41904
+[PT] i=93 raw=1946,1662,1045 xyz=20874,1992,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41906
+[PT] i=94 raw=1982,1662,1045 xyz=20838,1992,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41908
+[PT] i=95 raw=2018,1662,1045 xyz=20802,1992,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41910
+[PT] i=96 raw=2054,1662,1045 xyz=20766,1992,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41912
+[PT] i=97 raw=2090,1662,1045 xyz=20730,1992,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41914
+[PT] i=98 raw=2126,1662,1045 xyz=20694,1992,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41916
+[PT] i=99 raw=2162,1662,1045 xyz=20658,1992,8780 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41918
+[PT] i=100 raw=1838,1338,1117 xyz=20982,1668,8708 d=324,-324,-72
+[MOV] dx=324 dy=-324 dz=-72 tseg=5 k2x=52 k2y=52 k2z=234
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41920
+[PT] i=101 raw=1874,1338,1117 xyz=20946,1668,8708 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41921
+[PT] i=102 raw=1910,1338,1117 xyz=20910,1668,8708 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ok i=1 dsens=0002 mask=0002 fl=41923
+[PT] i=103 raw=1946,1338,1117 xyz=20874,1668,8708 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] ok i=0 dsens=0002 mask=0002 fl=41924
+[PT] i=104 raw=1982,1338,1117 xyz=20838,1668,8708 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=1 k2x=80 k2y=0 k2z=0
+[LPULS] CALL flag=0 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] ESC i=1 wrkpos=0002
+[PROC] LPULS FAIL pt=104 retry=0
+[START] st=104 fstart=2 metal=0 dchk=1
+[PROC] START n=104/1000 metal=0 dchk=1 lper=35 gate=23 shd=100
+[PROC] CFG xptr=680 yptr=330 zptr=150 zsize=305 nglas=1.5060 step=10 sf=2000 dT=6 fc=0 demo=0
+[PROC] CALC refr_ofs=1024 z_base=9826 (11000-zptr-refr_ofs)
+[PT] i=104 raw=1982,1338,1117 xyz=20838,1668,8708 d=-2462,1468,8508
+[MOV] dx=-2462 dy=1468 dz=8508 tseg=122 k2x=173 k2y=290 k2z=50
+[LPULS] CALL flag=1 dchk=1 metal=0
+[LPULS] retry i=0 dsens=0000 wrk=0002
+[LPULS] retry i=1 dsens=0000 wrk=0002
+[LPULS] retry i=2 dsens=0000 wrk=0002
+[LPULS] retry i=3 dsens=0000 wrk=0002
+[LPULS] retry i=4 dsens=0000 wrk=0002
+[LPULS] retry i=5 dsens=0000 wrk=0002
+[LPULS] retry i=6 dsens=0000 wrk=0002
+[LPULS] retry i=7 dsens=0000 wrk=0002
+[LPULS] retry i=8 dsens=0000 wrk=0002
+[LPULS] retry i=9 dsens=0000 wrk=0002
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41936
+[PROC] LPULS FAIL pt=104 retry=0
+=== Trace Log End ===

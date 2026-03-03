@@ -13,6 +13,8 @@
 ::   TLINK /c /x - case-sensitive, no map
 ::   Libraries: GRAPHICS EMU MATHL CL
 :: ===============================================
+:: Usage: COMPILE
+:: ===============================================
 if "%OS%"=="Windows_NT" goto NT_COMPILE
 
 :: ---------------------------------------------

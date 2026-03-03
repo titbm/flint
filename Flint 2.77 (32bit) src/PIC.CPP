@@ -312,25 +312,15 @@ int lpuls(int flag) {
 		program_pt2(l_period,(unsigned char)gate_delay);
 		ulFlash++;
 
-		/* Hardware-timed wait: guarantee Q-switch has fired before reset.
-		   After sync ch0 was near zero. program_pt2 loaded new values.
-		   ch0 finishes old cycle (<=330us) -> triggers ch1 -> reloads
-		   to l_period*100. ch1 counts gate_delay ticks (gate*10us).
-		   We wait for ch0 reload (proves trigger happened), then for
-		   enough counts to pass that ch1 has reached zero. */
-		{ unsigned int target = (unsigned int)l_period * 100
-		                        - gate_delay - 10;
-		  while(read_pt2() < 100) ;      /* wait for ch0 reload  */
-		  while(read_pt2() > target) ;   /* wait past gate region */
+		delay(1);
 #ifdef TRACE
-		  { unsigned int _post_pt2 = read_pt2();
-		    unsigned int _elap = (unsigned int)l_period*100 - _post_pt2;
-		    sprintf(_tbuf,"[LPULS] WAIT i=%u target=%u post=%u elapsed=%u ~%uus fl=%lu",
-		            i, target, _post_pt2, _elap, _elap*10, ulFlash);
-		    tlog_write(_tbuf);
-		  }
-#endif
+		{ unsigned int _post_pt2 = read_pt2();
+		  unsigned int _elap = (unsigned int)l_period*100 - _post_pt2;
+		  sprintf(_tbuf,"[LPULS] WAIT i=%u target=- post=%u elapsed=%u ~%uus fl=%lu",
+		          i, _post_pt2, _elap, _elap*10, ulFlash);
+		  tlog_write(_tbuf);
 		}
+#endif
 
 		/* Safe reset: gate minimum */
 		program_pt2(l_period,1);

@@ -26,10 +26,6 @@
 #include <stdio.h>
 #include <graphics.h>
 
-#ifdef HW_SIM
-#include "HW_SIM.H"
-#endif
-
 /*------------------------------------------------------------------
   TRACE: runtime diagnostic log for remote debugging.
   Writes FLINT.LOG next to EXE with timestamped hardware events.

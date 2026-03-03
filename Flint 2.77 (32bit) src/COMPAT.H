@@ -129,6 +129,34 @@ inline void nosound(void) {
     outp(0x61, inp(0x61) & 0xFC);        /* disable speaker */
 }
 
+/*--- Precise delay: Borland delay() replacement for Watcom ---*/
+/* Watcom's delay() uses INT 21h/AH=2Ch with ~55ms resolution.
+   This reads system PIT channel 0 (port 0x40) to measure elapsed
+   time with ~1us accuracy.  Non-invasive: does NOT reprogram any
+   timer, only latches and reads the existing counter.
+   PIT ch0 runs in mode 3 (square wave): counter decrements by 2
+   per clock tick.  PIT frequency: 1193182 Hz.
+   Counter units per ms = 1193182/1000 * 2 = ~2386. */
+inline void pit_delay_ms(unsigned ms) {
+    unsigned long total = (unsigned long)ms * 2386UL;
+    unsigned long elapsed = 0;
+    unsigned int prev, curr;
+    outp(0x43, 0x00);          /* latch ch0 */
+    prev  = (unsigned int)inp(0x40);
+    prev |= (unsigned int)inp(0x40) << 8;
+    while(elapsed < total) {
+        outp(0x43, 0x00);      /* latch ch0 */
+        curr  = (unsigned int)inp(0x40);
+        curr |= (unsigned int)inp(0x40) << 8;
+        if(curr <= prev)
+            elapsed += (unsigned long)(prev - curr);
+        else
+            elapsed += (unsigned long)prev + 65536UL - (unsigned long)curr;
+        prev = curr;
+    }
+}
+#define delay pit_delay_ms
+
 /*--- Mouse cursor macros: Borland pseudo-registers -> Watcom int386 ---*/
 #define CURSOR_ON()  { union REGS _r; _r.w.ax=1; int386(0x33,&_r,&_r); }
 #define CURSOR_OFF() { union REGS _r; _r.w.ax=2; int386(0x33,&_r,&_r); }
