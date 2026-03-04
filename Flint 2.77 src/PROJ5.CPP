@@ -1203,6 +1203,10 @@ c:				nmb_pbt=255; setdisk(path[0]-'A'); chdir(path); return i;
 int dlgstart(void) {
 	char tmpstr[10],str[23]; int k,m,s,c,f_start; long st_nmbnew=lastn;
 	f_start=2;
+#ifdef TRACE
+	sprintf(_tbuf,"[DLGSTART] ENTER lastn=%ld xcur=%d ycur=%d zcur=%d doptr=%d fptr=%d demo=%d",lastn,xcur,ycur,zcur,do_ptr,f_ptr,f_demo);
+	tlog_write(_tbuf);
+#endif
 	WndBkgr(100,100,520,400,COLDLG,"Start");
 	draw_bt(btc_strt,bnam_strt,BNM_STRT);
 	line(103,212,517,212);
@@ -1225,7 +1229,8 @@ int dlgstart(void) {
 		int i=scan_ms(btc_strt,bnam_strt,BNM_STRT,0);
 		switch(i) {
 			case 0:														// Ok
-a:				if(!f_metal && !LCtl) { msgbox1("Laser is not enabled."); goto b; }
+a:				/* v2.78: laser check removed — not present in v2.77 binary */
+				/* if(!f_metal && !LCtl) { msgbox1("Laser is not enabled."); goto b; } */
 				m=minmax();
 				if(m == 1) {
 					if(st_nmbnew < nmax) {
@@ -1241,8 +1246,14 @@ a:				if(!f_metal && !LCtl) { msgbox1("Laser is not enabled."); goto b; }
 #ifdef TRACE
 						sprintf(_tbuf,"[START] st=%ld fstart=%d metal=%d dchk=%d LCtl=%u gate=%d",start_nmb,f_start,f_metal,d_check,(unsigned)LCtl,gate_delay);
 						tlog_write(_tbuf);
+						sprintf(_tbuf,"[START] PRE-PROC xcur=%d ycur=%d zcur=%d doptr=%d fptr=%d",xcur,ycur,zcur,do_ptr,f_ptr);
+						tlog_write(_tbuf);
 #endif
 						k=process();
+#ifdef TRACE
+						sprintf(_tbuf,"[START] POST-PROC k=%d lastn=%ld xcur=%d ycur=%d zcur=%d doptr=%d",k,lastn,xcur,ycur,zcur,do_ptr);
+						tlog_write(_tbuf);
+#endif
 						outportb(ADRPPI+2,inportb(ADRPPI+2)|STEP_OFF);
 						FlashWr();
 						if(k) return 1;

@@ -486,6 +486,11 @@ int process(void) {
 #endif
 	msg(160,80,1,"For STOP: press ESC");
 	if(f_ptr || (!do_ptr)) move_sen(0);
+#ifdef TRACE
+	sprintf(_tbuf,"[PROC] RESUME xcur=%d ycur=%d zcur=%d doptr=%d fptr=%d st=%ld",
+		xcur,ycur,zcur,do_ptr,f_ptr,start_nmb);
+	tlog_write(_tbuf);
+#endif
 	outportb(ADRPPI+2,inportb(ADRPPI+2)&PR_OPEN);				// Protect-open
 #ifdef TRACE
 	tlog_write("[HW] PPI2 PR_OPEN");

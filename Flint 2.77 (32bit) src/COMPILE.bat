@@ -79,6 +79,7 @@ if exist %FLINTDIR%\BFT_FILES xcopy /E /I %FLINTDIR%\BFT_FILES BUILD\BFT_FILES >
 echo @echo off > BUILD\RUN.bat
 echo if not exist PROJ5.EXE goto NO_EXE >> BUILD\RUN.bat
 echo if not exist DOS4GW.EXE goto NO_DOS4GW >> BUILD\RUN.bat
+echo SET DOS4GVM=MAXMEM#128000 >> BUILD\RUN.bat
 echo PROJ5.EXE >> BUILD\RUN.bat
 echo goto END >> BUILD\RUN.bat
 echo :NO_EXE >> BUILD\RUN.bat
@@ -202,6 +203,7 @@ xcopy /E /I /Y "%FLINTDIR%\BFT_FILES" "%BUILDDIR%\BFT_FILES" >nul
 >>"%BUILDDIR%\RUN.bat" echo if "%%OS%%"=="Windows_NT" goto NT_RUN
 >>"%BUILDDIR%\RUN.bat" echo if not exist PROJ5.EXE goto NO_EXE
 >>"%BUILDDIR%\RUN.bat" echo if not exist DOS4GW.EXE goto NO_DOS4GW
+>>"%%BUILDDIR%%\RUN.bat" echo SET DOS4GVM=MAXMEM#128000
 >>"%BUILDDIR%\RUN.bat" echo PROJ5.EXE
 >>"%BUILDDIR%\RUN.bat" echo goto END
 >>"%BUILDDIR%\RUN.bat" echo :NT_RUN
