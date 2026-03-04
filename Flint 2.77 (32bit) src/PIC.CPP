@@ -34,7 +34,7 @@
   Writes FLINT.LOG next to EXE with timestamped hardware events.
   Comment out #define TRACE to disable for production builds.
 ------------------------------------------------------------------*/
-// #define TRACE  /* DISABLED: file I/O between port writes causes Z-axis timing errors on real hardware (see v2.11, v2.76 changelog) */
+#define TRACE
 
 #ifdef TRACE
 FILE *tlog = NULL;
@@ -55,8 +55,6 @@ void tlog_open(void)  {}
 void tlog_close(void) {}
 void tlog_write(const char *s) {}
 #endif
-
-
 
 #define ADRPT0 0x300
 #define ADRPT1 ADRPT0+4			// 0x304
@@ -552,7 +550,7 @@ a:		if(f_metal) {
 				sprintf(_tbuf,"[PROC] METAL FAIL pt=%ld retry=%d",i,k);
 				tlog_write(_tbuf);
 #endif
-				if(!k) { return 0; }
+				if(!k) return 0;
 				msg(160,80,1,"For STOP: press ESC");
 				flag=1;
 				if(k == 1) goto a;
@@ -574,7 +572,7 @@ a2:		if(!lpuls(flag)) {
 			sprintf(_tbuf,"[PROC] LPULS FAIL pt=%ld retry=%d",i,k);
 			tlog_write(_tbuf);
 #endif
-			if(!k) { return 0; }
+			if(!k) return 0;
 			msg(160,80,1,"For STOP: press ESC");
 			flag=1;
 			if(k == 1) goto a2;
@@ -754,7 +752,6 @@ c:	fxy=0; fz=0; done=0;
 	sprintf(_tbuf,"[HW] RG OUT %02X fxy=%d fz=%d",(int)ctlw,fxy,fz);
 	tlog_write(_tbuf);
 #endif
-
 	if((!dx)&&(!dy)&&(!dz)) goto b;
 	if(!f_demo) {
 		while(!done) {
