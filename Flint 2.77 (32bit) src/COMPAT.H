@@ -16,8 +16,12 @@
 #include <bios.h>
 
 /*--- I/O port access: Borland -> Watcom ---*/
-#define outportb(p,v)   outp((p),(v))
+/* Add I/O bus delay after port writes to match 16-bit Borland C timing.
+   Without this, consecutive 8254 PIT writes may be too fast for the chip
+   to latch values correctly. Reading port 0x80 inserts ~1us ISA bus delay. */
 #define inportb(p)      ((unsigned char)inp((p)))
+static void __inline _compat_iodelay(void) { inp(0x80); }
+#define outportb(p,v)   do { outp((p),(v)); _compat_iodelay(); } while(0)
 
 /*--- Far memory: Borland -> Watcom flat model ---*/
 #define farmalloc(s)    malloc((s))

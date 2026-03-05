@@ -85,6 +85,11 @@ extern void tlog_close(void);
 extern void tlog_write(const char *);
 extern char _tbuf[];
 
+#ifdef TRACE
+/* Diagnostic test (PIC.CPP) */
+extern void diag_z_test(void);
+#endif
+
 
 int main() {
 	int i, k, g_mode, g_error_code, all, g_driver=DETECT;
@@ -198,6 +203,14 @@ b:					closegraph();
 					/* v2.77: F7(65) removed */
 					case 67: goto c;									// F9
 					case 68: goto e;									// F10
+#ifdef TRACE
+					case 65:											// F7 Z-Diag
+						outportb(ADRPPI+2,inportb(ADRPPI+2)&STEP_ON);
+						delay(30);
+						diag_z_test();
+						outportb(ADRPPI+2,inportb(ADRPPI+2)|STEP_OFF);
+						break;
+#endif
 					}
 				break;
 			}
@@ -1229,8 +1242,7 @@ int dlgstart(void) {
 		int i=scan_ms(btc_strt,bnam_strt,BNM_STRT,0);
 		switch(i) {
 			case 0:														// Ok
-a:				/* v2.78: laser check removed — not present in v2.77 binary */
-				/* if(!f_metal && !LCtl) { msgbox1("Laser is not enabled."); goto b; } */
+a:				if(!f_metal && !LCtl) { msgbox1("Laser is not enabled."); goto b; }
 				m=minmax();
 				if(m == 1) {
 					if(st_nmbnew < nmax) {

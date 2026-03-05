@@ -180,6 +180,9 @@ void sh_close(void);
 int lpuls_metal(int flag);
 int move_sen(int dir);
 int move(int x, int y, int z);
+#ifdef TRACE
+void read_d_counters(unsigned int *xd, unsigned int *yd, unsigned int *zd);
+#endif
 
 /* v2.73: Segment time estimator for htime()
    Returns number of l_period intervals needed for a move of (dx,dy,dz) steps */
@@ -221,6 +224,43 @@ unsigned int read_pt2(void) {
 	}
 
 
+#ifdef TRACE
+/* Read back d-counter (step count) for each axis.
+   Uses 8254 Counter Latch Command: SC bits select channel.
+   PT0.ch1 = X steps (cmd 0x40), PT1.ch1 = Y steps (cmd 0x40),
+   PT1.ch2 = Z steps (cmd 0x80). */
+void read_d_counters(unsigned int *xd, unsigned int *yd, unsigned int *zd) {
+	unsigned int lo, hi;
+	/* X d counter: PT0 ch1 */
+	outportb(ADRPT0+3, 0x40);		/* Latch ch1 */
+	lo = (unsigned int)inportb(ADRPT0+1);
+	hi = (unsigned int)inportb(ADRPT0+1);
+	*xd = lo + hi*256;
+	/* Y d counter: PT1 ch1 */
+	outportb(ADRPT1+3, 0x40);		/* Latch ch1 */
+	lo = (unsigned int)inportb(ADRPT1+1);
+	hi = (unsigned int)inportb(ADRPT1+1);
+	*yd = lo + hi*256;
+	/* Z d counter: PT1 ch2 */
+	outportb(ADRPT1+3, 0x80);		/* Latch ch2 */
+	lo = (unsigned int)inportb(ADRPT1+2);
+	hi = (unsigned int)inportb(ADRPT1+2);
+	*zd = lo + hi*256;
+	}
+
+/* Read back a single 8254 counter value.
+   base = timer base address (ADRPT0 or ADRPT1)
+   ch = channel (0,1,2)
+   Sends Counter Latch Command, reads low+high byte. */
+unsigned int read_counter(int base, int ch) {
+	unsigned int lo, hi;
+	unsigned char latch_cmd = (unsigned char)(ch << 6);
+	outportb(base+3, latch_cmd);
+	lo = (unsigned int)inportb(base+ch);
+	hi = (unsigned int)inportb(base+ch);
+	return lo + hi*256;
+	}
+#endif
 
 
 int pi_ini(void) {
@@ -495,6 +535,11 @@ int process(void) {
 	}
 #endif
 	msg(160,80,1,"For STOP: press ESC");
+#ifdef TRACE
+	sprintf(_tbuf,"[PROC] CHK doptr=%d fptr=%d xcur=%d ycur=%d zcur=%d => %s",
+		do_ptr,f_ptr,xcur,ycur,zcur,(f_ptr||(!do_ptr))?"HOMING":"SKIP");
+	tlog_write(_tbuf);
+#endif
 	if(f_ptr || (!do_ptr)) move_sen(0);
 #ifdef TRACE
 	sprintf(_tbuf,"[PROC] RESUME xcur=%d ycur=%d zcur=%d doptr=%d fptr=%d st=%ld",
@@ -594,7 +639,7 @@ a2:		if(!lpuls(flag)) {
 #endif
 				sh_close(); msg(160,80,0,"");
 #ifdef TRACE
-				sprintf(_tbuf,"[PROC] ESC pt=%ld/%ld fl=%lu",i,nmax,ulFlash);
+				sprintf(_tbuf,"[STOP] ESC pt=%ld/%ld zcur=%d (Z до датчика: %d шагов)",i,nmax,zcur,zcur);
 				tlog_write(_tbuf);
 #endif
 				return 0;
@@ -608,17 +653,21 @@ a2:		if(!lpuls(flag)) {
 #endif
 	sh_close();
 #ifdef TRACE
-	sprintf(_tbuf,"[PROC] END ok n=%ld fl=%lu",nmax,ulFlash);
+	sprintf(_tbuf,"[STOP] TABLE_END zcur=%d (Z до датчика: %d шагов)",zcur,zcur);
 	tlog_write(_tbuf);
 #endif
 	msg(160,80,0,"");
 	msgbox("Ok.  TABLE END",0,1);
-	lastn=0; return 1;
+	lastn=0;
+	return 1;
 	}
 
 
 int move_sen(int dir) {
 	int done,fxy,fz; unsigned char stspb,tw;
+#ifdef TRACE
+	unsigned int _zRemain=0; int _zCaught=0;
+#endif
 
 	outportb(ADRPT0,0x64); outportb(ADRPT0,0);		// K2x=100: Fstep=1000Hz
 	outportb(ADRPT0+1,0); outportb(ADRPT0+1,0x70);	// dX=28672(>Xscale)
@@ -635,16 +684,17 @@ int move_sen(int dir) {
 		tw=(ctlw|XUP|YUP)&XOFF&YOFF&ZOFF&ZDOWN&OSCON;
 		}
 	outportb(ADRRG,ctlw);
-#ifdef TRACE
-	sprintf(_tbuf,"[HW] SEN_GO dir=%d RG=%02X target=%02X",dir,(int)ctlw,(int)tw);
-	tlog_write(_tbuf);
-#endif
 	if(!f_demo) {
 		while(ctlw != tw) {
 			stspb=inportb(ADRPPI+1);
 			if((stspb & 0x03) != 0x03) ctlw=ctlw&XOFF;
 			if((stspb & 0x0c) != 0x0c) ctlw=ctlw&YOFF;
-			if((stspb & 0x30) != 0x30) ctlw=ctlw&ZOFF;
+			if((stspb & 0x30) != 0x30) {
+				ctlw=ctlw&ZOFF;
+#ifdef TRACE
+				if(!_zCaught) { _zRemain=read_counter(ADRPT1,2); _zCaught=1; }
+#endif
+				}
 			outportb(ADRRG,ctlw);
 			/* v2.76: removed out_time(1) */
 			}
@@ -657,10 +707,6 @@ int move_sen(int dir) {
 	outportb(ADRPT1+2,0xc8); outportb(ADRPT1+2,0x00);			// dZ=200
 	if(!dir) {ctlw=(XON|YON|ZON|YUP|ZUP)&XDOWN&OSCON; outportb(ADRRG,ctlw);}
 	else {ctlw=(XON|YON|ZON|ZUP)&XDOWN&YDOWN&OSCON; outportb(ADRRG,ctlw);}
-#ifdef TRACE
-	sprintf(_tbuf,"[HW] SEN_RET RG=%02X",(int)ctlw);
-	tlog_write(_tbuf);
-#endif
 	fxy=1; fz=1; done=0;
 	if(!f_demo) {
 		while(!done) {
@@ -673,12 +719,63 @@ int move_sen(int dir) {
 		}
 	outportb(ADRRG,0x80);
 #ifdef TRACE
-	tlog_write("[HW] RG IDLE 80");
+	{int _zcur_was=zcur; unsigned int _zActual=(unsigned)(16384-_zRemain);
 #endif
 	if(!dir) {xcur=23300; ycur=200; zcur=200;}
 	do_ptr = !dir;
+#ifdef TRACE
+	sprintf(_tbuf,"[HOMING] dir=%d Zexpect=%d Zactual=%u Zdelta=%d sens=%02X",
+		dir,_zcur_was,_zActual,_zcur_was-(int)_zActual,(int)inportb(ADRPPI+1));
+	tlog_write(_tbuf);
+	}
+#endif
 	return 1;
 	}
+
+
+#ifdef TRACE
+/* Diagnostic: test Z axis repeatability.
+   Calls move_sen(0) N times, moves Z between calls, logs sensor/counter state.
+   Must be called with step drivers already enabled. */
+void diag_z_test(void) {
+	int n, saved_x, saved_y, saved_z;
+	unsigned int xd, yd, zd;
+	unsigned char sens;
+
+	saved_x = xcur; saved_y = ycur; saved_z = zcur;
+	tlog_write("[DIAG] Z-TEST START");
+
+	for(n = 0; n < 5; n++) {
+		sprintf(_tbuf, "[DIAG] iter=%d PRE xcur=%d ycur=%d zcur=%d", n, xcur, ycur, zcur);
+		tlog_write(_tbuf);
+
+		/* Phase A: home to sensors */
+		move_sen(0);
+		sens = inportb(ADRPPI+1);
+		read_d_counters(&xd, &yd, &zd);
+		sprintf(_tbuf, "[DIAG] iter=%d HOME sens=%02X Xd=%u Yd=%u Zd=%u x=%d y=%d z=%d",
+			n, (int)sens, xd, yd, zd, xcur, ycur, zcur);
+		tlog_write(_tbuf);
+
+		/* Phase B: move Z up 500 steps (stay at X/Y home) */
+		if(!move(xcur, ycur, zcur + 500)) {
+			sprintf(_tbuf, "[DIAG] iter=%d MOVE_FAIL", n);
+			tlog_write(_tbuf);
+			break;
+		}
+		sens = inportb(ADRPPI+1);
+		read_d_counters(&xd, &yd, &zd);
+		sprintf(_tbuf, "[DIAG] iter=%d MOVED sens=%02X Xd=%u Yd=%u Zd=%u x=%d y=%d z=%d",
+			n, (int)sens, xd, yd, zd, xcur, ycur, zcur);
+		tlog_write(_tbuf);
+	}
+
+	/* Return to sensor position */
+	move_sen(0);
+	sprintf(_tbuf, "[DIAG] Z-TEST DONE final x=%d y=%d z=%d", xcur, ycur, zcur);
+	tlog_write(_tbuf);
+}
+#endif
 
 
 /* v2.77: k2 calculator for move() - computes step frequency divider per axis
@@ -747,7 +844,22 @@ c:	fxy=0; fz=0; done=0;
 		fz=1;
 		}
 	else ctlw=ctlw&ZOFF;
-	ctlw=ctlw&OSCON; outportb(ADRRG,ctlw);
+	ctlw=ctlw&OSCON;
+#ifdef TRACE
+	/* VERIFY: read back counters BEFORE starting motors. */
+	{	unsigned int _rk2x,_rk2y,_rk2z,_rdx,_rdy,_rdz;
+		_rk2x=read_counter(ADRPT0,0);
+		_rdx=read_counter(ADRPT0,1);
+		_rk2y=read_counter(ADRPT1,0);
+		_rdy=read_counter(ADRPT1,1);
+		_rk2z=read_counter(ADRPT0,2);
+		_rdz=read_counter(ADRPT1,2);
+		sprintf(_tbuf,"[VFY] K2x=%u dX=%u K2y=%u dY=%u K2z=%u dZ=%u",
+			_rk2x,_rdx,_rk2y,_rdy,_rk2z,_rdz);
+		tlog_write(_tbuf);
+	}
+#endif
+	outportb(ADRRG,ctlw);
 #ifdef TRACE
 	sprintf(_tbuf,"[HW] RG OUT %02X fxy=%d fz=%d",(int)ctlw,fxy,fz);
 	tlog_write(_tbuf);
@@ -772,6 +884,16 @@ c:	fxy=0; fz=0; done=0;
 			}
 		}
 b:	if(f_demo) delay(l_period);										// v2.77: fixed per binary
+#ifdef TRACE
+	{	unsigned int _xd,_yd,_zd; unsigned char _sens;
+		_zd=read_counter(ADRPT1,2);  /* dZ remainder right after done */
+		_sens=inportb(ADRPPI+1);
+		read_d_counters(&_xd,&_yd,&_zd);  /* also read all via latch */
+		sprintf(_tbuf,"[MOV] DONE sens=%02X Xd=%u Yd=%u Zd=%u dz_prog=%d cur=%d,%d,%d->%d,%d,%d",
+			(int)_sens,_xd,_yd,_zd,dz,xcur,ycur,zcur,x,y,z);
+		tlog_write(_tbuf);
+	}
+#endif
 	xcur=x; ycur=y; zcur=z;
 	/* v2.76: removed out_time(1) */
 	return 1;
