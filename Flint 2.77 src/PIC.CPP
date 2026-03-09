@@ -32,6 +32,7 @@
   Comment out #define TRACE to disable for production builds.
 ------------------------------------------------------------------*/
 #define TRACE
+/* #define VFY_COUNTERS */  /* enables read_counter verification in move() -- may disrupt 8254 */
 
 #ifdef TRACE
 FILE *tlog = NULL;
@@ -837,9 +838,10 @@ c:	fxy=0; fz=0; done=0;
 		}
 	else ctlw=ctlw&ZOFF;
 	ctlw=ctlw&OSCON;
-#ifdef TRACE
+#ifdef VFY_COUNTERS
 	/* VERIFY: read back counters BEFORE starting motors.
-	   Compare what 8254 received vs what we programmed. */
+	   WARNING: latch commands may disrupt 8254 on real hardware.
+	   Only enable for bench testing. */
 	{	unsigned int _rk2x,_rk2y,_rk2z,_rdx,_rdy,_rdz;
 		_rk2x=read_counter(ADRPT0,0);	/* K2x */
 		_rdx=read_counter(ADRPT0,1);	/* dX */
@@ -878,12 +880,11 @@ c:	fxy=0; fz=0; done=0;
 		}
 b:	if(f_demo) delay(l_period);										// v2.77: fixed per binary
 #ifdef TRACE
-	{	unsigned int _xd,_yd,_zd; unsigned char _sens;
-		_zd=read_counter(ADRPT1,2);  /* dZ remainder right after done */
+	{	unsigned int _zd; unsigned char _sens;
 		_sens=inportb(ADRPPI+1);
-		read_d_counters(&_xd,&_yd,&_zd);  /* also read all via latch */
-		sprintf(_tbuf,"[MOV] DONE sens=%02X Xd=%u Yd=%u Zd=%u dz_prog=%d cur=%d,%d,%d->%d,%d,%d",
-			(int)_sens,_xd,_yd,_zd,dz,xcur,ycur,zcur,x,y,z);
+		_zd=read_counter(ADRPT1,2);  /* Z remainder: safe, motors already stopped */
+		sprintf(_tbuf,"[MOV] DONE sens=%02X Zd=%u dz_prog=%d cur=%d,%d,%d->%d,%d,%d",
+			(int)_sens,_zd,dz,xcur,ycur,zcur,x,y,z);
 		tlog_write(_tbuf);
 	}
 #endif
