@@ -71,7 +71,9 @@
 #pragma hdrstop
 #include "proj5.h"
 
+#ifndef NOTRACE
 #define TRACE
+#endif
 
 #define BITMAP_MSG_SIZE  65536UL
 #define BGMAP_SIZE       4096UL

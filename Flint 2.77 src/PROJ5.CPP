@@ -70,7 +70,9 @@
 #pragma hdrstop
 #include "proj5.h"
 
+#ifndef NOTRACE
 #define TRACE
+#endif
 
 /* v2.77: extern from PIC.CPP for pump/gate control */
 extern unsigned char LCtl;

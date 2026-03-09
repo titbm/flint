@@ -33,13 +33,17 @@
   TRACE: runtime diagnostic log for remote debugging.
   Writes FLINT.LOG next to EXE with timestamped hardware events.
   Comment out #define TRACE to disable for production builds.
+  Or compile with -DNOTRACE to suppress without editing source.
 ------------------------------------------------------------------*/
+#ifndef NOTRACE
 #define TRACE
+#endif
 /* #define VFY_COUNTERS */  /* enables read_counter verification in move() -- may disrupt 8254 */
+
+char _tbuf[160];
 
 #ifdef TRACE
 FILE *tlog = NULL;
-char _tbuf[160];
 void tlog_open(void)  {
 	tlog=fopen("FLINT.LOG","w");
 	if(tlog) {

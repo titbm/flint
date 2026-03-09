@@ -2,12 +2,13 @@
 # Makefile for FLINT+ 2.77 — 32-bit DOS/4GW port
 # Open Watcom C/C++ wmake
 #
-# Usage:  wmake          (build)
-#         wmake clean    (remove .obj and .exe)
+# Usage:  wmake                    (build with TRACE)
+#         wmake EXTRA=-dNOTRACE    (build without TRACE)
+#         wmake clean              (remove .obj and .exe)
 #
 
 CC = wpp386
-CFLAGS = -bt=dos -mf -ox -zq -w3 -i=.
+CFLAGS = -bt=dos -mf -ox -zq -w3 -i=. $(EXTRA)
 
 LINK = wlink
 LFLAGS = system dos4g
