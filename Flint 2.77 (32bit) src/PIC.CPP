@@ -716,8 +716,11 @@ int move_sen(int dir) {
 	if(!f_demo) {
 		while(!done) {
 			stspb=inportb(ADRPPI+1);
-			if(stspb & 0x80) {ctlw=ctlw&XOFF&YOFF; fxy=0;}
-			if(stspb & 0x40) {ctlw=ctlw&ZOFF; fz=0;}
+			unsigned char stspb_t = stspb;
+                        int _j; for(_j=0; _j<10; _j++) stspb_t &= inportb(ADRPPI+1);
+                        if(stspb_t & 0x80) {ctlw=ctlw&XOFF&YOFF; fxy=0;}
+                        if(stspb_t & 0x40) {ctlw=ctlw&ZOFF; fz=0;}
+                        /* Debounce inserted ONLY for homing */
 			outportb(ADRRG,ctlw);
 			if((!fxy) && (!fz)) done=1;
 			}
