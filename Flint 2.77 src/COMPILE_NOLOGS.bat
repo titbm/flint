@@ -50,29 +50,31 @@ if not exist PROJ5.EXE goto COMPILE_FAIL
 echo.
 echo *** Compilation successful (RELEASE) ***
 
-echo Building output directory...
-if not exist BUILD mkdir BUILD
-copy PROJ5.EXE BUILD\ >nul
+:: Build output directory
+set BUILDNAME=BUILD_16BIT_NOLOGS
+echo Building output directory: %BUILDNAME%
+if not exist %BUILDNAME% mkdir %BUILDNAME%
+copy PROJ5.EXE %BUILDNAME%\ >nul
 del PROJ5.EXE
-if exist %FLINTDIR%\FLINT.GLS copy %FLINTDIR%\FLINT.GLS BUILD\ >nul
-if exist %FLINTDIR%\FLINT1.CFG copy %FLINTDIR%\FLINT1.CFG BUILD\ >nul
-if exist %FLINTDIR%\FLINT9.CFG copy %FLINTDIR%\FLINT9.CFG BUILD\ >nul
-if exist %FLINTDIR%\FLASH.DAT copy %FLINTDIR%\FLASH.DAT BUILD\ >nul
-if exist %FLINTDIR%\CONFIG.SYS copy %FLINTDIR%\CONFIG.SYS BUILD\ >nul
-if exist %FLINTDIR%\BFT_FILES xcopy /E /I %FLINTDIR%\BFT_FILES BUILD\BFT_FILES >nul
+if exist %FLINTDIR%\FLINT.GLS copy %FLINTDIR%\FLINT.GLS %BUILDNAME%\ >nul
+if exist %FLINTDIR%\FLINT1.CFG copy %FLINTDIR%\FLINT1.CFG %BUILDNAME%\ >nul
+if exist %FLINTDIR%\FLINT9.CFG copy %FLINTDIR%\FLINT9.CFG %BUILDNAME%\ >nul
+if exist %FLINTDIR%\FLASH.DAT copy %FLINTDIR%\FLASH.DAT %BUILDNAME%\ >nul
+if exist %FLINTDIR%\CONFIG.SYS copy %FLINTDIR%\CONFIG.SYS %BUILDNAME%\ >nul
+if exist %FLINTDIR%\BFT_FILES xcopy /E /I %FLINTDIR%\BFT_FILES %BUILDNAME%\BFT_FILES >nul
 
-echo @echo off > BUILD\RUN.bat
-echo if not exist PROJ5.EXE goto NO_EXE >> BUILD\RUN.bat
-echo PROJ5.EXE >> BUILD\RUN.bat
-echo goto END >> BUILD\RUN.bat
-echo :NO_EXE >> BUILD\RUN.bat
-echo echo PROJ5.EXE not found. >> BUILD\RUN.bat
-echo pause >> BUILD\RUN.bat
-echo :END >> BUILD\RUN.bat
+echo @echo off > %BUILDNAME%\RUN.bat
+echo if not exist PROJ5.EXE goto NO_EXE >> %BUILDNAME%\RUN.bat
+echo PROJ5.EXE >> %BUILDNAME%\RUN.bat
+echo goto END >> %BUILDNAME%\RUN.bat
+echo :NO_EXE >> %BUILDNAME%\RUN.bat
+echo echo PROJ5.EXE not found. >> %BUILDNAME%\RUN.bat
+echo pause >> %BUILDNAME%\RUN.bat
+echo :END >> %BUILDNAME%\RUN.bat
 
 echo.
-echo Done! BUILD directory created (RELEASE, no logging).
-echo To run: BUILD\RUN.bat
+echo Done! %BUILDNAME% directory created (RELEASE, no logging).
+echo To run: %BUILDNAME%\RUN.bat
 pause
 goto END
 
@@ -100,7 +102,11 @@ echo ===========================================
 set SRCDIR=%~dp0.
 set FLINTDIR=%~dp0..\!GENESIS\Flint 2.77
 set TOOLSDIR=%~dp0..\Tools
-set BUILDDIR=%~dp0BUILD
+
+:: Generate timestamp (DDMMYY_HHMMSS)
+for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /format:list 2^>nul') do if not "%%I"=="" set "datetime=%%I"
+set "TSTAMP=%datetime:~6,2%%datetime:~4,2%%datetime:~2,2%_%datetime:~8,2%%datetime:~10,2%%datetime:~12,2%"
+set BUILDDIR=%~dp0BUILD_16BIT_NOLOGS_%TSTAMP%
 
 if exist "%TOOLSDIR%\BC45\BIN\BCC.EXE" (
     set BCDIR=%TOOLSDIR%\BC45
@@ -211,8 +217,8 @@ if exist "%FLINTDIR%\BFT_FILES" (
 )
 
 echo.
-echo Done! BUILD directory created (RELEASE, no logging).
-echo To run - double-click BUILD\RUN.bat
+echo Done! Directory created: BUILD_16BIT_NOLOGS_%TSTAMP%
+echo To run - double-click RUN.bat inside it
 pause
 goto END
 

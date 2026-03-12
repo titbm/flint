@@ -55,45 +55,46 @@ echo.
 echo *** Compilation successful ***
 
 :: Build output directory
-echo Building output directory...
-if not exist BUILD mkdir BUILD
-copy PROJ5.EXE BUILD\ >nul
+set BUILDNAME=BUILD_32BIT
+echo Building output directory: %BUILDNAME%
+if not exist %BUILDNAME% mkdir %BUILDNAME%
+copy PROJ5.EXE %BUILDNAME%\ >nul
 del PROJ5.EXE
 
 :: Copy DOS/4GW
-if exist %WATCOM%\binw\dos4gw.exe copy %WATCOM%\binw\dos4gw.exe BUILD\ >nul
+if exist %WATCOM%\binw\dos4gw.exe copy %WATCOM%\binw\dos4gw.exe %BUILDNAME%\ >nul
 
 :: Remove intermediate files
 if exist *.OBJ del *.OBJ
 if exist *.ERR del *.ERR
 if exist DEBUG.LOG del DEBUG.LOG
 
-if exist %FLINTDIR%\FLINT.GLS copy %FLINTDIR%\FLINT.GLS BUILD\ >nul
-if exist %FLINTDIR%\FLINT1.CFG copy %FLINTDIR%\FLINT1.CFG BUILD\ >nul
-if exist %FLINTDIR%\FLINT9.CFG copy %FLINTDIR%\FLINT9.CFG BUILD\ >nul
-if exist %FLINTDIR%\FLASH.DAT copy %FLINTDIR%\FLASH.DAT BUILD\ >nul
-if exist %FLINTDIR%\CONFIG.SYS copy %FLINTDIR%\CONFIG.SYS BUILD\ >nul
-if exist %FLINTDIR%\BFT_FILES xcopy /E /I %FLINTDIR%\BFT_FILES BUILD\BFT_FILES >nul
+if exist %FLINTDIR%\FLINT.GLS copy %FLINTDIR%\FLINT.GLS %BUILDNAME%\ >nul
+if exist %FLINTDIR%\FLINT1.CFG copy %FLINTDIR%\FLINT1.CFG %BUILDNAME%\ >nul
+if exist %FLINTDIR%\FLINT9.CFG copy %FLINTDIR%\FLINT9.CFG %BUILDNAME%\ >nul
+if exist %FLINTDIR%\FLASH.DAT copy %FLINTDIR%\FLASH.DAT %BUILDNAME%\ >nul
+if exist %FLINTDIR%\CONFIG.SYS copy %FLINTDIR%\CONFIG.SYS %BUILDNAME%\ >nul
+if exist %FLINTDIR%\BFT_FILES xcopy /E /I %FLINTDIR%\BFT_FILES %BUILDNAME%\BFT_FILES >nul
 
-:: Generate BUILD\RUN.bat (DOS only - no dosbox-x.conf)
-echo @echo off > BUILD\RUN.bat
-echo if not exist PROJ5.EXE goto NO_EXE >> BUILD\RUN.bat
-echo if not exist DOS4GW.EXE goto NO_DOS4GW >> BUILD\RUN.bat
-echo SET DOS4GVM=MAXMEM#128000 >> BUILD\RUN.bat
-echo PROJ5.EXE >> BUILD\RUN.bat
-echo goto END >> BUILD\RUN.bat
-echo :NO_EXE >> BUILD\RUN.bat
-echo echo PROJ5.EXE not found. >> BUILD\RUN.bat
-echo pause >> BUILD\RUN.bat
-echo goto END >> BUILD\RUN.bat
-echo :NO_DOS4GW >> BUILD\RUN.bat
-echo echo DOS4GW.EXE not found. >> BUILD\RUN.bat
-echo pause >> BUILD\RUN.bat
-echo :END >> BUILD\RUN.bat
+:: Generate RUN.bat (DOS only - no dosbox-x.conf)
+echo @echo off > %BUILDNAME%\RUN.bat
+echo if not exist PROJ5.EXE goto NO_EXE >> %BUILDNAME%\RUN.bat
+echo if not exist DOS4GW.EXE goto NO_DOS4GW >> %BUILDNAME%\RUN.bat
+echo SET DOS4GVM=MAXMEM#128000 >> %BUILDNAME%\RUN.bat
+echo PROJ5.EXE >> %BUILDNAME%\RUN.bat
+echo goto END >> %BUILDNAME%\RUN.bat
+echo :NO_EXE >> %BUILDNAME%\RUN.bat
+echo echo PROJ5.EXE not found. >> %BUILDNAME%\RUN.bat
+echo pause >> %BUILDNAME%\RUN.bat
+echo goto END >> %BUILDNAME%\RUN.bat
+echo :NO_DOS4GW >> %BUILDNAME%\RUN.bat
+echo echo DOS4GW.EXE not found. >> %BUILDNAME%\RUN.bat
+echo pause >> %BUILDNAME%\RUN.bat
+echo :END >> %BUILDNAME%\RUN.bat
 
 echo.
-echo Done! BUILD directory created.
-echo To run: BUILD\RUN.bat
+echo Done! %BUILDNAME% directory created.
+echo To run: %BUILDNAME%\RUN.bat
 pause
 goto END
 
@@ -123,8 +124,12 @@ echo ===========================================
 set "SRCDIR=%~dp0."
 set "FLINTDIR=%~dp0..\!GENESIS\Flint 2.77"
 set "TOOLSDIR=%~dp0..\Tools"
-set "BUILDDIR=%~dp0BUILD"
 set "WATCOM=%~dp0..\Tools\WATCOM"
+
+:: Generate timestamp (DDMMYY_HHMMSS)
+for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /format:list 2^>nul') do if not "%%I"=="" set "datetime=%%I"
+set "TSTAMP=%datetime:~6,2%%datetime:~4,2%%datetime:~2,2%_%datetime:~8,2%%datetime:~10,2%%datetime:~12,2%"
+set "BUILDDIR=%~dp0BUILD_32BIT_%TSTAMP%"
 
 :: --------------------------------------------
 :: Compiler: Open Watcom C++ wpp386
@@ -229,8 +234,8 @@ xcopy /E /I /Y "%FLINTDIR%\BFT_FILES" "%BUILDDIR%\BFT_FILES" >nul
 
 echo.
 echo ===========================================
-echo   Done! BUILD directory created.
-echo   To run - double-click BUILD\RUN.bat
+echo   Done! Directory created: BUILD_32BIT_%TSTAMP%
+echo   To run - double-click RUN.bat inside it
 echo ===========================================
 pause
 goto END
