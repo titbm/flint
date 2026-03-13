@@ -104,8 +104,7 @@ set FLINTDIR=%~dp0..\!GENESIS\Flint 2.77
 set TOOLSDIR=%~dp0..\Tools
 
 :: Generate timestamp (DDMMYY_HHMMSS)
-for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /format:list 2^>nul') do if not "%%I"=="" set "datetime=%%I"
-set "TSTAMP=%datetime:~6,2%%datetime:~4,2%%datetime:~2,2%_%datetime:~8,2%%datetime:~10,2%%datetime:~12,2%"
+for /f %%I in ('powershell -noprofile -command "Get-Date -Format ddMMyy_HHmmss"') do set "TSTAMP=%%I"
 set BUILDDIR=%~dp0BUILD_16BIT_NOLOGS_%TSTAMP%
 
 if exist "%TOOLSDIR%\BC45\BIN\BCC.EXE" (

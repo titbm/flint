@@ -127,8 +127,7 @@ set "TOOLSDIR=%~dp0..\Tools"
 set "WATCOM=%~dp0..\Tools\WATCOM"
 
 :: Generate timestamp (DDMMYY_HHMMSS)
-for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /format:list 2^>nul') do if not "%%I"=="" set "datetime=%%I"
-set "TSTAMP=%datetime:~6,2%%datetime:~4,2%%datetime:~2,2%_%datetime:~8,2%%datetime:~10,2%%datetime:~12,2%"
+for /f %%I in ('powershell -noprofile -command "Get-Date -Format ddMMyy_HHmmss"') do set "TSTAMP=%%I"
 set "BUILDDIR=%~dp0BUILD_32BIT_%TSTAMP%"
 
 :: --------------------------------------------
