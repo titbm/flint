@@ -64,19 +64,19 @@ del Z_DIAG.EXE
 
 :: Generate dual-mode RUN.bat
 echo @echo off > %BUILDNAME%\RUN.bat
-echo if "%%%%OS%%%%"=="Windows_NT" goto NT_RUN >> %BUILDNAME%\RUN.bat
+echo if "%%OS%%"=="Windows_NT" goto NT_RUN >> %BUILDNAME%\RUN.bat
 echo if not exist Z_DIAG.EXE goto NO_EXE >> %BUILDNAME%\RUN.bat
 echo Z_DIAG.EXE >> %BUILDNAME%\RUN.bat
 echo goto END >> %BUILDNAME%\RUN.bat
 echo :NT_RUN >> %BUILDNAME%\RUN.bat
-echo set DOSBOX=%%%%~dp0..\..\DOSBox-X\dosbox-x.exe >> %BUILDNAME%\RUN.bat
-echo if exist "%%%%DOSBOX%%%%" goto DOSBOX_OK >> %BUILDNAME%\RUN.bat
-echo for %%%%%%%%I in (dosbox-x.exe) do if not "%%%%%%%%~$PATH:I"=="" set DOSBOX=%%%%%%%%~$PATH:I >> %BUILDNAME%\RUN.bat
-echo if exist "%%%%DOSBOX%%%%" goto DOSBOX_OK >> %BUILDNAME%\RUN.bat
+echo set DOSBOX=%%~dp0..\..\DOSBox-X\dosbox-x.exe >> %BUILDNAME%\RUN.bat
+echo if exist "%%DOSBOX%%" goto DOSBOX_OK >> %BUILDNAME%\RUN.bat
+echo for %%%%I in (dosbox-x.exe) do if not "%%%%~$PATH:I"=="" set DOSBOX=%%%%~$PATH:I >> %BUILDNAME%\RUN.bat
+echo if exist "%%DOSBOX%%" goto DOSBOX_OK >> %BUILDNAME%\RUN.bat
 echo echo ERROR: DOSBox-X not found. >> %BUILDNAME%\RUN.bat
 echo pause ^& exit /b 1 >> %BUILDNAME%\RUN.bat
 echo :DOSBOX_OK >> %BUILDNAME%\RUN.bat
-echo "%%%%DOSBOX%%%%" -conf NUL -set "machine=svga_s3" -set "memsize=16" -set "cycles=max" -c "MOUNT C \"%%%%~dp0.\"" -c "C:" -c "Z_DIAG.EXE" -c "pause" -c "EXIT" >> %BUILDNAME%\RUN.bat
+echo "%%DOSBOX%%" -conf NUL -set "machine=svga_s3" -set "memsize=16" -set "cycles=max" -c "MOUNT C \"%%~dp0.\"" -c "C:" -c "Z_DIAG.EXE" -c "pause" -c "EXIT" >> %BUILDNAME%\RUN.bat
 echo goto END >> %BUILDNAME%\RUN.bat
 echo :NO_EXE >> %BUILDNAME%\RUN.bat
 echo echo Z_DIAG.EXE not found. >> %BUILDNAME%\RUN.bat
