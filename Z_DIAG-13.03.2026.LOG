@@ -1,0 +1,714 @@
+=== Z_DIAG Log Start ===
+ISA card detected at 0x300. K1=150
+
+Hardware initialized. Sensors: 0x3F
+
+
+###########################################################
+#                                                         #
+#              Z_DIAG AUTO-DIAGNOSTIC                     #
+#                                                         #
+###########################################################
+
+Running full diagnostic sequence...
+Press ESC at any time to abort.
+
+============ PHASE 0: Environment & CPU timing ============
+
+=== TEST 17: System Environment Report ===
+
+DOS version: 7.10
+Conventional memory: 640 KB
+Extended memory (XMS): 0 KB
+
+CPU identification:
+  Compiler: Borland C++ 4.6
+  sizeof(int)=2 sizeof(long)=4 sizeof(void*)=4
+  Memory model: LARGE
+
+Environment variables:
+  CONFIG=DOS
+  PROMPT=$p$g
+  winbootdir=C:\WINDOWS
+  COMSPEC=C:\WINDOWS\COMMAND.COM
+  PATH=C:\WINDOWS;C:\WINDOWS\COMMAND;C:\;C:\WINDOWS\;C:\WINDOWS\SYSTEM;C:\DOS\;C:\NC;C:\FLINT
+  SYMANTEC=C:\NC\SYMANTEC
+  TEMP=C:\TEMP
+  TMP=C:\TEMP
+  CMDLINE=z_diag.exe
+
+ISA card port scan (0x300-0x31F):
+  300: C8 00 C8 FF C8 00 00 FF
+  308: 96 3F FC BE FF FF FF FF
+  310: 00 FF 71 FF 4F 6D 70 70
+  318: 71 8E 01 00 00 00 00 03
+
+Stack pointer (approx): SP=3888
+BIOS equipment word: 0x4423
+  Floppy: yes, Video mode: 2, Serial ports: 2, Printers: 1
+
+=== TEST 17 COMPLETE ===
+
+=== TEST 15: CPU Timing / delay() Calibration ===
+
+--- A: delay() accuracy ---
+Calling delay(N), measuring with BIOS tick counter (55ms/tick).
+
+  delay(   1 ms):   0 BIOS ticks = ~0 ms  (expect ~1 ms)
+  delay(  10 ms):   0 BIOS ticks = ~0 ms  (expect ~10 ms)
+  delay(  55 ms):   1 BIOS ticks = ~55 ms  (expect ~55 ms)
+  delay( 100 ms):   2 BIOS ticks = ~110 ms  (expect ~100 ms)
+  delay( 500 ms):   9 BIOS ticks = ~495 ms  (expect ~500 ms)
+  delay(1000 ms):  19 BIOS ticks = ~1045 ms  (expect ~1000 ms)
+
+--- B: BIOS tick rate ---
+Counting BIOS ticks over 1 second (delay-measured).
+  1000ms delay = 18 ticks (expect ~18)
+  Tick rate OK.
+
+--- C: CPU busy-loop speed ---
+  Loops in 1 BIOS tick (~55ms): 2328569
+  => Fast CPU (P3+ class)
+
+--- D: I/O port access timing ---
+100 sequential inportb() calls, timed with BIOS tick.
+  inportb(0x80) calls in 55ms: 87364
+  => ~629 ns per I/O read
+
+--- E: outportb() pair timing (8254 low+high byte) ---
+The 8254 needs TWO consecutive writes (lo, hi). If an interrupt
+fires between them, the counter gets a corrupted value.
+  outportb() pairs in 55ms: 20021
+  => ~2747 ns per write pair
+
+=== TEST 15 COMPLETE ===
+============ PHASE 1: Hardware readout (no motors) ============
+
+--- Sensor Snapshot ---
+PPI PB = 0x3F
+  X-: 1  X+: 1  Y-: 1  Y+: 1  Z-: 1  Z+: 1  PB6: 0  PB7: 0
+PT0.ch0(K2x)=51200  PT0.ch1(dX)=0  PT0.ch2(K2z)=0
+PT1.ch0(K2y)=0  PT1.ch1(dY)=0  PT1.ch2(dZ)=0
+
+=== TEST 1: Counter Behavior Probe ===
+Loading counters with motors OFF, checking if they count down.
+
+T=0ms:  K2z= 1000  dZ=    0
+T=50ms: K2z= 1000  dZ=    0
+T=250ms: K2z= 1000  dZ=    0
+
+Analysis:
+  K2z: NOT counting (GATE likely controlled by motor enable)
+  dZ: NOT counting (needs K2z output as clock, or GATE gated)
+
+--- Sub-test: oscillator OFF ---
+OSC OFF T=0:   K2z= 1000  dZ=    0
+OSC OFF T=50ms: K2z= 1000  dZ=    0
+  K2z: stopped when OSC off => OSC is the clock source
+
+--- Sub-test: ZON=1, OSC OFF ---
+ZON+OSCOFF T=0:   K2z= 1000  dZ= 5000
+ZON+OSCOFF T=50ms: K2z= 1000  dZ= 5000
+  K2z doesn't count => needs OSC
+
+--- Sub-test: X axis (K2x, dX) for comparison ---
+X: T=0: K2x=    0 dX=    0  T=50ms: K2x=14312 dX=    0
+
+=== TEST 1 COMPLETE ===
+
+=== TEST 3: 8254 Mode Detection (Read-Back) ===
+Attempting Read-Back command on all counters.
+(Works only on 8254-2. Original 8254 ignores this command.)
+
+  PT0.ch0: status=0xE8  OUT=1  Mode=4  BCD=0
+  PT0.ch1: status=0x00  OUT=0  Mode=0  BCD=0
+  PT0.ch2: status=0xE8  OUT=1  Mode=4  BCD=0
+  PT1.ch0: status=0xE8  OUT=1  Mode=4  BCD=0
+  PT1.ch1: status=0x00  OUT=0  Mode=0  BCD=0
+  PT1.ch2: status=0x88  OUT=1  Mode=4  BCD=0
+
+Note: If all values look identical/random, chip may be 8254 (not 8254-2)
+and Read-Back is not supported. Use TEST 1 behavioral results instead.
+
+=== TEST 3 COMPLETE ===
+
+=== TEST 6: Oscillator Frequency Measurement ===
+Loading K2z=60000, measuring countdown rate.
+
+Counter is active. Measuring...
+Timeout
+Counted 18 ticks down (59413 -> 59395) in 10000001 read loops
+
+Timed measurement (100ms window):
+  Counted 18 ticks in 100ms => 180 Hz input clock
+  At K1=150 PPI.PA: base clock = 180 Hz
+
+=== TEST 6 COMPLETE ===
+
+============ PHASE 2: Sensor reliability ============
+
+=== TEST 9: Homing Repeatability ===
+10 cycles: Home -> UP 2000 -> Home. Measuring sensor consistency.
+
+  Cycle    Home
+  Cycle 0: home ABORTED
+
+*** AUTO-DIAGNOSTIC ABORTED BY USER (ESC) ***
+Partial results saved to Z_DIAG.LOG
+
+=== TEST 10: XY+Z Simultaneous Move Integrity ===
+Home all -> move XYZ simultaneously -> home all -> check Z.
+Uses calc_k2/seg_time timing (same algorithm as FLINT move()).
+Config: l_period=35 dT=6 step_freq=1000 f_const=0
+
+   Speed   X_tgt   Y_tgt   Z_tgt  Z_home   Z_dlt  Status
+  [homing all axes...] ABORTED
+
+=== TEST 11: Full Process Simulation ===
+Simulates FLINT process() with synthetic point table.
+Config: l_period=35 dT=6 step_freq=1000
+Pattern: 9 layers x 20 pts, Z_step=72
+
+--- Run 1: Z_base=8580, 9 layers x 20 pts ---
+Home ABORTED
+
+=== TEST 15: CPU Timing / delay() Calibration ===
+
+--- A: delay() accuracy ---
+Calling delay(N), measuring with BIOS tick counter (55ms/tick).
+
+  delay(   1 ms):   0 BIOS ticks = ~0 ms  (expect ~1 ms)
+  delay(  10 ms):   0 BIOS ticks = ~0 ms  (expect ~10 ms)
+  delay(  55 ms):   1 BIOS ticks = ~55 ms  (expect ~55 ms)
+  delay( 100 ms):   2 BIOS ticks = ~110 ms  (expect ~100 ms)
+  delay( 500 ms):   9 BIOS ticks = ~495 ms  (expect ~500 ms)
+  delay(1000 ms):  18 BIOS ticks = ~990 ms  (expect ~1000 ms)
+
+--- B: BIOS tick rate ---
+Counting BIOS ticks over 1 second (delay-measured).
+  1000ms delay = 18 ticks (expect ~18)
+  Tick rate OK.
+
+--- C: CPU busy-loop speed ---
+  Loops in 1 BIOS tick (~55ms): 2328527
+  => Fast CPU (P3+ class)
+
+--- D: I/O port access timing ---
+100 sequential inportb() calls, timed with BIOS tick.
+  inportb(0x80) calls in 55ms: 87364
+  => ~629 ns per I/O read
+
+--- E: outportb() pair timing (8254 low+high byte) ---
+The 8254 needs TWO consecutive writes (lo, hi). If an interrupt
+fires between them, the counter gets a corrupted value.
+  outportb() pairs in 55ms: 20021
+  => ~2747 ns per write pair
+
+=== TEST 15 COMPLETE ===
+
+=== TEST 16: Interrupt Interference ===
+Testing if interrupts corrupt 8254 counter programming.
+
+--- A: 200 counter writes WITH CLI/STI ---
+  iter 0: wrote 12345, read 63439 *** MISMATCH ***
+  iter 1: wrote 12345, read 63439 *** MISMATCH ***
+  iter 2: wrote 12345, read 63439 *** MISMATCH ***
+  iter 3: wrote 12345, read 63439 *** MISMATCH ***
+  iter 4: wrote 12345, read 63439 *** MISMATCH ***
+  iter 5: wrote 12345, read 63439 *** MISMATCH ***
+  iter 6: wrote 12345, read 63439 *** MISMATCH ***
+  iter 7: wrote 12345, read 63439 *** MISMATCH ***
+  iter 8: wrote 12345, read 63439 *** MISMATCH ***
+  iter 9: wrote 12345, read 63439 *** MISMATCH ***
+  iter 10: wrote 12345, read 63439 *** MISMATCH ***
+  iter 11: wrote 12345, read 63439 *** MISMATCH ***
+  iter 12: wrote 12345, read 63439 *** MISMATCH ***
+  iter 13: wrote 12345, read 63439 *** MISMATCH ***
+  iter 14: wrote 12345, read 63439 *** MISMATCH ***
+  iter 15: wrote 12345, read 63439 *** MISMATCH ***
+  iter 16: wrote 12345, read 63439 *** MISMATCH ***
+  iter 17: wrote 12345, read 63439 *** MISMATCH ***
+  iter 18: wrote 12345, read 63439 *** MISMATCH ***
+  iter 19: wrote 12345, read 63439 *** MISMATCH ***
+  iter 20: wrote 12345, read 63439 *** MISMATCH ***
+  iter 21: wrote 12345, read 63439 *** MISMATCH ***
+  iter 22: wrote 12345, read 63439 *** MISMATCH ***
+  iter 23: wrote 12345, read 63439 *** MISMATCH ***
+  iter 24: wrote 12345, read 63439 *** MISMATCH ***
+  iter 25: wrote 12345, read 63439 *** MISMATCH ***
+  iter 26: wrote 12345, read 63439 *** MISMATCH ***
+  iter 27: wrote 12345, read 63439 *** MISMATCH ***
+  iter 28: wrote 12345, read 63439 *** MISMATCH ***
+  iter 29: wrote 12345, read 63439 *** MISMATCH ***
+  iter 30: wrote 12345, read 63439 *** MISMATCH ***
+  iter 31: wrote 12345, read 63439 *** MISMATCH ***
+  iter 32: wrote 12345, read 63439 *** MISMATCH ***
+  iter 33: wrote 12345, read 63439 *** MISMATCH ***
+  iter 34: wrote 12345, read 63439 *** MISMATCH ***
+  iter 35: wrote 12345, read 63439 *** MISMATCH ***
+  iter 36: wrote 12345, read 63439 *** MISMATCH ***
+  iter 37: wrote 12345, read 63439 *** MISMATCH ***
+  iter 38: wrote 12345, read 63439 *** MISMATCH ***
+  iter 39: wrote 12345, read 63439 *** MISMATCH ***
+  iter 40: wrote 12345, read 63439 *** MISMATCH ***
+  iter 41: wrote 12345, read 63439 *** MISMATCH ***
+  iter 42: wrote 12345, read 63439 *** MISMATCH ***
+  iter 43: wrote 12345, read 63439 *** MISMATCH ***
+  iter 44: wrote 12345, read 63439 *** MISMATCH ***
+  iter 45: wrote 12345, read 63439 *** MISMATCH ***
+  iter 46: wrote 12345, read 63439 *** MISMATCH ***
+  iter 47: wrote 12345, read 63439 *** MISMATCH ***
+  iter 48: wrote 12345, read 63439 *** MISMATCH ***
+  iter 49: wrote 12345, read 63439 *** MISMATCH ***
+  iter 50: wrote 12345, read 63439 *** MISMATCH ***
+  iter 51: wrote 12345, read 63439 *** MISMATCH ***
+  iter 52: wrote 12345, read 63439 *** MISMATCH ***
+  iter 53: wrote 12345, read 63439 *** MISMATCH ***
+  iter 54: wrote 12345, read 63439 *** MISMATCH ***
+  iter 55: wrote 12345, read 63439 *** MISMATCH ***
+  iter 56: wrote 12345, read 63439 *** MISMATCH ***
+  iter 57: wrote 12345, read 63439 *** MISMATCH ***
+  iter 58: wrote 12345, read 63439 *** MISMATCH ***
+  iter 59: wrote 12345, read 63439 *** MISMATCH ***
+  iter 60: wrote 12345, read 63439 *** MISMATCH ***
+  iter 61: wrote 12345, read 63439 *** MISMATCH ***
+  iter 62: wrote 12345, read 63439 *** MISMATCH ***
+  iter 63: wrote 12345, read 63439 *** MISMATCH ***
+  iter 64: wrote 12345, read 63439 *** MISMATCH ***
+  iter 65: wrote 12345, read 63439 *** MISMATCH ***
+  iter 66: wrote 12345, read 63439 *** MISMATCH ***
+  iter 67: wrote 12345, read 63439 *** MISMATCH ***
+  iter 68: wrote 12345, read 63439 *** MISMATCH ***
+  iter 69: wrote 12345, read 63439 *** MISMATCH ***
+  iter 70: wrote 12345, read 63439 *** MISMATCH ***
+  iter 71: wrote 12345, read 63439 *** MISMATCH ***
+  iter 72: wrote 12345, read 63439 *** MISMATCH ***
+  iter 73: wrote 12345, read 63439 *** MISMATCH ***
+  iter 74: wrote 12345, read 63439 *** MISMATCH ***
+  iter 75: wrote 12345, read 63439 *** MISMATCH ***
+  iter 76: wrote 12345, read 63439 *** MISMATCH ***
+  iter 77: wrote 12345, read 63439 *** MISMATCH ***
+  iter 78: wrote 12345, read 63439 *** MISMATCH ***
+  iter 79: wrote 12345, read 63439 *** MISMATCH ***
+  iter 80: wrote 12345, read 63439 *** MISMATCH ***
+  iter 81: wrote 12345, read 63439 *** MISMATCH ***
+  iter 82: wrote 12345, read 63439 *** MISMATCH ***
+  iter 83: wrote 12345, read 63439 *** MISMATCH ***
+  iter 84: wrote 12345, read 63439 *** MISMATCH ***
+  iter 85: wrote 12345, read 63439 *** MISMATCH ***
+  iter 86: wrote 12345, read 63439 *** MISMATCH ***
+  iter 87: wrote 12345, read 63439 *** MISMATCH ***
+  iter 88: wrote 12345, read 63439 *** MISMATCH ***
+  iter 89: wrote 12345, read 63439 *** MISMATCH ***
+  iter 90: wrote 12345, read 63439 *** MISMATCH ***
+  iter 91: wrote 12345, read 63439 *** MISMATCH ***
+  iter 92: wrote 12345, read 63439 *** MISMATCH ***
+  iter 93: wrote 12345, read 63439 *** MISMATCH ***
+  iter 94: wrote 12345, read 63439 *** MISMATCH ***
+  iter 95: wrote 12345, read 63439 *** MISMATCH ***
+  iter 96: wrote 12345, read 63439 *** MISMATCH ***
+  iter 97: wrote 12345, read 63439 *** MISMATCH ***
+  iter 98: wrote 12345, read 63439 *** MISMATCH ***
+  iter 99: wrote 12345, read 63439 *** MISMATCH ***
+  iter 100: wrote 12345, read 63439 *** MISMATCH ***
+  iter 101: wrote 12345, read 63439 *** MISMATCH ***
+  iter 102: wrote 12345, read 63439 *** MISMATCH ***
+  iter 103: wrote 12345, read 63439 *** MISMATCH ***
+  iter 104: wrote 12345, read 63439 *** MISMATCH ***
+  iter 105: wrote 12345, read 63439 *** MISMATCH ***
+  iter 106: wrote 12345, read 63439 *** MISMATCH ***
+  iter 107: wrote 12345, read 63439 *** MISMATCH ***
+  iter 108: wrote 12345, read 63439 *** MISMATCH ***
+  iter 109: wrote 12345, read 63439 *** MISMATCH ***
+  iter 110: wrote 12345, read 63439 *** MISMATCH ***
+  iter 111: wrote 12345, read 63439 *** MISMATCH ***
+  iter 112: wrote 12345, read 63439 *** MISMATCH ***
+  iter 113: wrote 12345, read 63439 *** MISMATCH ***
+  iter 114: wrote 12345, read 63439 *** MISMATCH ***
+  iter 115: wrote 12345, read 63439 *** MISMATCH ***
+  iter 116: wrote 12345, read 63439 *** MISMATCH ***
+  iter 117: wrote 12345, read 63439 *** MISMATCH ***
+  iter 118: wrote 12345, read 63439 *** MISMATCH ***
+  iter 119: wrote 12345, read 63439 *** MISMATCH ***
+  iter 120: wrote 12345, read 63439 *** MISMATCH ***
+  iter 121: wrote 12345, read 63439 *** MISMATCH ***
+  iter 122: wrote 12345, read 63439 *** MISMATCH ***
+  iter 123: wrote 12345, read 63439 *** MISMATCH ***
+  iter 124: wrote 12345, read 63439 *** MISMATCH ***
+  iter 125: wrote 12345, read 63439 *** MISMATCH ***
+  iter 126: wrote 12345, read 63439 *** MISMATCH ***
+  iter 127: wrote 12345, read 63439 *** MISMATCH ***
+  iter 128: wrote 12345, read 63439 *** MISMATCH ***
+  iter 129: wrote 12345, read 63439 *** MISMATCH ***
+  iter 130: wrote 12345, read 63439 *** MISMATCH ***
+  iter 131: wrote 12345, read 63439 *** MISMATCH ***
+  iter 132: wrote 12345, read 63439 *** MISMATCH ***
+  iter 133: wrote 12345, read 63439 *** MISMATCH ***
+  iter 134: wrote 12345, read 63439 *** MISMATCH ***
+  iter 135: wrote 12345, read 63439 *** MISMATCH ***
+  iter 136: wrote 12345, read 63439 *** MISMATCH ***
+  iter 137: wrote 12345, read 63439 *** MISMATCH ***
+  iter 138: wrote 12345, read 63439 *** MISMATCH ***
+  iter 139: wrote 12345, read 63439 *** MISMATCH ***
+  iter 140: wrote 12345, read 63439 *** MISMATCH ***
+  iter 141: wrote 12345, read 63439 *** MISMATCH ***
+  iter 142: wrote 12345, read 63439 *** MISMATCH ***
+  iter 143: wrote 12345, read 63439 *** MISMATCH ***
+  iter 144: wrote 12345, read 63439 *** MISMATCH ***
+  iter 145: wrote 12345, read 63439 *** MISMATCH ***
+  iter 146: wrote 12345, read 63439 *** MISMATCH ***
+  iter 147: wrote 12345, read 63439 *** MISMATCH ***
+  iter 148: wrote 12345, read 63439 *** MISMATCH ***
+  iter 149: wrote 12345, read 63439 *** MISMATCH ***
+  iter 150: wrote 12345, read 63439 *** MISMATCH ***
+  iter 151: wrote 12345, read 63439 *** MISMATCH ***
+  iter 152: wrote 12345, read 63439 *** MISMATCH ***
+  iter 153: wrote 12345, read 63439 *** MISMATCH ***
+  iter 154: wrote 12345, read 63439 *** MISMATCH ***
+  iter 155: wrote 12345, read 63439 *** MISMATCH ***
+  iter 156: wrote 12345, read 63439 *** MISMATCH ***
+  iter 157: wrote 12345, read 63439 *** MISMATCH ***
+  iter 158: wrote 12345, read 63439 *** MISMATCH ***
+  iter 159: wrote 12345, read 63439 *** MISMATCH ***
+  iter 160: wrote 12345, read 63439 *** MISMATCH ***
+  iter 161: wrote 12345, read 63439 *** MISMATCH ***
+  iter 162: wrote 12345, read 63439 *** MISMATCH ***
+  iter 163: wrote 12345, read 63439 *** MISMATCH ***
+  iter 164: wrote 12345, read 63439 *** MISMATCH ***
+  iter 165: wrote 12345, read 63439 *** MISMATCH ***
+  iter 166: wrote 12345, read 63439 *** MISMATCH ***
+  iter 167: wrote 12345, read 63439 *** MISMATCH ***
+  iter 168: wrote 12345, read 63439 *** MISMATCH ***
+  iter 169: wrote 12345, read 63439 *** MISMATCH ***
+  iter 170: wrote 12345, read 63439 *** MISMATCH ***
+  iter 171: wrote 12345, read 63439 *** MISMATCH ***
+  iter 172: wrote 12345, read 63439 *** MISMATCH ***
+  iter 173: wrote 12345, read 63439 *** MISMATCH ***
+  iter 174: wrote 12345, read 63439 *** MISMATCH ***
+  iter 175: wrote 12345, read 63439 *** MISMATCH ***
+  iter 176: wrote 12345, read 63439 *** MISMATCH ***
+  iter 177: wrote 12345, read 63439 *** MISMATCH ***
+  iter 178: wrote 12345, read 63439 *** MISMATCH ***
+  iter 179: wrote 12345, read 63439 *** MISMATCH ***
+  iter 180: wrote 12345, read 63439 *** MISMATCH ***
+  iter 181: wrote 12345, read 63439 *** MISMATCH ***
+  iter 182: wrote 12345, read 63439 *** MISMATCH ***
+  iter 183: wrote 12345, read 63439 *** MISMATCH ***
+  iter 184: wrote 12345, read 63439 *** MISMATCH ***
+  iter 185: wrote 12345, read 63439 *** MISMATCH ***
+  iter 186: wrote 12345, read 63439 *** MISMATCH ***
+  iter 187: wrote 12345, read 63439 *** MISMATCH ***
+  iter 188: wrote 12345, read 63439 *** MISMATCH ***
+  iter 189: wrote 12345, read 63439 *** MISMATCH ***
+  iter 190: wrote 12345, read 63439 *** MISMATCH ***
+  iter 191: wrote 12345, read 63439 *** MISMATCH ***
+  iter 192: wrote 12345, read 63439 *** MISMATCH ***
+  iter 193: wrote 12345, read 63439 *** MISMATCH ***
+  iter 194: wrote 12345, read 63439 *** MISMATCH ***
+  iter 195: wrote 12345, read 63439 *** MISMATCH ***
+  iter 196: wrote 12345, read 63439 *** MISMATCH ***
+  iter 197: wrote 12345, read 63439 *** MISMATCH ***
+  iter 198: wrote 12345, read 63439 *** MISMATCH ***
+  iter 199: wrote 12345, read 63439 *** MISMATCH ***
+  Result: 200/200 corrupt with CLI. *** STILL CORRUPT ***
+
+--- B: 200 counter writes WITHOUT CLI (normal code) ---
+  iter 0: wrote 12345, read 63439 *** MISMATCH ***
+  iter 1: wrote 12345, read 63439 *** MISMATCH ***
+  iter 2: wrote 12345, read 63439 *** MISMATCH ***
+  iter 3: wrote 12345, read 63439 *** MISMATCH ***
+  iter 4: wrote 12345, read 63439 *** MISMATCH ***
+  iter 5: wrote 12345, read 63439 *** MISMATCH ***
+  iter 6: wrote 12345, read 63439 *** MISMATCH ***
+  iter 7: wrote 12345, read 63439 *** MISMATCH ***
+  iter 8: wrote 12345, read 63439 *** MISMATCH ***
+  iter 9: wrote 12345, read 63439 *** MISMATCH ***
+  iter 10: wrote 12345, read 63439 *** MISMATCH ***
+  iter 11: wrote 12345, read 63439 *** MISMATCH ***
+  iter 12: wrote 12345, read 63439 *** MISMATCH ***
+  iter 13: wrote 12345, read 63439 *** MISMATCH ***
+  iter 14: wrote 12345, read 63439 *** MISMATCH ***
+  iter 15: wrote 12345, read 63439 *** MISMATCH ***
+  iter 16: wrote 12345, read 63439 *** MISMATCH ***
+  iter 17: wrote 12345, read 63439 *** MISMATCH ***
+  iter 18: wrote 12345, read 63439 *** MISMATCH ***
+  iter 19: wrote 12345, read 63439 *** MISMATCH ***
+  iter 20: wrote 12345, read 63439 *** MISMATCH ***
+  iter 21: wrote 12345, read 63439 *** MISMATCH ***
+  iter 22: wrote 12345, read 63439 *** MISMATCH ***
+  iter 23: wrote 12345, read 63439 *** MISMATCH ***
+  iter 24: wrote 12345, read 63439 *** MISMATCH ***
+  iter 25: wrote 12345, read 63439 *** MISMATCH ***
+  iter 26: wrote 12345, read 63439 *** MISMATCH ***
+  iter 27: wrote 12345, read 63439 *** MISMATCH ***
+  iter 28: wrote 12345, read 63439 *** MISMATCH ***
+  iter 29: wrote 12345, read 63439 *** MISMATCH ***
+  iter 30: wrote 12345, read 63439 *** MISMATCH ***
+  iter 31: wrote 12345, read 63439 *** MISMATCH ***
+  iter 32: wrote 12345, read 63439 *** MISMATCH ***
+  iter 33: wrote 12345, read 63439 *** MISMATCH ***
+  iter 34: wrote 12345, read 63439 *** MISMATCH ***
+  iter 35: wrote 12345, read 63439 *** MISMATCH ***
+  iter 36: wrote 12345, read 63439 *** MISMATCH ***
+  iter 37: wrote 12345, read 63439 *** MISMATCH ***
+  iter 38: wrote 12345, read 63439 *** MISMATCH ***
+  iter 39: wrote 12345, read 63439 *** MISMATCH ***
+  iter 40: wrote 12345, read 63439 *** MISMATCH ***
+  iter 41: wrote 12345, read 63439 *** MISMATCH ***
+  iter 42: wrote 12345, read 63439 *** MISMATCH ***
+  iter 43: wrote 12345, read 63439 *** MISMATCH ***
+  iter 44: wrote 12345, read 63439 *** MISMATCH ***
+  iter 45: wrote 12345, read 63439 *** MISMATCH ***
+  iter 46: wrote 12345, read 63439 *** MISMATCH ***
+  iter 47: wrote 12345, read 63439 *** MISMATCH ***
+  iter 48: wrote 12345, read 63439 *** MISMATCH ***
+  iter 49: wrote 12345, read 63439 *** MISMATCH ***
+  iter 50: wrote 12345, read 63439 *** MISMATCH ***
+  iter 51: wrote 12345, read 63439 *** MISMATCH ***
+  iter 52: wrote 12345, read 63439 *** MISMATCH ***
+  iter 53: wrote 12345, read 63439 *** MISMATCH ***
+  iter 54: wrote 12345, read 63439 *** MISMATCH ***
+  iter 55: wrote 12345, read 63439 *** MISMATCH ***
+  iter 56: wrote 12345, read 63439 *** MISMATCH ***
+  iter 57: wrote 12345, read 63439 *** MISMATCH ***
+  iter 58: wrote 12345, read 63439 *** MISMATCH ***
+  iter 59: wrote 12345, read 63439 *** MISMATCH ***
+  iter 60: wrote 12345, read 63439 *** MISMATCH ***
+  iter 61: wrote 12345, read 63439 *** MISMATCH ***
+  iter 62: wrote 12345, read 63439 *** MISMATCH ***
+  iter 63: wrote 12345, read 63439 *** MISMATCH ***
+  iter 64: wrote 12345, read 63439 *** MISMATCH ***
+  iter 65: wrote 12345, read 63439 *** MISMATCH ***
+  iter 66: wrote 12345, read 63439 *** MISMATCH ***
+  iter 67: wrote 12345, read 63439 *** MISMATCH ***
+  iter 68: wrote 12345, read 63439 *** MISMATCH ***
+  iter 69: wrote 12345, read 63439 *** MISMATCH ***
+  iter 70: wrote 12345, read 63439 *** MISMATCH ***
+  iter 71: wrote 12345, read 63439 *** MISMATCH ***
+  iter 72: wrote 12345, read 63439 *** MISMATCH ***
+  iter 73: wrote 12345, read 63439 *** MISMATCH ***
+  iter 74: wrote 12345, read 63439 *** MISMATCH ***
+  iter 75: wrote 12345, read 63439 *** MISMATCH ***
+  iter 76: wrote 12345, read 63439 *** MISMATCH ***
+  iter 77: wrote 12345, read 63439 *** MISMATCH ***
+  iter 78: wrote 12345, read 63439 *** MISMATCH ***
+  iter 79: wrote 12345, read 63439 *** MISMATCH ***
+  iter 80: wrote 12345, read 63439 *** MISMATCH ***
+  iter 81: wrote 12345, read 63439 *** MISMATCH ***
+  iter 82: wrote 12345, read 63439 *** MISMATCH ***
+  iter 83: wrote 12345, read 63439 *** MISMATCH ***
+  iter 84: wrote 12345, read 63439 *** MISMATCH ***
+  iter 85: wrote 12345, read 63439 *** MISMATCH ***
+  iter 86: wrote 12345, read 63439 *** MISMATCH ***
+  iter 87: wrote 12345, read 63439 *** MISMATCH ***
+  iter 88: wrote 12345, read 63439 *** MISMATCH ***
+  iter 89: wrote 12345, read 63439 *** MISMATCH ***
+  iter 90: wrote 12345, read 63439 *** MISMATCH ***
+  iter 91: wrote 12345, read 63439 *** MISMATCH ***
+  iter 92: wrote 12345, read 63439 *** MISMATCH ***
+  iter 93: wrote 12345, read 63439 *** MISMATCH ***
+  iter 94: wrote 12345, read 63439 *** MISMATCH ***
+  iter 95: wrote 12345, read 63439 *** MISMATCH ***
+  iter 96: wrote 12345, read 63439 *** MISMATCH ***
+  iter 97: wrote 12345, read 63439 *** MISMATCH ***
+  iter 98: wrote 12345, read 63439 *** MISMATCH ***
+  iter 99: wrote 12345, read 63439 *** MISMATCH ***
+  iter 100: wrote 12345, read 63439 *** MISMATCH ***
+  iter 101: wrote 12345, read 63439 *** MISMATCH ***
+  iter 102: wrote 12345, read 63439 *** MISMATCH ***
+  iter 103: wrote 12345, read 63439 *** MISMATCH ***
+  iter 104: wrote 12345, read 63439 *** MISMATCH ***
+  iter 105: wrote 12345, read 63439 *** MISMATCH ***
+  iter 106: wrote 12345, read 63439 *** MISMATCH ***
+  iter 107: wrote 12345, read 63439 *** MISMATCH ***
+  iter 108: wrote 12345, read 63439 *** MISMATCH ***
+  iter 109: wrote 12345, read 63439 *** MISMATCH ***
+  iter 110: wrote 12345, read 63439 *** MISMATCH ***
+  iter 111: wrote 12345, read 63439 *** MISMATCH ***
+  iter 112: wrote 12345, read 63439 *** MISMATCH ***
+  iter 113: wrote 12345, read 63439 *** MISMATCH ***
+  iter 114: wrote 12345, read 63439 *** MISMATCH ***
+  iter 115: wrote 12345, read 63439 *** MISMATCH ***
+  iter 116: wrote 12345, read 63439 *** MISMATCH ***
+  iter 117: wrote 12345, read 63439 *** MISMATCH ***
+  iter 118: wrote 12345, read 63439 *** MISMATCH ***
+  iter 119: wrote 12345, read 63439 *** MISMATCH ***
+  iter 120: wrote 12345, read 63439 *** MISMATCH ***
+  iter 121: wrote 12345, read 63439 *** MISMATCH ***
+  iter 122: wrote 12345, read 63439 *** MISMATCH ***
+  iter 123: wrote 12345, read 63439 *** MISMATCH ***
+  iter 124: wrote 12345, read 63439 *** MISMATCH ***
+  iter 125: wrote 12345, read 63439 *** MISMATCH ***
+  iter 126: wrote 12345, read 63439 *** MISMATCH ***
+  iter 127: wrote 12345, read 63439 *** MISMATCH ***
+  iter 128: wrote 12345, read 63439 *** MISMATCH ***
+  iter 129: wrote 12345, read 63439 *** MISMATCH ***
+  iter 130: wrote 12345, read 63439 *** MISMATCH ***
+  iter 131: wrote 12345, read 63439 *** MISMATCH ***
+  iter 132: wrote 12345, read 63439 *** MISMATCH ***
+  iter 133: wrote 12345, read 63439 *** MISMATCH ***
+  iter 134: wrote 12345, read 63439 *** MISMATCH ***
+  iter 135: wrote 12345, read 63439 *** MISMATCH ***
+  iter 136: wrote 12345, read 63439 *** MISMATCH ***
+  iter 137: wrote 12345, read 63439 *** MISMATCH ***
+  iter 138: wrote 12345, read 63439 *** MISMATCH ***
+  iter 139: wrote 12345, read 63439 *** MISMATCH ***
+  iter 140: wrote 12345, read 63439 *** MISMATCH ***
+  iter 141: wrote 12345, read 63439 *** MISMATCH ***
+  iter 142: wrote 12345, read 63439 *** MISMATCH ***
+  iter 143: wrote 12345, read 63439 *** MISMATCH ***
+  iter 144: wrote 12345, read 63439 *** MISMATCH ***
+  iter 145: wrote 12345, read 63439 *** MISMATCH ***
+  iter 146: wrote 12345, read 63439 *** MISMATCH ***
+  iter 147: wrote 12345, read 63439 *** MISMATCH ***
+  iter 148: wrote 12345, read 63439 *** MISMATCH ***
+  iter 149: wrote 12345, read 63439 *** MISMATCH ***
+  iter 150: wrote 12345, read 63439 *** MISMATCH ***
+  iter 151: wrote 12345, read 63439 *** MISMATCH ***
+  iter 152: wrote 12345, read 63439 *** MISMATCH ***
+  iter 153: wrote 12345, read 63439 *** MISMATCH ***
+  iter 154: wrote 12345, read 63439 *** MISMATCH ***
+  iter 155: wrote 12345, read 63439 *** MISMATCH ***
+  iter 156: wrote 12345, read 63439 *** MISMATCH ***
+  iter 157: wrote 12345, read 63439 *** MISMATCH ***
+  iter 158: wrote 12345, read 63439 *** MISMATCH ***
+  iter 159: wrote 12345, read 63439 *** MISMATCH ***
+  iter 160: wrote 12345, read 63439 *** MISMATCH ***
+  iter 161: wrote 12345, read 63439 *** MISMATCH ***
+  iter 162: wrote 12345, read 63439 *** MISMATCH ***
+  iter 163: wrote 12345, read 63439 *** MISMATCH ***
+  iter 164: wrote 12345, read 63439 *** MISMATCH ***
+  iter 165: wrote 12345, read 63439 *** MISMATCH ***
+  iter 166: wrote 12345, read 63439 *** MISMATCH ***
+  iter 167: wrote 12345, read 63439 *** MISMATCH ***
+  iter 168: wrote 12345, read 63439 *** MISMATCH ***
+  iter 169: wrote 12345, read 63439 *** MISMATCH ***
+  iter 170: wrote 12345, read 63439 *** MISMATCH ***
+  iter 171: wrote 12345, read 63439 *** MISMATCH ***
+  iter 172: wrote 12345, read 63439 *** MISMATCH ***
+  iter 173: wrote 12345, read 63439 *** MISMATCH ***
+  iter 174: wrote 12345, read 63439 *** MISMATCH ***
+  iter 175: wrote 12345, read 63439 *** MISMATCH ***
+  iter 176: wrote 12345, read 63439 *** MISMATCH ***
+  iter 177: wrote 12345, read 63439 *** MISMATCH ***
+  iter 178: wrote 12345, read 63439 *** MISMATCH ***
+  iter 179: wrote 12345, read 63439 *** MISMATCH ***
+  iter 180: wrote 12345, read 63439 *** MISMATCH ***
+  iter 181: wrote 12345, read 63439 *** MISMATCH ***
+  iter 182: wrote 12345, read 63439 *** MISMATCH ***
+  iter 183: wrote 12345, read 63439 *** MISMATCH ***
+  iter 184: wrote 12345, read 63439 *** MISMATCH ***
+  iter 185: wrote 12345, read 63439 *** MISMATCH ***
+  iter 186: wrote 12345, read 63439 *** MISMATCH ***
+  iter 187: wrote 12345, read 63439 *** MISMATCH ***
+  iter 188: wrote 12345, read 63439 *** MISMATCH ***
+  iter 189: wrote 12345, read 63439 *** MISMATCH ***
+  iter 190: wrote 12345, read 63439 *** MISMATCH ***
+  iter 191: wrote 12345, read 63439 *** MISMATCH ***
+  iter 192: wrote 12345, read 63439 *** MISMATCH ***
+  iter 193: wrote 12345, read 63439 *** MISMATCH ***
+  iter 194: wrote 12345, read 63439 *** MISMATCH ***
+  iter 195: wrote 12345, read 63439 *** MISMATCH ***
+  iter 196: wrote 12345, read 63439 *** MISMATCH ***
+  iter 197: wrote 12345, read 63439 *** MISMATCH ***
+  iter 198: wrote 12345, read 63439 *** MISMATCH ***
+  iter 199: wrote 12345, read 63439 *** MISMATCH ***
+  Result: 200/200 corrupt without CLI. *** INTERRUPT CORRUPTION DETECTED ***
+
+Analysis:
+  => Corruption even with CLI. Hardware or bus timing issue.
+
+--- C: Z move with CLI-protected counter programming ---
+Home ABORTED
+
+=== TEST 17: System Environment Report ===
+
+DOS version: 7.10
+Conventional memory: 640 KB
+Extended memory (XMS): 0 KB
+
+CPU identification:
+  Compiler: Borland C++ 4.6
+  sizeof(int)=2 sizeof(long)=4 sizeof(void*)=4
+  Memory model: LARGE
+
+Environment variables:
+  CONFIG=DOS
+  PROMPT=$p$g
+  winbootdir=C:\WINDOWS
+  COMSPEC=C:\WINDOWS\COMMAND.COM
+  PATH=C:\WINDOWS;C:\WINDOWS\COMMAND;C:\;C:\WINDOWS\;C:\WINDOWS\SYSTEM;C:\DOS\;C:\NC;C:\FLINT
+  SYMANTEC=C:\NC\SYMANTEC
+  TEMP=C:\TEMP
+  TMP=C:\TEMP
+  CMDLINE=z_diag.exe
+
+ISA card port scan (0x300-0x31F):
+  300: FF FF A5 FF FF FF C7 FF
+  308: 96 3A FC BE FF FF FF FF
+  310: 00 FF 71 FF 01 8B 25 25
+  318: 00 FE 01 00 00 00 00 03
+
+Stack pointer (approx): SP=3908
+BIOS equipment word: 0x4423
+  Floppy: yes, Video mode: 2, Serial ports: 2, Printers: 1
+
+=== TEST 17 COMPLETE ===
+
+=== TEST 18: Timing-Critical Sequence Stress ===
+Programming K2z+dZ 1000 times, checking readback each time.
+(Simulates move() counter programming sequence)
+
+--- A: 1000 iterations WITHOUT CLI ---
+  i=0 K2z: wrote 200, read 42401 ***
+  i=0 dZ: wrote 5000, read 51072 ***
+  i=1 K2z: wrote 200, read 42401 ***
+  i=1 dZ: wrote 5000, read 32896 ***
+  i=2 K2z: wrote 200, read 42401 ***
+  i=2 dZ: wrote 5000, read 32896 ***
+  i=3 K2z: wrote 200, read 42401 ***
+  i=3 dZ: wrote 5000, read 51072 ***
+  i=4 K2z: wrote 200, read 42401 ***
+  i=4 dZ: wrote 5000, read 32896 ***
+  i=5 K2z: wrote 200, read 42401 ***
+  i=5 dZ: wrote 5000, read 33004 ***
+  i=6 K2z: wrote 200, read 42401 ***
+  i=6 dZ: wrote 5000, read 51072 ***
+  i=7 K2z: wrote 200, read 42401 ***
+  i=7 dZ: wrote 5000, read 51072 ***
+  i=8 K2z: wrote 200, read 42401 ***
+  i=8 dZ: wrote 5000, read 32896 ***
+  i=9 K2z: wrote 200, read 42401 ***
+  i=9 dZ: wrote 5000, read 32896 ***
+  Without CLI: 2000 failures / 2000 checks. *** CORRUPTION ***
+
+--- B: 1000 iterations WITH CLI ---
+  i=0 K2z: wrote 200, read 42401 ***
+  i=0 dZ: wrote 5000, read 33004 ***
+  i=1 K2z: wrote 200, read 42401 ***
+  i=1 dZ: wrote 5000, read 32896 ***
+  i=2 K2z: wrote 200, read 42401 ***
+  i=2 dZ: wrote 5000, read 32896 ***
+  i=3 K2z: wrote 200, read 42401 ***
+  i=3 dZ: wrote 5000, read 32896 ***
+  i=4 K2z: wrote 200, read 42401 ***
+  i=4 dZ: wrote 5000, read 33004 ***
+  i=5 K2z: wrote 200, read 42401 ***
+  i=5 dZ: wrote 5000, read 33004 ***
+  i=6 K2z: wrote 200, read 42401 ***
+  i=6 dZ: wrote 5000, read 32896 ***
+  i=7 K2z: wrote 200, read 42401 ***
+  i=7 dZ: wrote 5000, read 51072 ***
+  i=8 K2z: wrote 200, read 42401 ***
+  i=8 dZ: wrote 5000, read 32896 ***
+  i=9 K2z: wrote 200, read 42401 ***
+  i=9 dZ: wrote 5000, read 32896 ***
+  With CLI: 2000 failures / 2000 checks. *** STILL CORRUPT ***
+
+Analysis:
+  => Corruption persists even with CLI.
+  => Hardware timing issue (ISA bus speed, wait states).
+
+=== TEST 18 COMPLETE ===
+Config updated: l_period=35 dT=0 step_freq=1000 f_const=0
+=== Z_DIAG Log End ===

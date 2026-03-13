@@ -214,6 +214,10 @@ static int home_z(int dir, unsigned int *steps_taken) {
     int fz, done, rc;
     unsigned int z_remain;
 
+    /* Re-send mode control words to ensure flip-flop sync */
+    outportb(ADRPT0+3, 0xb4);   /* PT0.ch2 (K2z): mode2, lo+hi */
+    outportb(ADRPT1+3, 0xb8);   /* PT1.ch2 (dZ):  mode4, lo+hi */
+
     /* Phase 1: fast approach */
     outportb(ADRPT0+2, 0x64); outportb(ADRPT0+2, 0x00);  /* K2z=100 (1000Hz) */
     outportb(ADRPT1+2, 0x00); outportb(ADRPT1+2, 0x40);  /* dZ=16384 */
@@ -1745,9 +1749,12 @@ static void test16_interrupt(void) {
     LOG("\n=== TEST 16: Interrupt Interference ===\n");
     LOG("Testing if interrupts corrupt 8254 counter programming.\n\n");
 
-    /* Init */
+    /* Init: re-send mode control words to reset 8254 flip-flops
+       (may be corrupted by TEST 3 Read-Back on non-8254-2 chips) */
     ctlw = (XUP|YUP|ZUP) & XOFF & YOFF & ZOFF & OSCON;
     outportb(ADRRG, ctlw);
+    outportb(ADRPT0+3, 0xb4);   /* PT0.ch2 (K2z): mode2, lo+hi */
+    outportb(ADRPT1+3, 0xb8);   /* PT1.ch2 (dZ):  mode4, lo+hi */
     delay(10);
 
     /* --- Test A: CLI-protected writes --- */
@@ -1992,9 +1999,12 @@ static void test18_sequence_stress(void) {
     LOG("Programming K2z+dZ 1000 times, checking readback each time.\n");
     LOG("(Simulates move() counter programming sequence)\n\n");
 
-    /* Init: osc on, motors off */
+    /* Init: re-send mode control words to reset 8254 flip-flops
+       (may be corrupted by TEST 3 Read-Back on non-8254-2 chips) */
     ctlw = (XUP|YUP|ZUP) & XOFF & YOFF & ZOFF & OSCON;
     outportb(ADRRG, ctlw);
+    outportb(ADRPT0+3, 0xb4);   /* PT0.ch2 (K2z): mode2, lo+hi */
+    outportb(ADRPT1+3, 0xb8);   /* PT1.ch2 (dZ):  mode4, lo+hi */
     delay(10);
 
     /* --- Without CLI --- */
