@@ -831,7 +831,6 @@ static void test5_thermal(void) {
 =====================================================================*/
 static void test6_osc_freq(void) {
     unsigned int start_val = 60000;
-    unsigned int end_threshold = 50000;
     unsigned int v0, v1;
     unsigned long t0, t1;
     unsigned long ticks;
@@ -1662,7 +1661,7 @@ static void test15_cpu_timing(void) {
         volatile unsigned long count = 0;
         t0 = *bios_tick;
         /* Wait for tick edge */
-        while(*bios_tick == t0) ;
+        while(*bios_tick == t0) { /* wait */ }
         t0 = *bios_tick;
         /* Count loops for exactly 1 tick (55ms) */
         while(*bios_tick == t0) count++;
@@ -1680,12 +1679,11 @@ static void test15_cpu_timing(void) {
     LOG("100 sequential inportb() calls, timed with BIOS tick.\n");
     {
         volatile unsigned long count = 0;
-        unsigned char dummy;
         t0 = *bios_tick;
-        while(*bios_tick == t0) ;
+        while(*bios_tick == t0) { /* wait */ }
         t0 = *bios_tick;
         while(*bios_tick == t0) {
-            dummy = inportb(0x80);  /* unused port, safe read */
+            (void)inportb(0x80);  /* unused port, safe read */
             count++;
         }
         LOG("  inportb(0x80) calls in 55ms: %lu\n", count);
@@ -1704,7 +1702,7 @@ static void test15_cpu_timing(void) {
     {
         volatile unsigned long count = 0;
         t0 = *bios_tick;
-        while(*bios_tick == t0) ;
+        while(*bios_tick == t0) { /* wait */ }
         t0 = *bios_tick;
         while(*bios_tick == t0) {
             /* Simulate 8254 double-write to an unused port */

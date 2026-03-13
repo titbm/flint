@@ -110,8 +110,8 @@ echo ===========================================
 echo   Compiling Z_DIAG (16-bit)
 echo ===========================================
 
-set SRCDIR=%~dp0.
-set TOOLSDIR=%~dp0..
+for %%I in ("%~dp0.") do set "SRCDIR=%%~fI"
+for %%I in ("%~dp0..") do set "TOOLSDIR=%%~fI"
 
 :: Generate timestamp (DDMMYY_HHMMSS)
 for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /format:list 2^>nul') do if not "%%I"=="" set "datetime=%%I"
@@ -183,23 +183,35 @@ mkdir "%BUILDDIR%"
 move /Y "%SRCDIR%\Z_DIAG.EXE" "%BUILDDIR%\" >nul
 
 :: Generate dual-mode RUN.bat
->"%BUILDDIR%\RUN.bat" echo @echo off
->>"%BUILDDIR%\RUN.bat" echo if "%%OS%%"=="Windows_NT" goto NT_RUN
->>"%BUILDDIR%\RUN.bat" echo if not exist Z_DIAG.EXE goto NO_EXE
->>"%BUILDDIR%\RUN.bat" echo Z_DIAG.EXE
->>"%BUILDDIR%\RUN.bat" echo goto END
->>"%BUILDDIR%\RUN.bat" echo :NT_RUN
->>"%BUILDDIR%\RUN.bat" echo set "DOSBOX=%%~dp0..\..\DOSBox-X\dosbox-x.exe"
->>"%BUILDDIR%\RUN.bat" echo if exist "%%DOSBOX%%" goto DOSBOX_OK
->>"%BUILDDIR%\RUN.bat" echo for %%%%I in ^(dosbox-x.exe^) do if not "%%%%~$PATH:I"=="" set "DOSBOX=%%%%~$PATH:I"
->>"%BUILDDIR%\RUN.bat" echo if exist "%%DOSBOX%%" goto DOSBOX_OK
->>"%BUILDDIR%\RUN.bat" echo echo ERROR: DOSBox-X not found. ^& pause ^& exit /b 1
->>"%BUILDDIR%\RUN.bat" echo :DOSBOX_OK
->>"%BUILDDIR%\RUN.bat" echo "%%DOSBOX%%" -conf NUL -set "machine=svga_s3" -set "memsize=16" -set "cycles=max" -c "MOUNT C \"%%~dp0.\"" -c "C:" -c "Z_DIAG.EXE" -c "pause" -c "EXIT"
->>"%BUILDDIR%\RUN.bat" echo goto END
->>"%BUILDDIR%\RUN.bat" echo :NO_EXE
->>"%BUILDDIR%\RUN.bat" echo echo Z_DIAG.EXE not found. ^& pause
->>"%BUILDDIR%\RUN.bat" echo :END
+>"%BUILDDIR%\RUN.bat" (
+    echo @echo off
+    echo if "%%OS%%"=="Windows_NT" goto NT_RUN
+    echo if not exist Z_DIAG.EXE goto NO_EXE
+    echo Z_DIAG.EXE
+    echo goto END
+    echo :NT_RUN
+    echo set DOSBOX=%%~dp0..\..\DOSBox-X\dosbox-x.exe
+    echo if exist "%%DOSBOX%%" goto DOSBOX_OK
+    echo for %%%%I in ^(dosbox-x.exe^) do if not "%%%%~$PATH:I"=="" set DOSBOX=%%%%~$PATH:I
+    echo if exist "%%DOSBOX%%" goto DOSBOX_OK
+    echo echo ERROR: DOSBox-X not found.
+    echo pause ^& exit /b 1
+    echo :DOSBOX_OK
+    echo "%%DOSBOX%%" -conf NUL ^^
+    echo   -set "machine=svga_s3" ^^
+    echo   -set "memsize=16" ^^
+    echo   -set "cycles=max" ^^
+    echo   -c "MOUNT C \"%%~dp0.\"" ^^
+    echo   -c "C:" ^^
+    echo   -c "Z_DIAG.EXE" ^^
+    echo   -c "pause" ^^
+    echo   -c "EXIT"
+    echo goto END
+    echo :NO_EXE
+    echo echo Z_DIAG.EXE not found.
+    echo pause
+    echo :END
+)
 
 echo.
 echo Done! Directory created: ZDIAG_%TSTAMP%
