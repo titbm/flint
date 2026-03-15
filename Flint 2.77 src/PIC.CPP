@@ -666,6 +666,18 @@ int move_sen(int dir) {
 	unsigned int _zRemain=0; int _zCaught=0;
 #endif
 
+	/* Fix 1: reset PB6/PB7 latches before starting */
+	outportb(ADRRG,0x80);
+	outportb(ADRPPI+2,0xFF);
+	outportb(ADRPPI+2,0xFC);
+	/* Fix 2: reprogram timer modes (reset 8253 flip-flops) */
+	outportb(ADRPT0+3,0x34);	// K2x: mode2 lo+hi
+	outportb(ADRPT0+3,0x78);	// dX:  mode4 lo+hi
+	outportb(ADRPT0+3,0xB4);	// K2z: mode2 lo+hi
+	outportb(ADRPT1+3,0x34);	// K2y: mode2 lo+hi
+	outportb(ADRPT1+3,0x78);	// dY:  mode4 lo+hi
+	outportb(ADRPT1+3,0xB8);	// dZ:  mode4 lo+hi
+
 	outportb(ADRPT0,0x64); outportb(ADRPT0,0);		// K2x=100: Fstep=1000Hz
 	outportb(ADRPT0+1,0); outportb(ADRPT0+1,0x70);	// dX=28672(>Xscale)
 	outportb(ADRPT1,0x64); outportb(ADRPT1,0);		// K2y=100: Fstep=1000Hz
@@ -684,13 +696,23 @@ int move_sen(int dir) {
 	if(!f_demo) {
 		while(ctlw != tw) {
 			stspb=inportb(ADRPPI+1);
-			if((stspb & 0x03) != 0x03) ctlw=ctlw&XOFF;
-			if((stspb & 0x0c) != 0x0c) ctlw=ctlw&YOFF;
+			/* Fix 3: debounce sensors — confirm after 1ms */
+			if((stspb & 0x03) != 0x03) {
+				delay(1); stspb=inportb(ADRPPI+1);
+				if((stspb & 0x03) != 0x03) ctlw=ctlw&XOFF;
+				}
+			if((stspb & 0x0c) != 0x0c) {
+				delay(1); stspb=inportb(ADRPPI+1);
+				if((stspb & 0x0c) != 0x0c) ctlw=ctlw&YOFF;
+				}
 			if((stspb & 0x30) != 0x30) {
-				ctlw=ctlw&ZOFF;
+				delay(1); stspb=inportb(ADRPPI+1);
+				if((stspb & 0x30) != 0x30) {
+					ctlw=ctlw&ZOFF;
 #ifdef TRACE
-				if(!_zCaught) { _zRemain=read_counter(ADRPT1,2); _zCaught=1; }
+					if(!_zCaught) { _zRemain=read_counter(ADRPT1,2); _zCaught=1; }
 #endif
+					}
 				}
 			outportb(ADRRG,ctlw);
 			/* v2.76: removed out_time(1) */
@@ -708,11 +730,8 @@ int move_sen(int dir) {
 	if(!f_demo) {
 		while(!done) {
 			stspb=inportb(ADRPPI+1);
-			unsigned char stspb_t = stspb;
-                        int _j; for(_j=0; _j<10; _j++) stspb_t &= inportb(ADRPPI+1);
-                        if(stspb_t & 0x80) {ctlw=ctlw&XOFF&YOFF; fxy=0;}
-                        if(stspb_t & 0x40) {ctlw=ctlw&ZOFF; fz=0;}
-                        /* Debounce inserted ONLY for homing */
+			if(stspb & 0x80) {ctlw=ctlw&XOFF&YOFF; fxy=0;}
+			if(stspb & 0x40) {ctlw=ctlw&ZOFF; fz=0;}
 			outportb(ADRRG,ctlw);
 			if((!fxy) && (!fz)) done=1;
 			}
@@ -731,51 +750,6 @@ int move_sen(int dir) {
 #endif
 	return 1;
 	}
-
-
-#ifdef TRACE
-/* Diagnostic: test Z axis repeatability.
-   Calls move_sen(0) N times, moves Z between calls, logs sensor/counter state.
-   Must be called with step drivers already enabled. */
-void diag_z_test(void) {
-	int n, saved_x, saved_y, saved_z;
-	unsigned int xd, yd, zd;
-	unsigned char sens;
-
-	saved_x = xcur; saved_y = ycur; saved_z = zcur;
-	tlog_write("[DIAG] Z-TEST START");
-
-	for(n = 0; n < 5; n++) {
-		sprintf(_tbuf, "[DIAG] iter=%d PRE xcur=%d ycur=%d zcur=%d", n, xcur, ycur, zcur);
-		tlog_write(_tbuf);
-
-		/* Phase A: home to sensors */
-		move_sen(0);
-		sens = inportb(ADRPPI+1);
-		read_d_counters(&xd, &yd, &zd);
-		sprintf(_tbuf, "[DIAG] iter=%d HOME sens=%02X Xd=%u Yd=%u Zd=%u x=%d y=%d z=%d",
-			n, (int)sens, xd, yd, zd, xcur, ycur, zcur);
-		tlog_write(_tbuf);
-
-		/* Phase B: move Z up 500 steps (stay at X/Y home) */
-		if(!move(xcur, ycur, zcur + 500)) {
-			sprintf(_tbuf, "[DIAG] iter=%d MOVE_FAIL", n);
-			tlog_write(_tbuf);
-			break;
-		}
-		sens = inportb(ADRPPI+1);
-		read_d_counters(&xd, &yd, &zd);
-		sprintf(_tbuf, "[DIAG] iter=%d MOVED sens=%02X Xd=%u Yd=%u Zd=%u x=%d y=%d z=%d",
-			n, (int)sens, xd, yd, zd, xcur, ycur, zcur);
-		tlog_write(_tbuf);
-	}
-
-	/* Return to sensor position */
-	move_sen(0);
-	sprintf(_tbuf, "[DIAG] Z-TEST DONE final x=%d y=%d z=%d", xcur, ycur, zcur);
-	tlog_write(_tbuf);
-}
-#endif
 
 
 /* v2.77: k2 calculator for move() - computes step frequency divider per axis

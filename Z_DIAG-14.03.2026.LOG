@@ -1,0 +1,639 @@
+=== Z_DIAG v2 Log Start ===
+ISA card detected at 0x300. K1=150
+
+Sensors: 0x3A
+
+
+###########################################################
+#         Z_DIAG v2 AUTO-DIAGNOSTIC                       #
+###########################################################
+Press ESC at any time to abort.
+
+============ PHASE 1: Environment ============
+
+=== TEST 1: Environment Report ===
+
+DOS version: 7.10
+Conventional memory: 640 KB
+Extended memory (int15h): 0 KB
+
+Compiler: Borland C++ 4.6
+sizeof(int)=2 sizeof(long)=4 sizeof(void*)=4
+Memory model: LARGE
+
+BIOS equipment word: 0x4423
+  Floppy: yes, Video mode: 2, Serial ports: 2, Printers: 1
+Stack pointer (approx): SP=4050
+
+Environment variables:
+  CONFIG=DOS
+  PROMPT=$p$g
+  COMSPEC=C:\WINDOWS\COMMAND.COM
+  PATH=C:\WINDOWS;C:\WINDOWS\COMMAND;C:\;C:\WINDOWS\;C:\WINDOWS\SYSTEM;C:\DOS\;C:\NC;C:\FLINT
+  TEMP=C:\TEMP
+  TMP=C:\TEMP
+  CMDLINE=z_diag.exe
+
+=== TEST 1 COMPLETE ===
+
+=== TEST 2: CPU Timing ===
+
+--- A: delay() accuracy ---
+  delay(   1 ms):   0 ticks = ~0 ms
+  delay(  10 ms):   0 ticks = ~0 ms
+  delay(  55 ms):   1 ticks = ~55 ms
+  delay( 100 ms):   2 ticks = ~110 ms
+  delay( 500 ms):   9 ticks = ~495 ms
+  delay(1000 ms):  19 ticks = ~1045 ms
+
+--- B: BIOS tick rate ---
+  1000ms = 18 ticks (expect ~18). OK
+
+--- C: CPU busy-loop speed ---
+  Loops in 55ms: 2328575 (P3+ class)
+
+--- D: I/O read timing ---
+  inportb() calls in 55ms: 87362 => ~629 ns/read
+
+--- E: outportb() pair timing ---
+  pairs in 55ms: 20021 => ~2747 ns/pair
+
+=== TEST 2 COMPLETE ===
+
+============ PHASE 2: Hardware Identification ============
+
+=== TEST 3: Port Scan 0x300-0x31F ===
+
+  300: 00 02 00 FF 00 02 00 FF  | PT0 (K2x,dX,K2z)
+  308: 96 3A FC BE FF FF FF FF  | PPI (PA,PB,PC,CW)
+  310: 00 FF 71 FF FF FF FF FF  | PPI2 (PA,PB,PC,CW)
+  318: FF FF 01 00 00 00 00 03  | CMOS counter
+
+=== TEST 3 COMPLETE ===
+
+=== TEST 4: PPI (8255) Verify ===
+
+PA: wrote 150, read 150. OK
+PA: wrote 200, read 200. OK
+PB (sensors): 0x3A
+  X-=0 X+=1 Y-=0 Y+=1 Z-=1 Z+=1 PB6=0 PB7=0
+PC: wrote 0xFC, read 0xFC
+PPI2 PA (input): 0x01
+PPI2 PB (output): 0x00
+
+=== TEST 4 COMPLETE ===
+
+=== TEST 5: Timer Chip ID (8253 vs 8254) ===
+For each chip: write value, verify via latch+read,
+then test Read-Back. If Read-Back corrupts → 8253.
+
+--- PT0 (base 0x300) ---
+  Write 12345, latch+read: 12345. OK
+  Read-Back byte: 0x39
+  After RB, write 12345, read: 14799. *** CORRUPT (14799) => 8253 (shared flip-flop) ***
+
+--- PT1 (base 0x304) ---
+  Write 12345, latch+read: 12345. OK
+  Read-Back byte: 0x39
+  After RB, write 12345, read: 14799. *** CORRUPT (14799) => 8253 (shared flip-flop) ***
+
+--- PT2 (base 0x314) ---
+  Write 12345, latch+read: 12345. OK
+  Read-Back byte: 0x39
+  After RB, write 12345, read: 14799. *** CORRUPT (14799) => 8253 (shared flip-flop) ***
+
+=== TEST 5 COMPLETE ===
+
+============ PHASE 3: Hardware Behavior ============
+
+=== TEST 6: Oscillator Frequency ===
+
+--- A: Via K2x (GATE always HIGH) ---
+  K2x: 60000 -> 60000 in 55ms, delta=60000
+  OSC frequency (via K2x): ~1090909 Hz
+
+--- B: Via K2z (needs ZON+OSC) ---
+  K2z: 59802 -> 49575 in 55ms, delta=10227
+  OSC frequency (via K2z): ~185945 Hz
+
+=== TEST 6 COMPLETE ===
+
+=== TEST 7: Counter GATE Map ===
+Which control signals gate each counter channel?
+
+  Channel       Condition             Before   After  Counting?
+  K2x(PT0.0)   OSC on, XON off        50000   50000  no
+  K2x(PT0.0)   OSC OFF, XON off       50000   50000  no
+  K2y(PT1.0)   OSC on, YON off        50000   50000  no
+  K2y(PT1.0)   OSC on, YON on         49802   44836  YES
+  K2z(PT0.2)   OSC on, ZON off        50000   50000  no
+  K2z(PT0.2)   OSC on, ZON on         49802   44836  YES
+  K2z(PT0.2)   OSC OFF, ZON on        44714   44714  no
+  dZ(PT1.2)    K2z=100,ZON on,OSC on  49999   49949  YES
+
+=== TEST 7 COMPLETE ===
+
+=== TEST 8: Sensor Snapshot ===
+
+PPI (0x308):
+  PA = 0x96 (K1=150)
+  PB = 0x3A (sensors)
+    X- =0  X+ =1  Y- =0  Y+ =1  Z- =1  Z+ =1  PB6=0  PB7=0
+  PC = 0xFC
+    stepM=0  endS=0  ctl2=1  ctl3=1  ctl4=1  LASER=1  pulse=1  PROT=1
+
+PPI2 (0x310):
+  PA = 0x00 (external sensors)
+  PB = 0xFF (EM shutters)
+
+Counters (after hw_init):
+  PT0: K2x=50000  dX=2  K2z=14
+  PT1: K2y=44715  dY=0  dZ=49948
+  PT2: ch0=14640  ch1=12593  ch2=34944
+
+RG (ctlw): 0x07
+LRG: 0xF9
+CMOS: 0x3F 0x3F
+
+=== TEST 8 COMPLETE ===
+
+=== TEST 9: PB6/PB7 Signal Nature ===
+Is PB6 (Z done) a latch or one-shot pulse?
+
+--- A: Z cascade (no physical movement, STEP_OFF) ---
+  PB6 before start: 0
+  PB6 went HIGH after 140142 poll loops
+  500 reads after PB6: 500 HIGH, 0 LOW
+  => PB6 is LATCHED (stays HIGH)
+  PB6 before reset: 0
+  PB6 after reset:  0
+
+  Duration test (dZ=10, K2z=500):
+  PB6 HIGH for 100001 reads (~62900 us)
+  => LATCHED (stays forever until reset)
+
+--- B: XY cascade → PB7 ---
+  PB7 before start: 0
+  PB7 went HIGH after 140149 loops
+  200 reads: 200 HIGH => LATCHED
+
+=== TEST 9 COMPLETE ===
+
+=== TEST 10: Sensor Reset Behavior ===
+
+PB before any reset: 0x3A
+
+Sensor reset sequence (PC1=1 then PC1=0):
+  After PC=0xFF (reset active): PB=0x3A
+  After PC=0xFC (enable):       PB=0x3A
+
+STEP control (PC0):
+  STEP_ON  (PC=0xFC): PB=0x3A
+  STEP_OFF (PC=0xFD): PB=0x3A
+
+=== TEST 10 COMPLETE ===
+
+--- Phase 3 complete. Starting Phase 4 (motors)... ---
+
+============ PHASE 4A: Basic Mechanics ============
+
+=== TEST 11: Home Repeatability (10 cycles) ===
+
+  Cycle 0: 1084 steps
+  Cycle 1: 16384 steps
+  Cycle 2: 16384 steps
+  Cycle 3: 16384 steps
+  Cycle 4: 16384 steps
+  Cycle 5: 16384 steps
+  Cycle 6: 16384 steps
+  Cycle 7: 16384 steps
+  Cycle 8: 16384 steps
+  Cycle 9: 16384 steps
+
+  Min=1084  Max=16384  Avg=14854  Spread=15300 *** UNRELIABLE ***
+
+=== TEST 11 COMPLETE ===
+
+=== TEST 12: Z Step Integrity (Z only) ===
+
+     K2z  Steps  Rep    Home  Expect   Delta  Status
+     100   1000    0   16384    1000  +15384  *** LOSS ***
+     100   1000    1   16384    1000  +15384  *** LOSS ***
+     100   1000    2   16384    1000  +15384  *** LOSS ***
+     100   2000    0   16384    2000  +14384  *** LOSS ***
+     100   2000    1   16384    2000  +14384  *** LOSS ***
+     100   2000    2   16384    2000  +14384  *** LOSS ***
+     100   5000    0   16384    5000  +11384  *** LOSS ***
+     100   5000    1   16384    5000  +11384  *** LOSS ***
+     100   5000    2   16384    5000  +11384  *** LOSS ***
+     200   1000    0   16384    1000  +15384  *** LOSS ***
+     200   1000    1   16384    1000  +15384  *** LOSS ***
+     200   1000    2   16384    1000  +15384  *** LOSS ***
+     200   2000    0   16384    2000  +14384  *** LOSS ***
+     200   2000    1   16384    2000  +14384  *** LOSS ***
+     200   2000    2   16384    2000  +14384  *** LOSS ***
+     200   5000    0   16384    5000  +11384  *** LOSS ***
+     200   5000    1   16384    5000  +11384  *** LOSS ***
+     200   5000    2   16384    5000  +11384  *** LOSS ***
+     500   1000    0   16384    1000  +15384  *** LOSS ***
+     500   1000    1   16384    1000  +15384  *** LOSS ***
+     500   1000    2   16384    1000  +15384  *** LOSS ***
+     500   2000    0   16384    2000  +14384  *** LOSS ***
+     500   2000    1   16384    2000  +14384  *** LOSS ***
+     500   2000    2   16384    2000  +14384  *** LOSS ***
+     500   5000    0   16384    5000  +11384  *** LOSS ***
+     500   5000    1   16384    5000  +11384  *** LOSS ***
+     500   5000    2   16384    5000  +11384  *** LOSS ***
+
+=== TEST 12 COMPLETE ===
+
+=== TEST 13: XYZ Step Integrity ===
+Home all -> move XYZ -> home all -> check Z delta.
+
+   X_tgt  Y_tgt  Z_tgt  Z_home  Expect   Delta  Status
+SENSOR
+SENSOR
+SENSOR
+SENSOR
+
+=== TEST 13 COMPLETE ===
+
+============ PHASE 4B: Bug Reproduction ============
+
+=== TEST 14: FLINT F5->F5 Cycle Replica ===
+Exact FLINT sequence: STEP_ON -> move_sen -> 180pts -> STEP_OFF -> repeat
+Config: l_period=35 dT=6 step_freq=1000 f_const=0
+
+========== RUN 1 ==========
+Home OK. xcur=23300 ycur=200 zcur=200
+Run 1 ABORTED
+
+============ PHASE 4C: Bug Isolation ============
+
+=== TEST 15: Homing Isolation ===
+5 reps x 4 combos after identical process() run.
+
+--- Z only ---
+ABORTED
+
+=== TEST 16: Sensor Noise During XY Motion ===
+Moving XY while polling Z sensors (PB4/PB5).
+
+ABORTED
+
+=== TEST 17: K2z Timing Probe ===
+Measures actual K2z counter period via timing.
+If 8253 flip-flop corrupted: K2z=100 becomes 25600 => 256x slower.
+
+--- A: Reference (after hw_init) ---
+  K2z=100 reference: 701 loops (~440 us)
+
+--- B: After 180-point process ---
+Process ABORTED
+
+=== TEST 18: Gravity Drift ===
+Home -> up 6000 -> STEP_OFF -> wait -> STEP_ON -> home -> delta
+
+  Wait_s    Home   Delta  Status
+      0s   16384       -  baseline
+      1s   16384     +0  OK
+      5s   16384     +0  OK
+     10s   16384     +0  OK
+     30s   16384     +0  OK
+
+=== TEST 18 COMPLETE ===
+
+###########################################################
+#         AUTO-DIAGNOSTIC COMPLETE                        #
+###########################################################
+Config: l_period=35 dT=6 step_freq=1000 f_const=0
+Full results in Z_DIAG.LOG
+
+=== TEST 10: Sensor Reset Behavior ===
+
+PB before any reset: 0x3A
+
+Sensor reset sequence (PC1=1 then PC1=0):
+  After PC=0xFF (reset active): PB=0x3A
+  After PC=0xFC (enable):       PB=0x3A
+
+STEP control (PC0):
+  STEP_ON  (PC=0xFC): PB=0x3A
+  STEP_OFF (PC=0xFD): PB=0x3A
+
+=== TEST 10 COMPLETE ===
+Config: l_period=35 dT=6 step_freq=1000 f_const=0
+
+=== TEST 14: FLINT F5->F5 Cycle Replica ===
+Exact FLINT sequence: STEP_ON -> move_sen -> 180pts -> STEP_OFF -> repeat
+Config: l_period=35 dT=6 step_freq=1000 f_const=0
+
+========== RUN 1 ==========
+Home OK. xcur=23300 ycur=200 zcur=200
+Run 1 ABORTED
+
+###########################################################
+#         Z_DIAG v2 AUTO-DIAGNOSTIC                       #
+###########################################################
+Press ESC at any time to abort.
+
+============ PHASE 1: Environment ============
+
+=== TEST 1: Environment Report ===
+
+DOS version: 7.10
+Conventional memory: 640 KB
+Extended memory (int15h): 0 KB
+
+Compiler: Borland C++ 4.6
+sizeof(int)=2 sizeof(long)=4 sizeof(void*)=4
+Memory model: LARGE
+
+BIOS equipment word: 0x4423
+  Floppy: yes, Video mode: 2, Serial ports: 2, Printers: 1
+Stack pointer (approx): SP=4050
+
+Environment variables:
+  CONFIG=DOS
+  PROMPT=$p$g
+  COMSPEC=C:\WINDOWS\COMMAND.COM
+  PATH=C:\WINDOWS;C:\WINDOWS\COMMAND;C:\;C:\WINDOWS\;C:\WINDOWS\SYSTEM;C:\DOS\;C:\NC;C:\FLINT
+  TEMP=C:\TEMP
+  TMP=C:\TEMP
+  CMDLINE=z_diag.exe
+
+=== TEST 1 COMPLETE ===
+
+=== TEST 2: CPU Timing ===
+
+--- A: delay() accuracy ---
+  delay(   1 ms):   0 ticks = ~0 ms
+  delay(  10 ms):   0 ticks = ~0 ms
+  delay(  55 ms):   1 ticks = ~55 ms
+  delay( 100 ms):   2 ticks = ~110 ms
+  delay( 500 ms):   9 ticks = ~495 ms
+  delay(1000 ms):  19 ticks = ~1045 ms
+
+--- B: BIOS tick rate ---
+  1000ms = 18 ticks (expect ~18). OK
+
+--- C: CPU busy-loop speed ---
+  Loops in 55ms: 2328568 (P3+ class)
+
+--- D: I/O read timing ---
+  inportb() calls in 55ms: 87364 => ~629 ns/read
+
+--- E: outportb() pair timing ---
+  pairs in 55ms: 20021 => ~2747 ns/pair
+
+=== TEST 2 COMPLETE ===
+
+============ PHASE 2: Hardware Identification ============
+
+=== TEST 3: Port Scan 0x300-0x31F ===
+
+  300: 8A 2C 64 FF 8A 2C BB FF  | PT0 (K2x,dX,K2z)
+  308: 96 3A FC BE FF FF FF FF  | PPI (PA,PB,PC,CW)
+  310: 00 FF 71 FF 36 31 92 92  | PPI2 (PA,PB,PC,CW)
+  318: 92 FF 01 00 00 00 00 03  | CMOS counter
+
+=== TEST 3 COMPLETE ===
+
+=== TEST 4: PPI (8255) Verify ===
+
+PA: wrote 150, read 150. OK
+PA: wrote 200, read 200. OK
+PB (sensors): 0x3A
+  X-=0 X+=1 Y-=0 Y+=1 Z-=1 Z+=1 PB6=0 PB7=0
+PC: wrote 0xFC, read 0xFC
+PPI2 PA (input): 0x01
+PPI2 PB (output): 0x00
+
+=== TEST 4 COMPLETE ===
+
+=== TEST 5: Timer Chip ID (8253 vs 8254) ===
+For each chip: write value, verify via latch+read,
+then test Read-Back. If Read-Back corrupts → 8253.
+
+--- PT0 (base 0x300) ---
+  Write 12345, latch+read: 2698. *** BAD ***
+  Read-Back byte: 0x8A
+  After RB, write 12345, read: 35535. *** CORRUPT (35535) => 8253 (shared flip-flop) ***
+
+--- PT1 (base 0x304) ---
+  Write 12345, latch+read: 12345. OK
+  Read-Back byte: 0x39
+  After RB, write 12345, read: 14799. *** CORRUPT (14799) => 8253 (shared flip-flop) ***
+
+--- PT2 (base 0x314) ---
+  Write 12345, latch+read: 12345. OK
+  Read-Back byte: 0x39
+  After RB, write 12345, read: 14799. *** CORRUPT (14799) => 8253 (shared flip-flop) ***
+
+=== TEST 5 COMPLETE ===
+
+============ PHASE 3: Hardware Behavior ============
+
+=== TEST 6: Oscillator Frequency ===
+
+--- A: Via K2x (GATE always HIGH) ---
+  K2x: 60000 -> 60000 in 55ms, delta=60000
+  OSC frequency (via K2x): ~1090909 Hz
+
+--- B: Via K2z (needs ZON+OSC) ---
+  K2z: 59801 -> 49560 in 55ms, delta=10241
+  OSC frequency (via K2z): ~186200 Hz
+
+=== TEST 6 COMPLETE ===
+
+=== TEST 7: Counter GATE Map ===
+Which control signals gate each counter channel?
+
+  Channel       Condition             Before   After  Counting?
+  K2x(PT0.0)   OSC on, XON off        50000   50000  no
+  K2x(PT0.0)   OSC OFF, XON off       50000   50000  no
+  K2y(PT1.0)   OSC on, YON off        50000   50000  no
+  K2y(PT1.0)   OSC on, YON on         49802   44836  YES
+  K2z(PT0.2)   OSC on, ZON off        50000   50000  no
+  K2z(PT0.2)   OSC on, ZON on         49802   44837  YES
+  K2z(PT0.2)   OSC OFF, ZON on        44714   44714  no
+  dZ(PT1.2)    K2z=100,ZON on,OSC on  49999   49949  YES
+
+=== TEST 7 COMPLETE ===
+
+=== TEST 8: Sensor Snapshot ===
+
+PPI (0x308):
+  PA = 0x96 (K1=150)
+  PB = 0x3A (sensors)
+    X- =0  X+ =1  Y- =0  Y+ =1  Z- =1  Z+ =1  PB6=0  PB7=0
+  PC = 0xFC
+    stepM=0  endS=0  ctl2=1  ctl3=1  ctl4=1  LASER=1  pulse=1  PROT=1
+
+PPI2 (0x310):
+  PA = 0x01 (external sensors)
+  PB = 0xFF (EM shutters)
+
+Counters (after hw_init):
+  PT0: K2x=50000  dX=300  K2z=15
+  PT1: K2y=44717  dY=300  dZ=49948
+  PT2: ch0=14640  ch1=12593  ch2=18296
+
+RG (ctlw): 0x07
+LRG: 0x39
+CMOS: 0xFF 0xFE
+
+=== TEST 8 COMPLETE ===
+
+=== TEST 9: PB6/PB7 Signal Nature ===
+Is PB6 (Z done) a latch or one-shot pulse?
+
+--- A: Z cascade (no physical movement, STEP_OFF) ---
+  PB6 before start: 0
+  PB6 went HIGH after 140139 poll loops
+  500 reads after PB6: 500 HIGH, 0 LOW
+  => PB6 is LATCHED (stays HIGH)
+  PB6 before reset: 0
+  PB6 after reset:  0
+
+  Duration test (dZ=10, K2z=500):
+  PB6 HIGH for 100001 reads (~62900 us)
+  => LATCHED (stays forever until reset)
+
+--- B: XY cascade → PB7 ---
+  PB7 before start: 0
+  PB7 went HIGH after 140152 loops
+  200 reads: 200 HIGH => LATCHED
+
+=== TEST 9 COMPLETE ===
+
+=== TEST 10: Sensor Reset Behavior ===
+
+PB before any reset: 0x3A
+
+Sensor reset sequence (PC1=1 then PC1=0):
+  After PC=0xFF (reset active): PB=0x3A
+  After PC=0xFC (enable):       PB=0x3A
+
+STEP control (PC0):
+  STEP_ON  (PC=0xFC): PB=0x3A
+  STEP_OFF (PC=0xFD): PB=0x3A
+
+=== TEST 10 COMPLETE ===
+
+--- Phase 3 complete. Starting Phase 4 (motors)... ---
+
+============ PHASE 4A: Basic Mechanics ============
+
+=== TEST 11: Home Repeatability (10 cycles) ===
+
+  Cycle 0: 39 steps
+  Cycle 1: 16384 steps
+  Cycle 2: 16384 steps
+  Cycle 3: 16384 steps
+  Cycle 4: 16384 steps
+  Cycle 5: 16384 steps
+  Cycle 6: 16384 steps
+  Cycle 7: 16384 steps
+  Cycle 8: 16384 steps
+  Cycle 9: 16384 steps
+
+  Min=39  Max=16384  Avg=14749  Spread=16345 *** UNRELIABLE ***
+
+=== TEST 11 COMPLETE ===
+
+=== TEST 12: Z Step Integrity (Z only) ===
+
+     K2z  Steps  Rep    Home  Expect   Delta  Status
+     100   1000    0   16384    1000  +15384  *** LOSS ***
+     100   1000    1   16384    1000  +15384  *** LOSS ***
+     100   1000    2   16384    1000  +15384  *** LOSS ***
+     100   2000    0   16384    2000  +14384  *** LOSS ***
+     100   2000    1   16384    2000  +14384  *** LOSS ***
+     100   2000    2   16384    2000  +14384  *** LOSS ***
+     100   5000    0   16384    5000  +11384  *** LOSS ***
+     100   5000    1   16384    5000  +11384  *** LOSS ***
+     100   5000    2   16384    5000  +11384  *** LOSS ***
+     200   1000    0   16384    1000  +15384  *** LOSS ***
+     200   1000    1   16384    1000  +15384  *** LOSS ***
+     200   1000    2   16384    1000  +15384  *** LOSS ***
+     200   2000    0   16384    2000  +14384  *** LOSS ***
+     200   2000    1   16384    2000  +14384  *** LOSS ***
+     200   2000    2   16384    2000  +14384  *** LOSS ***
+     200   5000    0   16384    5000  +11384  *** LOSS ***
+     200   5000    1   16384    5000  +11384  *** LOSS ***
+     200   5000    2   16384    5000  +11384  *** LOSS ***
+     500   1000    0   16384    1000  +15384  *** LOSS ***
+     500   1000    1   16384    1000  +15384  *** LOSS ***
+     500   1000    2   16384    1000  +15384  *** LOSS ***
+     500   2000    0   16384    2000  +14384  *** LOSS ***
+     500   2000    1   16384    2000  +14384  *** LOSS ***
+     500   2000    2   16384    2000  +14384  *** LOSS ***
+     500   5000    0   16384    5000  +11384  *** LOSS ***
+     500   5000    1   16384    5000  +11384  *** LOSS ***
+     500   5000    2   16384    5000  +11384  *** LOSS ***
+
+=== TEST 12 COMPLETE ===
+
+=== TEST 13: XYZ Step Integrity ===
+Home all -> move XYZ -> home all -> check Z delta.
+
+   X_tgt  Y_tgt  Z_tgt  Z_home  Expect   Delta  Status
+SENSOR
+SENSOR
+SENSOR
+SENSOR
+
+=== TEST 13 COMPLETE ===
+
+============ PHASE 4B: Bug Reproduction ============
+
+=== TEST 14: FLINT F5->F5 Cycle Replica ===
+Exact FLINT sequence: STEP_ON -> move_sen -> 180pts -> STEP_OFF -> repeat
+Config: l_period=35 dT=6 step_freq=1000 f_const=0
+
+========== RUN 1 ==========
+Home OK. xcur=23300 ycur=200 zcur=200
+Run 1 ABORTED
+
+============ PHASE 4C: Bug Isolation ============
+
+=== TEST 15: Homing Isolation ===
+5 reps x 4 combos after identical process() run.
+
+--- Z only ---
+ABORTED
+
+=== TEST 16: Sensor Noise During XY Motion ===
+Moving XY while polling Z sensors (PB4/PB5).
+
+ABORTED
+
+=== TEST 17: K2z Timing Probe ===
+Measures actual K2z counter period via timing.
+If 8253 flip-flop corrupted: K2z=100 becomes 25600 => 256x slower.
+
+--- A: Reference (after hw_init) ---
+  K2z=100 reference: 702 loops (~441 us)
+
+--- B: After 180-point process ---
+Process ABORTED
+
+=== TEST 18: Gravity Drift ===
+Home -> up 6000 -> STEP_OFF -> wait -> STEP_ON -> home -> delta
+
+  Wait_s    Home   Delta  Status
+      0s   16384       -  baseline
+      1s   16384     +0  OK
+      5s   16384     +0  OK
+     10s   16384     +0  OK
+     30s   16384     +0  OK
+
+=== TEST 18 COMPLETE ===
+
+###########################################################
+#         AUTO-DIAGNOSTIC COMPLETE                        #
+###########################################################
+Config: l_period=35 dT=6 step_freq=1000 f_const=0
+Full results in Z_DIAG.LOG
+=== Z_DIAG v2 Log End ===

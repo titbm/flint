@@ -140,13 +140,24 @@ static void hw_stop(void) {
     outportb(ADRRG, ctlw);
 }
 
+/*--- Stop all motors and reset PB6/PB7 latches ---*/
+static void hw_full_stop(void) {
+    outportb(ADRRG, 0x80);          /* all motors off, OSC off */
+    outportb(ADRPPI+2, 0xff);      /* reset PB6/PB7 latches  */
+    outportb(ADRPPI+2, 0xfc);      /* re-enable sensors      */
+}
+
 /*--- Wait for Z done (PB6), with ESC and sensor check ---*/
 static int wait_z_done(void) {
     unsigned char stspb;
     long loops = 0;
     while(1) {
         stspb = read_sensors();
-        if(stspb & 0x40) break;
+        if(stspb & 0x40) {
+            ctlw = ctlw & ZOFF;
+            outportb(ADRRG, ctlw);
+            break;
+        }
         if((stspb & 0x30) != 0x30) {
             delay(1);
             stspb = read_sensors();
@@ -191,6 +202,7 @@ static int home_z(unsigned int *steps_taken) {
     int fz;
     unsigned int z_remain;
 
+    hw_full_stop();                /* reset PB6 before starting */
     outportb(ADRPT0+3, 0xb4);
     outportb(ADRPT1+3, 0xb8);
     outportb(ADRPT0+2, 0x64); outportb(ADRPT0+2, 0x00);  /* K2z=100 */
@@ -245,6 +257,7 @@ static int home_z(unsigned int *steps_taken) {
 static int home_all(int reinit) {
     unsigned char stspb, tw;
 
+    hw_full_stop();                /* reset PB6/PB7 before starting */
     if(reinit) {
         outportb(ADRPT0+3, 0x34);
         outportb(ADRPT0+3, 0x78);
@@ -375,6 +388,7 @@ static int move_xyz(int x, int y, int z) {
         if(loops > 10000000L) { hw_stop(); return 3; }
     }
     }
+    hw_full_stop();
     xcur = x; ycur = y; zcur = z;
     return 0;
 }
@@ -392,7 +406,10 @@ static int move_z(int steps, unsigned int k2z) {
     if(steps > 0) ctlw = (ctlw | ZUP | ZON) & OSCON;
     else          ctlw = ((ctlw & ZDOWN) | ZON) & OSCON;
     outportb(ADRRG, ctlw);
-    return wait_z_done();
+    { int rc = wait_z_done();
+      hw_full_stop();
+      return rc;
+    }
 }
 
 /*--- Measure K2z timing (loads K2z WITHOUT mode CW) ---*/
