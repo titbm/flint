@@ -140,18 +140,26 @@ inline void nosound(void) {
    timer, only latches and reads the existing counter.
    PIT ch0 runs in mode 3 (square wave): counter decrements by 2
    per clock tick.  PIT frequency: 1193182 Hz.
-   Counter units per ms = 1193182/1000 * 2 = ~2386. */
+   Counter units per ms = 1193182/1000 * 2 = ~2386.
+   _disable()/_enable() guard: prevents INT 8 from stealing the second
+   inp(0x40) between the two reads, which would corrupt curr and cause
+   either infinite hang or premature exit.  Also prevents outp(0x43,0x00)
+   from disrupting PIT ch2 flip-flop (speaker tone corruption). */
 inline void pit_delay_ms(unsigned ms) {
     unsigned long total = (unsigned long)ms * 2386UL;
     unsigned long elapsed = 0;
     unsigned int prev, curr;
+    _disable();
     outp(0x43, 0x00);          /* latch ch0 */
     prev  = (unsigned int)inp(0x40);
     prev |= (unsigned int)inp(0x40) << 8;
+    _enable();
     while(elapsed < total) {
+        _disable();
         outp(0x43, 0x00);      /* latch ch0 */
         curr  = (unsigned int)inp(0x40);
         curr |= (unsigned int)inp(0x40) << 8;
+        _enable();
         if(curr <= prev)
             elapsed += (unsigned long)(prev - curr);
         else
