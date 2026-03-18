@@ -167,6 +167,7 @@ extern unsigned long ulFlash;
 int msg(int msgx, int msgy, int onoff, char msgtxt[]);
 int msgbox(char msgtxt[], int more, int f_beep=0);
 void draw(int flag, int all);
+void mainscr(int all);
 void beep(int tone, int duration);
 void out_time(int newt);
 void progbar(long nmb_max, long nmb, int set, int xl, int yt);
@@ -593,6 +594,7 @@ a:		if(f_metal) {
 				tlog_write(_tbuf);
 #endif
 				if(!k) return 0;
+				mainscr(1); show_reit(1); progbar(nmax,i,1,160,464);
 				msg(160,80,1,"For STOP: press ESC");
 				flag=1;
 				if(k == 1) goto a;
@@ -615,6 +617,7 @@ a2:		if(!lpuls(flag)) {
 			tlog_write(_tbuf);
 #endif
 			if(!k) return 0;
+			mainscr(1); show_reit(1); progbar(nmax,i,1,160,464);
 			msg(160,80,1,"For STOP: press ESC");
 			flag=1;
 			if(k == 1) goto a2;

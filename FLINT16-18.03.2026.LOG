@@ -1,0 +1,1848 @@
+=== FLINT 2.77 Trace Log Start ===
+[HW] LRG <- 00 (init)
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[INI] hw=1 K1=150 lper=35 gate=19 shd=100 dchk=1
+[UI] MAIN btn=255 (key) pkey=59
+[CONFIG] PUMP ON
+[HW] LRG <- 03 (D0=pump D1=EOshutter)
+[CONFIG] OK lper=35 gate=19 sfq=1000 shd=100 const=0 metal=0
+[HW] SH_CLOSE all-off
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[CONFIG] EXIT LCtl=3 gate_val=19 (gate reset to 1)
+[UI] MAIN btn=255 (key) pkey=61
+[DATA] LOAD file=cube.bft points=1000
+[UI] MAIN btn=255 (key) pkey=63
+[DLGSTART] ENTER lastn=0 xcur=0 ycur=0 zcur=0 doptr=0 fptr=0 demo=0
+[START] st=0 fstart=2 metal=0 dchk=1 LCtl=3 gate=19
+[START] PRE-PROC xcur=0 ycur=0 zcur=0 doptr=0 fptr=0
+[PROC] START n=0/1000 metal=0 dchk=1 lper=35 gate=19 shd=100
+[PROC] CFG xptr=640 yptr=280 zptr=150 zsize=400 nglas=1.5060 step=10 sf=1000 dT=6 fc=0 demo=0
+[PROC] CALC refr_ofs=1343 z_base=9507 (11000-zptr-refr_ofs)
+[PROC] CHK doptr=0 fptr=0 xcur=0 ycur=0 zcur=0 => HOMING
+[HOMING] dir=0 Zexpect=0 Zactual=9419 Zdelta=-9419 sens=3F
+[PROC] RESUME xcur=23300 ycur=200 zcur=200 doptr=1 fptr=0 st=0
+[HW] PPI2 PR_OPEN
+[PT] i=0 raw=86,86,86 xyz=22774,366,9420 d=-526,166,9220
+[MOV] dx=-526 dy=166 dz=9220 tseg=264 k2x=1755 k2y=5562 k2z=100
+[HW] RG OUT 3E fxy=1 fz=1
+[MOV] DONE sens=3F Zd=0 dz_prog=9220 cur=23300,200,200->22774,366,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41627
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41628
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3411 elapsed=89 ~890us fl=41629
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41630
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3409 elapsed=91 ~910us fl=41631
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41632
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3410 elapsed=90 ~900us fl=41633
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41634
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3414 elapsed=86 ~860us fl=41635
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3408 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41636
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3293 elapsed=207 ~2070us fl=41637
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41637 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=0 retry=2
+[PT] i=1 raw=122,86,86 xyz=22738,366,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22774,366,9420->22738,366,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41638
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41639
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41640
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3413 elapsed=87 ~870us fl=41641
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3408 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41642
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3411 elapsed=89 ~890us fl=41643
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41644
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3411 elapsed=89 ~890us fl=41645
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41646
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3412 elapsed=88 ~880us fl=41647
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3407 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41648
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41648 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=1 retry=2
+[PT] i=2 raw=158,86,86 xyz=22702,366,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22738,366,9420->22702,366,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41649
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41650
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41651
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3408 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41652
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41653
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41654
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41655
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41656
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3414 elapsed=86 ~860us fl=41657
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3409 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41658
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3411 elapsed=89 ~890us fl=41659
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41659 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=2 retry=2
+[PT] i=3 raw=194,86,86 xyz=22666,366,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22702,366,9420->22666,366,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41660
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41661
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41662
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41663
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41664
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41665
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41666
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41667
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41668
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41669
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3407 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41670
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41670 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=3 retry=2
+[PT] i=4 raw=230,86,86 xyz=22630,366,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22666,366,9420->22630,366,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41671
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41672
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41673
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41674
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41675
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41676
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41677
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41678
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41679
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41680
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41681
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41681 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=4 retry=2
+[PT] i=5 raw=266,86,86 xyz=22594,366,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22630,366,9420->22594,366,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3410 elapsed=90 ~900us fl=41682
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41683
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41684
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41685
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41686
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41687
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41688
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41689
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3408 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41690
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41691
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41692
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41692 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=5 retry=2
+[PT] i=6 raw=302,86,86 xyz=22558,366,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22594,366,9420->22558,366,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41693
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3410 elapsed=90 ~900us fl=41694
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41695
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3413 elapsed=87 ~870us fl=41696
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3408 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41697
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41698
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41699
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41700
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41701
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41702
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41703
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41703 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=6 retry=2
+[PT] i=7 raw=338,86,86 xyz=22522,366,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22558,366,9420->22522,366,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3410 elapsed=90 ~900us fl=41704
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41705
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3411 elapsed=89 ~890us fl=41706
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41707
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3411 elapsed=89 ~890us fl=41708
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41709
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3412 elapsed=88 ~880us fl=41710
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41711
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3411 elapsed=89 ~890us fl=41712
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41713
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41714
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41714 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=7 retry=2
+[PT] i=8 raw=374,86,86 xyz=22486,366,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22522,366,9420->22486,366,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41715
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3411 elapsed=89 ~890us fl=41716
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41717
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3412 elapsed=88 ~880us fl=41718
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41719
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3409 elapsed=91 ~910us fl=41720
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41721
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3411 elapsed=89 ~890us fl=41722
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41723
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3411 elapsed=89 ~890us fl=41724
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41725
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41725 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=8 retry=2
+[PT] i=9 raw=410,86,86 xyz=22450,366,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22486,366,9420->22450,366,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41726
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3408 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41727
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41728
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41729
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3414 elapsed=86 ~860us fl=41730
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3409 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41731
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3410 elapsed=90 ~900us fl=41732
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41733
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3413 elapsed=87 ~870us fl=41734
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3408 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41735
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3409 elapsed=91 ~910us fl=41736
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41736 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=9 retry=2
+[PT] i=10 raw=86,122,86 xyz=22774,402,9420 d=324,36,0
+[MOV] dx=324 dy=36 dz=0 tseg=10 k2x=106 k2y=955 k2z=0
+[HW] RG OUT 1F fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22450,366,9420->22774,402,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41737
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41738
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41739
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41740
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41741
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41742
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3408 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41743
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41744
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41745
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3412 elapsed=88 ~880us fl=41746
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41747
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41747 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=10 retry=2
+[PT] i=11 raw=122,122,86 xyz=22738,402,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22774,402,9420->22738,402,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41748
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41749
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41750
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41751
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41752
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3408 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41753
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41754
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41755
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41756
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41757
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41758
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41758 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=11 retry=2
+[PT] i=12 raw=158,122,86 xyz=22702,402,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22738,402,9420->22702,402,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41759
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41760
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3408 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41761
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41762
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41763
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41764
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41765
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41766
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3409 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41767
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41768
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41769
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41769 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=12 retry=2
+[PT] i=13 raw=194,122,86 xyz=22666,402,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22702,402,9420->22666,402,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41770
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41771
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41772
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41773
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41774
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41775
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41776
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3409 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41777
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41778
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41779
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41780
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41780 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=13 retry=2
+[PT] i=14 raw=230,122,86 xyz=22630,402,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22666,402,9420->22630,402,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3411 elapsed=89 ~890us fl=41781
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41782
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3414 elapsed=86 ~860us fl=41783
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3409 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41784
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41785
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41786
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41787
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41788
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41789
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41790
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41791
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41791 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=14 retry=2
+[PT] i=15 raw=266,122,86 xyz=22594,402,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22630,402,9420->22594,402,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41792
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3414 elapsed=86 ~860us fl=41793
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3409 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41794
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3411 elapsed=89 ~890us fl=41795
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41796
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3411 elapsed=89 ~890us fl=41797
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41798
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3411 elapsed=89 ~890us fl=41799
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41800
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41801
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41802
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41802 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=15 retry=2
+[PT] i=16 raw=302,122,86 xyz=22558,402,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22594,402,9420->22558,402,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41803
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3408 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41804
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3411 elapsed=89 ~890us fl=41805
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41806
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3414 elapsed=86 ~860us fl=41807
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3409 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41808
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3410 elapsed=90 ~900us fl=41809
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41810
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3411 elapsed=89 ~890us fl=41811
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41812
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3414 elapsed=86 ~860us fl=41813
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41813 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=16 retry=2
+[PT] i=17 raw=338,122,86 xyz=22522,402,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22558,402,9420->22522,402,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41814
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41815
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41816
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3414 elapsed=86 ~860us fl=41817
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3408 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41818
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3411 elapsed=89 ~890us fl=41819
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41820
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3411 elapsed=89 ~890us fl=41821
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41822
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3414 elapsed=86 ~860us fl=41823
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3408 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41824
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41824 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=17 retry=2
+[PT] i=18 raw=374,122,86 xyz=22486,402,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22522,402,9420->22486,402,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41825
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41826
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41827
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41828
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41829
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41830
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41831
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3407 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41832
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3410 elapsed=90 ~900us fl=41833
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41834
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3410 elapsed=90 ~900us fl=41835
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41835 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=18 retry=2
+[PT] i=19 raw=410,122,86 xyz=22450,402,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22486,402,9420->22450,402,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41836
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41837
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41838
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41839
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41840
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41841
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3408 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41842
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41843
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41844
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41845
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41846
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41846 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=19 retry=2
+[PT] i=20 raw=86,158,86 xyz=22774,438,9420 d=324,36,0
+[MOV] dx=324 dy=36 dz=0 tseg=10 k2x=106 k2y=955 k2z=0
+[HW] RG OUT 1F fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22450,402,9420->22774,438,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41847
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41848
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41849
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3409 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41850
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41851
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41852
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41853
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41854
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41855
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3408 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41856
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41857
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41857 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=20 retry=2
+[PT] i=21 raw=122,158,86 xyz=22738,438,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22774,438,9420->22738,438,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3410 elapsed=90 ~900us fl=41858
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41859
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41860
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41861
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41862
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41863
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3407 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41864
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41865
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41866
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41867
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41868
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41868 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=21 retry=2
+[PT] i=22 raw=158,158,86 xyz=22702,438,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22738,438,9420->22702,438,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41869
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3414 elapsed=86 ~860us fl=41870
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3408 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41871
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41872
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41873
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41874
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41875
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41876
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41877
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41878
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41879
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41879 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=22 retry=2
+[PT] i=23 raw=194,158,86 xyz=22666,438,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22702,438,9420->22666,438,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3412 elapsed=88 ~880us fl=41880
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41881
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3410 elapsed=90 ~900us fl=41882
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41883
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3411 elapsed=89 ~890us fl=41884
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41885
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41886
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41887
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41888
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41889
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41890
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41890 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=23 retry=2
+[PT] i=24 raw=230,158,86 xyz=22630,438,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22666,438,9420->22630,438,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41891
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3411 elapsed=89 ~890us fl=41892
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41893
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3412 elapsed=88 ~880us fl=41894
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41895
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3410 elapsed=90 ~900us fl=41896
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41897
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3410 elapsed=90 ~900us fl=41898
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41899
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3412 elapsed=88 ~880us fl=41900
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3407 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41901
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41901 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=24 retry=2
+[PT] i=25 raw=266,158,86 xyz=22594,438,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22630,438,9420->22594,438,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41902
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41903
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3413 elapsed=87 ~870us fl=41904
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3407 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41905
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3410 elapsed=90 ~900us fl=41906
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41907
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3411 elapsed=89 ~890us fl=41908
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41909
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3412 elapsed=88 ~880us fl=41910
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41911
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3409 elapsed=91 ~910us fl=41912
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41912 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=25 retry=2
+[PT] i=26 raw=302,158,86 xyz=22558,438,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22594,438,9420->22558,438,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41913
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41914
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3409 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41915
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3428 elapsed=72 ~720us fl=41916
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41917
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3411 elapsed=89 ~890us fl=41918
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41919
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3414 elapsed=86 ~860us fl=41920
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3409 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41921
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3410 elapsed=90 ~900us fl=41922
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3404 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3427 elapsed=73 ~730us fl=41923
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41923 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=26 retry=2
+[PT] i=27 raw=338,158,86 xyz=22522,438,9420 d=-36,0,0
+[MOV] dx=-36 dy=0 dz=0 tseg=2 k2x=177 k2y=0 k2z=0
+[HW] RG OUT 0E fxy=1 fz=0
+[MOV] DONE sens=3F Zd=0 dz_prog=0 cur=22558,438,9420->22522,438,9420
+[LPULS] CALL flag=1 dchk=1 metal=0
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=0 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=0 target=- post=3427 elapsed=73 ~730us fl=41924
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=0 dsens=0000 wrk=0002 pt2=3407 LCtl=3
+[HW] SH_OPEN pos=0002 PB=FD shd=100
+[LPULS] FIRE i=1 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=1 target=- post=3427 elapsed=73 ~730us fl=41925
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=1 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=2 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=2 target=- post=3427 elapsed=73 ~730us fl=41926
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=2 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=3 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=3 target=- post=3427 elapsed=73 ~730us fl=41927
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=3 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=4 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=4 target=- post=3427 elapsed=73 ~730us fl=41928
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=4 dsens=0000 wrk=0002 pt2=3406 LCtl=3
+[LPULS] FIRE i=5 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=5 target=- post=3427 elapsed=73 ~730us fl=41929
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=5 dsens=0000 wrk=0002 pt2=3421 LCtl=3
+[LPULS] FIRE i=6 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=6 target=- post=3427 elapsed=73 ~730us fl=41930
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=6 dsens=0000 wrk=0002 pt2=3409 LCtl=3
+[LPULS] FIRE i=7 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=7 target=- post=3427 elapsed=73 ~730us fl=41931
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=7 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=8 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=8 target=- post=3427 elapsed=73 ~730us fl=41932
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=8 dsens=0000 wrk=0002 pt2=3405 LCtl=3
+[LPULS] FIRE i=9 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=9 target=- post=3427 elapsed=73 ~730us fl=41933
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] retry i=9 dsens=0000 wrk=0002 pt2=3422 LCtl=3
+[LPULS] FIRE i=10 sync=33 cyc=3500 gate=19 LCtl=3
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=19 (190us)
+[LPULS] WAIT i=10 target=- post=3411 elapsed=89 ~890us fl=41934
+[HW] PT2 ch0=3500 (lo=AC hi=0D) ch1=1 (10us)
+[LPULS] FAIL i=10 wrkpos=0002 dsens=0000 mask=0002 fl=41934 LCtl=3
+[HW] PPI2 PR_CLOSE
+[HW] SH_CLOSE all-off
+[PROC] LPULS FAIL pt=27 retry=0
+[START] POST-PROC k=0 lastn=27 xcur=22522 ycur=438 zcur=9420 doptr=1
+[UI] MAIN btn=255 (key) pkey=68
+[HW] LRG <- 00 (shutdown)
+=== Trace Log End ===
