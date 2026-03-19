@@ -59,45 +59,48 @@ void *EGAVGA_driver_far = (void *)0;
 
 /*=== Internal VGA helpers =============================================*/
 
+/*
+ * All VGA register writes use outpw() (single 16-bit OUT instruction)
+ * to write index+data atomically. This prevents ISR race conditions:
+ * a mouse driver ISR could fire between two separate outp() calls,
+ * changing the GC/SEQ index register and causing our data write
+ * to go to the wrong register — corrupting VGA state on real hardware.
+ */
+
 /* Set VGA write mode 0, with map mask for selected planes */
 static inline void vga_set_write_planes(unsigned char mask) {
-    outp(VGA_SEQ_INDEX, SEQ_MAP_MASK);
-    outp(VGA_SEQ_DATA, mask);
+    outpw(VGA_SEQ_INDEX, SEQ_MAP_MASK | ((unsigned)mask << 8));
 }
 
 /* Set the bit mask register */
 static inline void vga_set_bit_mask(unsigned char mask) {
-    outp(VGA_GC_INDEX, GC_BIT_MASK);
-    outp(VGA_GC_DATA, mask);
+    outpw(VGA_GC_INDEX, GC_BIT_MASK | ((unsigned)mask << 8));
 }
 
 /* Set read map select (0-3) */
 static inline void vga_set_read_plane(unsigned char plane) {
-    outp(VGA_GC_INDEX, GC_READ_MAP);
-    outp(VGA_GC_DATA, plane);
+    outpw(VGA_GC_INDEX, GC_READ_MAP | ((unsigned)plane << 8));
 }
 
-/* Set VGA to write mode 0 (default) */
+/* Set VGA to write mode 0 (default).
+ * In mode 12h, GC_MODE bits 2-7 are always 0, so we write directly. */
 static void vga_write_mode_0(void) {
-    outp(VGA_GC_INDEX, GC_MODE);
-    unsigned char mode = inp(VGA_GC_DATA);
-    outp(VGA_GC_INDEX, GC_MODE);
-    outp(VGA_GC_DATA, mode & 0xFC);  /* clear bits 0-1 = mode 0 */
+    outpw(VGA_GC_INDEX, GC_MODE | (0x00 << 8));
 }
 
 /* Set VGA to write mode 2 */
 static void vga_write_mode_2(void) {
-    outp(VGA_GC_INDEX, GC_MODE);
-    unsigned char mode = inp(VGA_GC_DATA);
-    outp(VGA_GC_INDEX, GC_MODE);
-    outp(VGA_GC_DATA, (mode & 0xFC) | 0x02);
+    outpw(VGA_GC_INDEX, GC_MODE | (0x02 << 8));
 }
 
 /* Reset GC registers to safe defaults after drawing */
 static void vga_reset_gc(void) {
     vga_set_bit_mask(0xFF);
     vga_set_write_planes(0x0F);
-    outp(VGA_GC_INDEX, GC_DATA_ROT);
+    outpw(VGA_GC_INDEX, GC_DATA_ROT  | (0x00 << 8));  /* no rotate, overwrite */
+    outpw(VGA_GC_INDEX, GC_MODE      | (0x00 << 8));  /* write mode 0 */
+    outpw(VGA_GC_INDEX, GC_ENABLE_SR | (0x00 << 8));  /* disable set/reset */
+    outpw(VGA_GC_INDEX, GC_SET_RESET | (0x00 << 8));  /* set/reset = 0 */
 }
 
 /* Reverse bit order of a byte (bit0<->bit7, bit1<->bit6, etc.) */
@@ -165,11 +168,8 @@ static void vline_fast(int x, int y1, int y2, int color) {
     }
     vga_write_mode_0();
     vga_set_bit_mask(0xFF);
-    outp(VGA_GC_DATA, 0x00);
-    outp(VGA_GC_INDEX, GC_ENABLE_SR);
-    outp(VGA_GC_DATA, 0x00);
-    outp(VGA_GC_INDEX, GC_SET_RESET);
-    outp(VGA_GC_DATA, 0x00);
+    outpw(VGA_GC_INDEX, GC_ENABLE_SR | (0x00 << 8));
+    outpw(VGA_GC_INDEX, GC_SET_RESET | (0x00 << 8));
 }
 
 
@@ -704,8 +704,11 @@ void putimage(int left, int top, const void *bitmap, int op) {
     /* This is the simple approach; for COPY_PUT we can optimize */
 
     if(op == COPY_PUT) {
-        /* Optimized: write plane by plane */
+        /* Optimized: write plane by plane.
+         * Disable interrupts per-plane to prevent mouse ISR from
+         * accessing VGA while map mask selects only one plane. */
         for(int plane = 0; plane < 4; plane++) {
+            _disable();
             vga_write_mode_0();
             vga_set_write_planes(1 << plane);
 
@@ -780,9 +783,10 @@ void putimage(int left, int top, const void *bitmap, int op) {
                     }
                 }
             }
+            vga_set_write_planes(0x0F);
+            vga_set_bit_mask(0xFF);
+            _enable();
         }
-        vga_set_write_planes(0x0F);
-        vga_set_bit_mask(0xFF);
 
     } else {
         /* Fallback: per-pixel operation for XOR_PUT etc. */

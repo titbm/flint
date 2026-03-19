@@ -291,6 +291,7 @@ int pressbt(int bt[],int nm) {
 
 
 int msgbox(char msgtxt[], int more, int f_beep) {
+	CURSOR_OFF();
 	getimage(180,290,385,345,bitmapmsg);
 	setfillstyle(1,BLACK); bar(184,294,384,344);
 	setfillstyle(1,COL_ON); bar(180,290,380,340);
@@ -309,6 +310,7 @@ int msgbox(char msgtxt[], int more, int f_beep) {
 
 
 void msgbox1(char msgtxt[]) {
+	CURSOR_OFF();
 	getimage(180,290,385,345,bitmapmsg);
 	setfillstyle(1,BLACK); bar(184,294,384,344);
 	setfillstyle(1,COL_ON); bar(180,290,380,340);
@@ -323,6 +325,7 @@ void msgbox1(char msgtxt[]) {
 
 
 int msg(int msgx,int msgy,int onoff,char msgtxt[]) {
+	CURSOR_OFF();
 	if(onoff) {
 		getimage(msgx,msgy,msgx+205,msgy+45,bitmapmsg);
 		setfillstyle(1,BLACK); bar(msgx+4,msgy+4,msgx+204,msgy+44);
