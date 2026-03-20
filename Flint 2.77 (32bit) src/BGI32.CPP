@@ -650,8 +650,12 @@ void getimage(int left, int top, int right, int bottom, void *bitmap) {
     header[1] = (unsigned short)h;
     data = (unsigned char *)bitmap + 4;
 
-    /* For each plane, read the pixel data */
+    /* For each plane, read the pixel data.
+     * Disable interrupts per-plane to prevent mouse ISR from
+     * changing the read map select register between our set
+     * and actual VGA memory reads. */
     for(int plane = 0; plane < 4; plane++) {
+        _disable();
         vga_set_read_plane(plane);
 
         for(int y = 0; y < h; y++) {
@@ -687,6 +691,7 @@ void getimage(int left, int top, int right, int bottom, void *bitmap) {
                 data[plane * bytes_per_row * h + y * bytes_per_row + bx] = val;
             }
         }
+        _enable();
     }
 }
 
