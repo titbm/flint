@@ -10,9 +10,9 @@ Flint 2.77 (32bit) src/BUILD_*/
 Flint 2.77 src/*.OBJ
 Flint 2.77 src/*.EXE
 Flint 2.77 src/LINK.RSP
-Flint 2.77 src/TURBOC.
+Flint 2.77 src/TURBOC.$LN
 Flint 2.77 src/BUILD/
-
+Flint 2.77 src/BUILD_*/
 
 # IDE files
 *.bak
