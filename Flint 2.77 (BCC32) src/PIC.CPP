@@ -1,0 +1,932 @@
+/*********************************************************************
+	pic.cpp
+	iB
+	ver.2.77 (reconstructed from v2.61 + changelog v2.61-v2.77)
+			int pi_ini(void)
+			int lpuls(void)
+			void sh_open(unsigned int pos)
+			void sh_close(void)
+			int process(void)
+			int move_sen(int dir)
+			int move(int x, int y, int z)
+
+	Changes from v2.61:
+	v2.70: Dr.check indicator, reiterations display in mainscr
+	v2.71: Pump/Gate control via LRG in process()
+	v2.72: Timer-based laser pulse (PT2), dT speed correction in move()
+	v2.73: Gate delay control via PT2.ch1, safe mode (10µs) on exit
+	v2.74: Merged first/next retry counters in lpuls()
+	v2.75: f_beep for critical msgbox, removed endSensor check in pi_ini
+	v2.76: Removed out_time() calls everywhere
+	v2.77: Optimized shutter handling in lpuls(), configurable sh_delay
+*********************************************************************/
+#include <conio.h>
+#include <dos.h>
+/* DPMI32: use DPMI32.LIB functions, not BCC32 macros pointing to missing __inportb__/__outportb__ */
+#undef inportb
+#undef outportb
+#undef inport
+#undef outport
+#undef inp
+#undef inpw
+#undef outp
+#undef outpw
+#include <stdlib.h>
+#include <stdio.h>
+#include <graphics.h>
+
+/*------------------------------------------------------------------
+  TRACE: runtime diagnostic log for remote debugging.
+  Writes FLINT.LOG next to EXE with timestamped hardware events.
+  Comment out #define TRACE to disable for production builds.
+  Or compile with -DNOTRACE to suppress without editing source.
+------------------------------------------------------------------*/
+#ifndef NOTRACE
+#define TRACE
+#endif
+/* #define VFY_COUNTERS */  /* enables read_counter verification in move() -- may disrupt 8254 */
+
+char _tbuf[160];
+
+#ifdef TRACE
+FILE *tlog = NULL;
+void tlog_open(void)  {
+	tlog=fopen("FLINT.LOG","w");
+	if(tlog) {
+		fprintf(tlog,"=== FLINT 2.77 Trace Log Start ===\n");
+		fflush(tlog);
+	}
+}
+void tlog_close(void) { if(tlog){fprintf(tlog,"=== Trace Log End ===\n"); fclose(tlog); tlog=NULL;} }
+void tlog_write(const char *s) {
+	if(tlog){fputs(s,tlog); fputc('\n',tlog); fflush(tlog);}
+	}
+#else
+void tlog_open(void)  {}
+void tlog_close(void) {}
+void tlog_write(const char *s) {}
+#endif
+
+#define ADRPT0 0x300
+#define ADRPT1 ADRPT0+4			// 0x304
+#define ADRPPI ADRPT0+8			// 0x308
+#define ADRRG ADRPT0+0x0c		// 0x30c
+#define ADRPPI2 ADRPT0+0x10	// 0x310
+#define ADRPT2  ADRPT0+0x14	// 0x314
+#define ADRCMOS ADRPT0+0x18	// 0x318
+#define LRG     ADRPT0+0x1c	// 0x31c
+/*-------------------------------------------------------------------
+RG(out):	D0:	X.direction (0 - negativ, 1 - positiv)
+			D1:	Y.direction (0 - negativ, 1 - positiv)
+			D2:	Z.direction (0 - negativ, 1 - positiv)
+			D3:	X.enable (D3 = 1)
+			D4:	Y.enable (D4 = 1)
+			D5:	Z.enable (D5 = 1)
+			D6:	-
+			D7:	OSC.enable (D7 = 0)
+PPI:	PA(out):	PA0-PA7:	K1 ( =7...255)
+		PB(inp):	PB0-PB5:	endSENSORS (0 - endSENSOR on, 1 - off)
+					PB6:		"IRQ2"(1 - event)
+					PB7:		"IRQ3"(1 - event)
+		PC(out):	PC0:	stepMOTORS (0 - on, 1 - off)
+					PC1:	ctl.1: endSENSORS(0-enable,1-reset)
+					PC2:	ctl.2
+					PC3:	ctl.3
+					PC4:	ctl.4
+					PC5:	LASER (0 - disable, 1 - enable)
+					PC6:	LASERpuls (0 - on, 1 - off)
+					PC7:	PROTECT (0 - open, 1 - close)
+PT0:	ch.0: 	K2x ( =2-65535)
+		ch.1: 	Xdistance ( =1-65535)
+		ch.2: 	K2z ( =2-65535)
+PT1:	ch.0: 	K2y ( =2-65535)
+		ch.1: 	Ydistance ( =1-65535)
+		ch.2: 	Zdistance ( =1-65535)
+PT2:	ch.0:		Laser Frequency (Tlas = K1*10mcs  655ms max)
+		ch.1:		EOShutt-Pump Delay (Tsh = K2*10mcs)
+		ch.2:		Global Delay (K3*10mcs)
+CMOS(out):		CMOS counter reset
+CMOS+1(out):	CMOS counter increment
+CMOS+2(inp):	CMOS counter low byte read
+CMOS+3(inp):	CMOS counter high byte read
+LRG(out):		D0=1:	Laser Pumping Enable, PowerOn|Reset: D0=0
+				D1=1:	Laser EOShutter Enable, PowerOn|Reset: D1=0
+--------------------------------------------------------------------*/
+#define XUP 0x01			// OR
+#define XDOWN 0xfe		// AND
+#define YUP 0x02			// OR
+#define YDOWN 0xfd		// AND
+#define ZUP 0x04			// OR
+#define ZDOWN 0xfb		// AND
+#define XON 0x08			// OR
+#define XOFF 0xf7			// AND
+#define YON 0x10			// OR
+#define YOFF 0xef			// AND
+#define ZON 0x20			// OR
+#define ZOFF 0xdf			// AND
+#define OSCON 0x7f		// AND
+#define OSCOFF 0x80		// OR
+#define PULS_ON 0xbf		// AND
+#define PULS_OFF 0x40	// OR
+#define PR_OPEN 0x7f		// AND
+#define PR_CLOSE 0x80	// OR
+
+#define ESC 27
+#define COLBK 56
+#define COLBKL 59
+
+#define CLC1 0x40			// Counter Latch Command
+#define CLC2 0x80
+#define PUMP_ON 0x01		// OR
+#define PUMP_OFF 0xfe	// AND
+#define SHUT_ON 0x2		// OR
+#define SHUT_OFF 0xfd	// AND
+
+extern int f_demo;
+extern int xptr, yptr, zptr;
+extern int do_ptr;
+extern int f_ptr;
+extern int xcur, ycur, zcur;
+extern int f_xyz;
+extern long start_nmb;
+extern long lastn;
+extern long nmax;
+extern int l_period;
+extern int gate_delay;				// v2.70: Gate delay (x10 mcs)
+extern int step_freq;
+extern int f_const;
+extern unsigned int step;
+extern double nglas;
+extern int xsize, ysize, zsize;
+extern short *iTabl;
+unsigned char ctlw;
+extern int gl_nmb;
+extern unsigned int glpos9;
+extern unsigned int nmrpt[];		// v2.74: 10 elements (was 20)
+extern unsigned int errnmb;
+extern int d_check;
+extern int f_noise;
+extern int dT;						// v2.73: CPU time correction (ms)
+extern int sh_delay;				// v2.77: EM shutter delay (ms)
+extern int f_metal;				// v2.78: metal mode flag
+unsigned char LCtl;					// Laser Control Word
+unsigned int LPeriod;				// Laser Period in 10's mcs
+extern unsigned long ulFlash;
+
+int msg(int msgx, int msgy, int onoff, char msgtxt[]);
+int msgbox(char msgtxt[], int more, int f_beep=0);
+void draw(int flag, int all);
+void mainscr(int all);
+void beep(int tone, int duration);
+void out_time(int newt);
+void progbar(long nmb_max, long nmb, int set, int xl, int yt);
+void glaspos(int xl, int yt, int cw);
+void show_reit(int mode);
+/* Forward declarations for functions in this file */
+void sh_open(unsigned int pos);
+void sh_close(void);
+int lpuls_metal(int flag);
+int move_sen(int dir);
+int move(int x, int y, int z);
+#ifdef TRACE
+void read_d_counters(unsigned int *xd, unsigned int *yd, unsigned int *zd);
+#endif
+
+/* v2.73: Segment time estimator for htime()
+   Returns number of l_period intervals needed for a move of (dx,dy,dz) steps */
+int seg_time(int adx, int ady, int adz) {
+	int t; long ms; int count;
+	t=(abs(adx)>abs(ady))? abs(adx):abs(ady);
+	if(t<abs(adz)) t=abs(adz);
+	ms=(long)t*1000/step_freq;
+	count=(int)(ms/l_period)+1;
+	if(ms%l_period > l_period-dT) count++;
+	return count;
+	}
+
+
+void program_pt2(int period, unsigned char gate) {
+	/* Original binary: signed int * int → overflows for period>327.
+	   Do NOT use (unsigned int) cast — it changes overflow behavior. */
+	int val=period*100;
+#ifdef TRACE
+	sprintf(_tbuf,"[HW] PT2 ch0=%d (lo=%02X hi=%02X) ch1=%u (%uus)",
+		val,(unsigned)(unsigned char)(val%256),(unsigned)(unsigned char)(val/256),
+		(unsigned)gate,(unsigned)gate*10);
+	tlog_write(_tbuf);
+#endif
+	outportb(ADRPT2,(unsigned char)(val%256));
+	outportb(ADRPT2,(unsigned char)(val/256));
+	outportb(ADRPT2+1,gate);
+	outportb(ADRPT2+1,0);
+	}
+
+
+unsigned int read_pt2(void) {
+	unsigned int low, high;
+	outportb(ADRPT2+3,0);								// Counter Latch ch0
+	low = (unsigned int)inportb(ADRPT2);
+	high = (unsigned int)inportb(ADRPT2);
+	return low + high*256;
+	}
+
+
+#ifdef TRACE
+/* Read back d-counter (step count) for each axis.
+   Uses 8254 Counter Latch Command: SC bits select channel.
+   PT0.ch1 = X steps (cmd 0x40), PT1.ch1 = Y steps (cmd 0x40),
+   PT1.ch2 = Z steps (cmd 0x80). */
+void read_d_counters(unsigned int *xd, unsigned int *yd, unsigned int *zd) {
+	unsigned int lo, hi;
+	/* X d counter: PT0 ch1 */
+	outportb(ADRPT0+3, 0x40);		/* Latch ch1 */
+	lo = (unsigned int)inportb(ADRPT0+1);
+	hi = (unsigned int)inportb(ADRPT0+1);
+	*xd = lo + hi*256;
+	/* Y d counter: PT1 ch1 */
+	outportb(ADRPT1+3, 0x40);		/* Latch ch1 */
+	lo = (unsigned int)inportb(ADRPT1+1);
+	hi = (unsigned int)inportb(ADRPT1+1);
+	*yd = lo + hi*256;
+	/* Z d counter: PT1 ch2 */
+	outportb(ADRPT1+3, 0x80);		/* Latch ch2 */
+	lo = (unsigned int)inportb(ADRPT1+2);
+	hi = (unsigned int)inportb(ADRPT1+2);
+	*zd = lo + hi*256;
+	}
+
+/* Read back a single 8254 counter value.
+   base = timer base address (ADRPT0 or ADRPT1)
+   ch = channel (0,1,2)
+   Sends Counter Latch Command, reads low+high byte. */
+unsigned int read_counter(int base, int ch) {
+	unsigned int lo, hi;
+	unsigned char latch_cmd = (unsigned char)(ch << 6);	/* ch0=0x00, ch1=0x40, ch2=0x80 */
+	outportb(base+3, latch_cmd);
+	lo = (unsigned int)inportb(base+ch);
+	hi = (unsigned int)inportb(base+ch);
+	return lo + hi*256;
+	}
+#endif
+
+
+
+
+int pi_ini(void) {
+	ctlw = (XUP|YUP|ZUP)&XOFF&YOFF&ZOFF&OSCON;
+	outportb(ADRRG,ctlw);
+	LCtl=0; outportb(LRG,LCtl);
+#ifdef TRACE
+	tlog_write("[HW] LRG <- 00 (init)");
+#endif
+	outportb(ADRPPI+3,0x82);	// PPI:mode0,PA-out,PB-inp,PC-out
+	outportb(ADRPPI,150);		// K1=150:F1=100kHz
+	outportb(ADRPPI+2,0xfd);	// stepM-off,endS-en.,las-en.,puls-off,protect
+	outportb(ADRPPI+2,0xff);	// -"-,endS-reset,-"-,-"-,-"-
+	outportb(ADRPPI+2,0xfc);	// stepM-on,endS-enable,-"-,-"-,-"-
+	outportb(ADRPPI2+3,0x91);	// PPI2:mode0,PA,PC0...3-inp,PB,PC4...7-out
+	outportb(ADRPPI2+1,0xff);	// PPI2:0xff->PB:EM1...8-off
+	outportb(ADRPPI2+3,0x09);	// PPI2:1->PC4:EM9-off
+	outportb(ADRPPI2+3,0x0b);	// PPI2:1->PC5:EM10-off
+	outportb(ADRPPI2+3,0x0d);	// PPI2:1->PC6:EMCOM-off
+	outportb(ADRPT0+3,0x34);	// PT0.ch.0:mode2,binary,lb,hb
+	outportb(ADRPT0+3,0x78);	// PT0.ch.1:mode4,binary,lb,hb
+	outportb(ADRPT0+3,0xb4);	// PT0.ch.2:mode2,binary,lb,hb
+	outportb(ADRPT1+3,0x34);	// PT1.ch.0:mode2,binary,lb,hb
+	outportb(ADRPT1+3,0x78);	// PT1.ch.1:mode4,binary,lb,hb
+	outportb(ADRPT1+3,0xb8);	// PT1.ch.2:mode4,binary,lb,hb
+	outportb(ADRPT2+3,0x34);	// PT2.ch.0:mode2,binary,lb,hb (pump freq)
+	outportb(ADRPT2+3,0x7a);	// PT2.ch.1:mode5,binary,lb,hb (gate delay)
+	outportb(ADRPT2+3,0xb8);	// PT2.ch.2:mode4,binary,lb,hb
+	program_pt2(l_period,1);		// init safe timer values
+	/* v2.75: Removed endSensor check from pi_ini, only check K1 readback */
+	{	int hw = (inportb(ADRPPI) == 150);
+#ifdef TRACE
+		sprintf(_tbuf,"[INI] hw=%d K1=%d lper=%d gate=%d shd=%d dchk=%d",
+			hw,(int)inportb(ADRPPI),l_period,gate_delay,sh_delay,d_check);
+		tlog_write(_tbuf);
+#endif
+		return hw;
+	}
+	}
+
+
+/* v2.72+: Timer-based laser pulse via PT2
+   v2.74:  Merged first/next retry counters
+   v2.77:  EM shutter optimization, hardware timer sync */
+int lpuls(int flag) {
+	unsigned int i,k,dsens,mask,wrkpos,shft;
+	unsigned int prevwrkpos;
+
+#ifdef TRACE
+	sprintf(_tbuf,"[LPULS] CALL flag=%d dchk=%d metal=%d",flag,d_check,f_metal);
+	tlog_write(_tbuf);
+#endif
+
+	if(f_demo) {
+		ulFlash++;
+#ifdef TRACE
+		sprintf(_tbuf,"[LPULS] demo ok fl=%lu",ulFlash);
+		tlog_write(_tbuf);
+#endif
+		return 1;
+		}
+	prevwrkpos=errnmb;
+	mask=(gl_nmb)? glpos9:0x0200;
+	if(d_check && errnmb) {
+		wrkpos=errnmb & mask;
+		}
+	else wrkpos=mask;
+	if(flag) sh_open(wrkpos);
+	for(i=0; i<11; i++) {
+		if(kbhit()) {
+			if(getch() == ESC) {
+#ifdef TRACE
+				sprintf(_tbuf,"[LPULS] ESC i=%u wrkpos=%04X",i,wrkpos);
+				tlog_write(_tbuf);
+#endif
+				errnmb=wrkpos; return 0;
+				}
+			}
+		/* Wait for PT2 counter to near-complete */
+		while((read_pt2()-2) & 0xFFE0) ;
+#ifdef TRACE
+		{ unsigned int _sync_pt2 = read_pt2();
+		  sprintf(_tbuf,"[LPULS] FIRE i=%u sync=%u cyc=%u gate=%u LCtl=%u",
+		          i, _sync_pt2, (unsigned)l_period*100, (unsigned)gate_delay, (unsigned)LCtl);
+		  tlog_write(_tbuf);
+		}
+#endif
+		/* Fire: program gate delay */
+		program_pt2(l_period,(unsigned char)gate_delay);
+		ulFlash++;
+		
+		delay(1);
+#ifdef TRACE
+		{ unsigned int _post_pt2 = read_pt2();
+		  unsigned int _elap = (unsigned int)l_period*100 - _post_pt2;
+		  sprintf(_tbuf,"[LPULS] WAIT i=%u target=- post=%u elapsed=%u ~%uus fl=%lu",
+		          i, _post_pt2, _elap, _elap*10, ulFlash);
+		  tlog_write(_tbuf);
+		}
+#endif
+
+		/* Safe reset: gate minimum */
+		program_pt2(l_period,1);
+		if(!d_check) {
+#ifdef TRACE
+			sprintf(_tbuf,"[LPULS] ok i=0 nodchk fl=%lu",ulFlash);
+			tlog_write(_tbuf);
+#endif
+			return 1;
+			}
+		dsens=((unsigned int)inportb(ADRPPI2)+
+					(unsigned int)inportb(ADRPPI2+2)*256)&0x03ff;
+		wrkpos-=(dsens & wrkpos);
+		if(!wrkpos) {
+#ifdef TRACE
+			sprintf(_tbuf,"[LPULS] ok i=%u dsens=%04X mask=%04X fl=%lu LCtl=%u",
+				i,dsens,mask,ulFlash,(unsigned)LCtl);
+			tlog_write(_tbuf);
+#endif
+			if(i || errnmb) sh_open(mask);
+			errnmb=0; return 1;
+			}
+		if(i == 10) break;
+#ifdef TRACE
+		{ unsigned int _rpt2 = read_pt2();
+		  sprintf(_tbuf,"[LPULS] retry i=%u dsens=%04X wrk=%04X pt2=%u LCtl=%u",
+		          i,dsens,wrkpos,_rpt2,(unsigned)LCtl);
+		  tlog_write(_tbuf);
+		}
+#endif
+		shft=0x0001;
+		for(k=0; k<10; k++) {if(wrkpos & shft) nmrpt[k]+=1; shft*=2;}
+		show_reit(0);
+		if(wrkpos != prevwrkpos) {sh_open(wrkpos); prevwrkpos=wrkpos;}
+		}
+#ifdef TRACE
+	sprintf(_tbuf,"[LPULS] FAIL i=10 wrkpos=%04X dsens=%04X mask=%04X fl=%lu LCtl=%u",
+		wrkpos,dsens,mask,ulFlash,(unsigned)LCtl);
+	tlog_write(_tbuf);
+#endif
+	errnmb=wrkpos; return 0;
+	}
+
+
+/* v2.78: Direct PC6 pulse for metal engraving mode.
+   Same d_check/retry/EM-shutter logic as lpuls(), but fires
+   via PC6 bit instead of PT2 timer. No pump needed. */
+int lpuls_metal(int flag) {
+	unsigned int i,k,dsens,mask,wrkpos,shft;
+	unsigned int prevwrkpos;
+
+#ifdef TRACE
+	sprintf(_tbuf,"[METAL] CALL flag=%d dchk=%d",flag,d_check);
+	tlog_write(_tbuf);
+#endif
+
+	if(f_demo) {
+		ulFlash++;
+#ifdef TRACE
+		sprintf(_tbuf,"[METAL] demo ok fl=%lu",ulFlash);
+		tlog_write(_tbuf);
+#endif
+		return 1;
+		}
+	prevwrkpos=errnmb;
+	mask=(gl_nmb)? glpos9:0x0200;
+	if(d_check && errnmb) {
+		wrkpos=errnmb & mask;
+		}
+	else wrkpos=mask;
+	if(flag) sh_open(wrkpos);
+	for(i=0; i<11; i++) {
+		if(kbhit()) {
+			if(getch() == ESC) {
+#ifdef TRACE
+				sprintf(_tbuf,"[METAL] ESC i=%u wrkpos=%04X",i,wrkpos);
+				tlog_write(_tbuf);
+#endif
+				errnmb=wrkpos; return 0;
+				}
+			}
+		/* Fire: direct PC6 pulse */
+		outportb(ADRPPI+2,inportb(ADRPPI+2)&PULS_ON);
+		delay(1);
+		outportb(ADRPPI+2,inportb(ADRPPI+2)|PULS_OFF);
+		ulFlash++;
+		delay(1);
+		if(!d_check) {
+#ifdef TRACE
+			sprintf(_tbuf,"[METAL] ok i=0 nodchk fl=%lu",ulFlash);
+			tlog_write(_tbuf);
+#endif
+			return 1;
+			}
+		dsens=((unsigned int)inportb(ADRPPI2)+
+					(unsigned int)inportb(ADRPPI2+2)*256)&0x03ff;
+		wrkpos-=(dsens & wrkpos);
+		if(!wrkpos) {
+#ifdef TRACE
+			sprintf(_tbuf,"[METAL] ok i=%u dsens=%04X mask=%04X fl=%lu",
+				i,dsens,mask,ulFlash);
+			tlog_write(_tbuf);
+#endif
+			if(i || errnmb) sh_open(mask);
+			errnmb=0; return 1;
+			}
+		if(i == 10) break;
+#ifdef TRACE
+		sprintf(_tbuf,"[METAL] retry i=%u dsens=%04X wrk=%04X",i,dsens,wrkpos);
+		tlog_write(_tbuf);
+#endif
+		shft=0x0001;
+		for(k=0; k<10; k++) {if(wrkpos & shft) nmrpt[k]+=1; shft*=2;}
+		show_reit(0);
+		if(wrkpos != prevwrkpos) {sh_open(wrkpos); prevwrkpos=wrkpos;}
+		}
+#ifdef TRACE
+	sprintf(_tbuf,"[METAL] FAIL i=10 wrkpos=%04X dsens=%04X mask=%04X fl=%lu",
+		wrkpos,dsens,mask,ulFlash);
+	tlog_write(_tbuf);
+#endif
+	errnmb=wrkpos; return 0;
+	}
+
+
+/* v2.77: configurable sh_delay instead of fixed SH_TIME=50 */
+void sh_open(unsigned int pos) {
+#ifdef TRACE
+	sprintf(_tbuf,"[HW] SH_OPEN pos=%04X PB=%02X shd=%d",
+		pos,(unsigned)((unsigned char)(pos%256)^0xff),sh_delay);
+	tlog_write(_tbuf);
+#endif
+	outportb(ADRPPI2+1,(unsigned char)(pos%256)^0xff);		// PB: EM1-EM8
+	if(pos & 0x0100) outportb(ADRPPI2+3,0x08);				// PC4=0: EM9-on
+	else outportb(ADRPPI2+3,0x09);
+	if(pos & 0x0200) outportb(ADRPPI2+3,0x0a);				// PC5=0: EM10-on
+	else outportb(ADRPPI2+3,0x0b);
+	outportb(ADRPPI2+3,0x0c);										// PC6=0: EMCOM-on
+	delay(sh_delay); outportb(ADRPPI2+3,0x0d);				// PC6=1: EMCOM-off
+	}
+
+
+void sh_close(void) {
+#ifdef TRACE
+	tlog_write("[HW] SH_CLOSE all-off");
+#endif
+	outportb(ADRPPI2+1,0xff); outportb(ADRPPI2+3,0x09);	// PB0-PB7=1,PC4=1
+	outportb(ADRPPI2+3,0x0b); outportb(ADRPPI2+3,0x0d);	// PC5,PC6=1
+	}
+
+
+/* v2.71+: Pump/Gate managed via config dialog (LRG)
+   v2.76:  Removed out_time() calls
+   v2.77:  Dr.check indicator update, reiteration display */
+int process(void) {
+	long i; int xnew,ynew,znew,k; char tmpstr[20];
+	int flag;
+
+#ifdef TRACE
+	sprintf(_tbuf,"[PROC] START n=%ld/%ld metal=%d dchk=%d lper=%d gate=%d shd=%d",
+		start_nmb,nmax,f_metal,d_check,l_period,gate_delay,sh_delay);
+	tlog_write(_tbuf);
+	sprintf(_tbuf,"[PROC] CFG xptr=%d yptr=%d zptr=%d zsize=%d nglas=%.4f step=%u sf=%d dT=%d fc=%d demo=%d",
+		xptr,yptr,zptr,zsize,nglas,step,step_freq,dT,f_const,f_demo);
+	tlog_write(_tbuf);
+	{	int _refr=(int)(zsize*10*(1-1/nglas));
+		sprintf(_tbuf,"[PROC] CALC refr_ofs=%d z_base=%d (11000-zptr-refr_ofs)",
+			_refr,11000-zptr-_refr);
+		tlog_write(_tbuf);
+	}
+#endif
+	msg(160,80,1,"For STOP: press ESC");
+#ifdef TRACE
+	sprintf(_tbuf,"[PROC] CHK doptr=%d fptr=%d xcur=%d ycur=%d zcur=%d => %s",
+		do_ptr,f_ptr,xcur,ycur,zcur,(f_ptr||(!do_ptr))?"HOMING":"SKIP");
+	tlog_write(_tbuf);
+#endif
+	if(f_ptr || (!do_ptr)) move_sen(0);
+#ifdef TRACE
+	sprintf(_tbuf,"[PROC] RESUME xcur=%d ycur=%d zcur=%d doptr=%d fptr=%d st=%ld",
+		xcur,ycur,zcur,do_ptr,f_ptr,start_nmb);
+	tlog_write(_tbuf);
+#endif
+	outportb(ADRPPI+2,inportb(ADRPPI+2)&PR_OPEN);				// Protect-open
+#ifdef TRACE
+	tlog_write("[HW] PPI2 PR_OPEN");
+#endif
+	flag=1;
+
+	progbar(nmax,start_nmb,1,160,464);
+	for(i=start_nmb; i<nmax; i++) {
+		xnew=23500-xptr-iTabl[3*i];
+		ynew=yptr+iTabl[3*i+1];
+		znew=11000-zptr-zsize*10*(1-1/nglas)-iTabl[3*i+2];
+#ifdef TRACE
+		{	int _dx=xnew-xcur, _dy=ynew-ycur, _dz=znew-zcur;
+			sprintf(_tbuf,"[PT] i=%ld raw=%d,%d,%d xyz=%d,%d,%d d=%d,%d,%d",
+				i,(int)iTabl[3*i],(int)iTabl[3*i+1],(int)iTabl[3*i+2],
+				xnew,ynew,znew,_dx,_dy,_dz);
+			tlog_write(_tbuf);
+		}
+#endif
+		if(!move(xnew,ynew,znew)) {
+			outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
+#ifdef TRACE
+			tlog_write("[HW] PPI2 PR_CLOSE");
+#endif
+			sh_close(); msg(160,80,0,"");
+#ifdef TRACE
+			sprintf(_tbuf,"[PROC] MOVE ERR pt=%ld x=%d y=%d z=%d",i,xnew,ynew,znew);
+			tlog_write(_tbuf);
+#endif
+			msgbox("KPU/End sens.error",0,1);
+			return 0;
+			}
+a:		if(f_metal) {
+			/* v2.78: pump on/off per point to avoid parasitic shots during move */
+			LCtl = PUMP_ON | SHUT_ON;
+			outportb(LRG, LCtl);
+			if(!lpuls(flag)) {
+				LCtl = 0; outportb(LRG, LCtl);
+				outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
+#ifdef TRACE
+				tlog_write("[HW] PPI2 PR_CLOSE");
+#endif
+				sh_close(); msg(160,80,0,"");
+				show_reit(1);
+				k=msgbox("Check laser. Retry: Ok",1,1);
+#ifdef TRACE
+				sprintf(_tbuf,"[PROC] METAL FAIL pt=%ld retry=%d",i,k);
+				tlog_write(_tbuf);
+#endif
+				if(!k) return 0;
+				mainscr(1); show_reit(1); progbar(nmax,i,1,160,464);
+				msg(160,80,1,"For STOP: press ESC");
+				flag=1;
+				if(k == 1) goto a;
+				errnmb=0;
+				}
+			else flag=0;
+			LCtl = 0; outportb(LRG, LCtl);
+			}
+		else {
+a2:		if(!lpuls(flag)) {
+			outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
+#ifdef TRACE
+			tlog_write("[HW] PPI2 PR_CLOSE");
+#endif
+			sh_close(); msg(160,80,0,"");
+			show_reit(1);
+			k=msgbox("Check laser. Retry: Ok",1,1);
+#ifdef TRACE
+			sprintf(_tbuf,"[PROC] LPULS FAIL pt=%ld retry=%d",i,k);
+			tlog_write(_tbuf);
+#endif
+			if(!k) return 0;
+			mainscr(1); show_reit(1); progbar(nmax,i,1,160,464);
+			msg(160,80,1,"For STOP: press ESC");
+			flag=1;
+			if(k == 1) goto a2;
+			errnmb=0;												// for Next
+			}
+		else flag=0;
+		}
+		outportb(ADRCMOS+1,0);											// CMOS increment
+		draw(f_xyz, 0);													// Draw pixel
+		lastn=i+1;
+		setcolor(BLACK); setfillstyle(1,COLBKL); bar(31,206,86,222);
+		ltoa(lastn,tmpstr,10); outtextxy(40,211,tmpstr);
+		progbar(nmax,i,0,160,464);
+		if(kbhit()) {
+			if(getch() == ESC) {
+				outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
+#ifdef TRACE
+				tlog_write("[HW] PPI2 PR_CLOSE");
+#endif
+				sh_close(); msg(160,80,0,"");
+#ifdef TRACE
+				sprintf(_tbuf,"[STOP] ESC pt=%ld/%ld zcur=%d (Z до датчика: %d шагов)",i,nmax,zcur,zcur);
+				tlog_write(_tbuf);
+#endif
+				return 0;
+				}
+			}
+		}
+	/* Normal end */
+	outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
+#ifdef TRACE
+	tlog_write("[HW] PPI2 PR_CLOSE");
+#endif
+	sh_close();
+#ifdef TRACE
+	sprintf(_tbuf,"[STOP] TABLE_END zcur=%d (Z до датчика: %d шагов)",zcur,zcur);
+	tlog_write(_tbuf);
+#endif
+	msg(160,80,0,"");
+	msgbox("Ok.  TABLE END",0,1);
+	lastn=0;
+	return 1;
+	}
+
+
+int move_sen(int dir) {
+	int done,fxy,fz; unsigned char stspb,tw;
+#ifdef TRACE
+	unsigned int _zRemain=0; int _zCaught=0;
+#endif
+
+	/* Fix 1: reset PB6/PB7 latches before starting */
+	outportb(ADRRG,0x80);
+	outportb(ADRPPI+2,0xFF);
+	outportb(ADRPPI+2,0xFC);
+	/* Fix 2: reprogram timer modes (reset 8253 flip-flops) */
+	outportb(ADRPT0+3,0x34);	// K2x: mode2 lo+hi
+	outportb(ADRPT0+3,0x78);	// dX:  mode4 lo+hi
+	outportb(ADRPT0+3,0xB4);	// K2z: mode2 lo+hi
+	outportb(ADRPT1+3,0x34);	// K2y: mode2 lo+hi
+	outportb(ADRPT1+3,0x78);	// dY:  mode4 lo+hi
+	outportb(ADRPT1+3,0xB8);	// dZ:  mode4 lo+hi
+
+	outportb(ADRPT0,0x64); outportb(ADRPT0,0);		// K2x=100: Fstep=1000Hz
+	outportb(ADRPT0+1,0); outportb(ADRPT0+1,0x70);	// dX=28672(>Xscale)
+	outportb(ADRPT1,0x64); outportb(ADRPT1,0);		// K2y=100: Fstep=1000Hz
+	outportb(ADRPT1+1,0); outportb(ADRPT1+1,0x70);	// dY=28672(>Yscale)
+	outportb(ADRPT0+2,0x64); outportb(ADRPT0+2,0);	// K2z=100: Fstep=1000Hz
+	outportb(ADRPT1+2,0); outportb(ADRPT1+2,0x40);	// dZ=16384(>Zscale)
+	if(!dir) {
+		ctlw=(XON|YON|ZON|XUP)&YDOWN&ZDOWN&OSCON;
+		tw=(ctlw|XUP)&XOFF&YOFF&ZOFF&YDOWN&ZDOWN&OSCON;
+		}
+	else {
+		ctlw=(XON|YON|ZON|XUP|YUP)&ZDOWN&OSCON;
+		tw=(ctlw|XUP|YUP)&XOFF&YOFF&ZOFF&ZDOWN&OSCON;
+		}
+	outportb(ADRRG,ctlw);
+	if(!f_demo) {
+		while(ctlw != tw) {
+			stspb=inportb(ADRPPI+1);
+			/* Fix 3: debounce sensors — confirm after 1ms */
+			if((stspb & 0x03) != 0x03) {
+				delay(1); stspb=inportb(ADRPPI+1);
+				if((stspb & 0x03) != 0x03) ctlw=ctlw&XOFF;
+				}
+			if((stspb & 0x0c) != 0x0c) {
+				delay(1); stspb=inportb(ADRPPI+1);
+				if((stspb & 0x0c) != 0x0c) ctlw=ctlw&YOFF;
+				}
+			if((stspb & 0x30) != 0x30) {
+				delay(1); stspb=inportb(ADRPPI+1);
+				if((stspb & 0x30) != 0x30) {
+					ctlw=ctlw&ZOFF;
+#ifdef TRACE
+					if(!_zCaught) { _zRemain=read_counter(ADRPT1,2); _zCaught=1; }
+#endif
+					}
+				}
+			outportb(ADRRG,ctlw);
+			/* v2.76: removed out_time(1) */
+			}
+		}
+	outportb(ADRPT0,0xc8); outportb(ADRPT0,0x00);				// K2x=200
+	outportb(ADRPT0+1,0xc8); outportb(ADRPT0+1,0x00);			// dX=200
+	outportb(ADRPT1,0xc8); outportb(ADRPT1,0x00);				// K2y=200
+	outportb(ADRPT1+1,0xc8); outportb(ADRPT1+1,0x00);			// dY=200
+	outportb(ADRPT0+2,0xc8); outportb(ADRPT0+2,0x00);			// K2z=200
+	outportb(ADRPT1+2,0xc8); outportb(ADRPT1+2,0x00);			// dZ=200
+	if(!dir) {ctlw=(XON|YON|ZON|YUP|ZUP)&XDOWN&OSCON; outportb(ADRRG,ctlw);}
+	else {ctlw=(XON|YON|ZON|ZUP)&XDOWN&YDOWN&OSCON; outportb(ADRRG,ctlw);}
+	fxy=1; fz=1; done=0;
+	if(!f_demo) {
+		while(!done) {
+			stspb=inportb(ADRPPI+1);
+			if(stspb & 0x80) {ctlw=ctlw&XOFF&YOFF; fxy=0;}
+			if(stspb & 0x40) {ctlw=ctlw&ZOFF; fz=0;}
+			outportb(ADRRG,ctlw);
+			if((!fxy) && (!fz)) done=1;
+			}
+		}
+	outportb(ADRRG,0x80);
+#ifdef TRACE
+	{int _zcur_was=zcur; unsigned int _zActual=(unsigned)(16384-_zRemain);
+#endif
+	if(!dir) {xcur=23300; ycur=200; zcur=200;}
+	do_ptr = !dir;
+#ifdef TRACE
+	sprintf(_tbuf,"[HOMING] dir=%d Zexpect=%d Zactual=%u Zdelta=%d sens=%02X",
+		dir,_zcur_was,_zActual,_zcur_was-(int)_zActual,(int)inportb(ADRPPI+1));
+	tlog_write(_tbuf);
+	}
+#endif
+	return 1;
+	}
+
+
+/* v2.77: k2 calculator for move() - computes step frequency divider per axis
+   k2 = (seg_time_count * l_period - dT) * 100 / abs(delta)
+   Clamped to [100000/step_freq, 65500]. Returns k2min when f_const. */
+long calc_k2(int delta, int t) {
+	long k2, k2min, k2max=65500;
+	k2min=100000L/step_freq;
+	k2=k2min;
+	if(!f_const) {
+		k2=((long)t*l_period-dT)*100/abs(delta);
+		if(k2 < k2min) k2=k2min;
+		if(k2 > k2max) k2=k2max;
+		}
+	return k2;
+	}
+
+
+/* v2.72: replaced hardcoded 3 with dT for CPU correction
+   v2.76: removed out_time(1) call at end
+   v2.77: fixed k2 formula - uses seg_time() and calc_k2() per original binary */
+int move(int x, int y, int z) {
+	int dx,dy,dz,fxy,fz,done; unsigned char stspb;
+	long k2; int t_seg;
+
+c:	fxy=0; fz=0; done=0;
+	dx=x-xcur; dy=y-ycur; dz=z-zcur;
+	t_seg=seg_time(dx,dy,dz);
+#ifdef TRACE
+	{	long _k2x=0,_k2y=0,_k2z=0;
+		if(dx) _k2x=calc_k2(dx,t_seg);
+		if(dy) _k2y=calc_k2(dy,t_seg);
+		if(dz) _k2z=calc_k2(dz,t_seg);
+		sprintf(_tbuf,"[MOV] dx=%d dy=%d dz=%d tseg=%d k2x=%ld k2y=%ld k2z=%ld",
+			dx,dy,dz,t_seg,_k2x,_k2y,_k2z);
+		tlog_write(_tbuf);
+	}
+#endif
+	if(dx) {
+		k2=calc_k2(dx,t_seg);
+		outportb(ADRPT0,(unsigned char)(k2%256));
+		outportb(ADRPT0,(unsigned char)(k2/256));
+		outportb(ADRPT0+1,(unsigned char)(abs(dx)%256));
+		outportb(ADRPT0+1,(unsigned char)(abs(dx)/256));
+		ctlw=(dx>0)? ctlw|XUP|XON:(ctlw&XDOWN)|XON;
+		fxy=1;
+		}
+	else ctlw=ctlw&XOFF;
+	if(dy) {
+		k2=calc_k2(dy,t_seg);
+		outportb(ADRPT1,(unsigned char)(k2%256));
+		outportb(ADRPT1,(unsigned char)(k2/256));
+		outportb(ADRPT1+1,(unsigned char)(abs(dy)%256));
+		outportb(ADRPT1+1,(unsigned char)(abs(dy)/256));
+		ctlw=(dy>0)? ctlw|YUP|YON:(ctlw&YDOWN)|YON;
+		fxy=1;
+		}
+	else ctlw=ctlw&YOFF;
+	if(dz) {
+		k2=calc_k2(dz,t_seg);
+		outportb(ADRPT0+2,(unsigned char)(k2%256));
+		outportb(ADRPT0+2,(unsigned char)(k2/256));
+		outportb(ADRPT1+2,(unsigned char)(abs(dz)%256));
+		outportb(ADRPT1+2,(unsigned char)(abs(dz)/256));
+		ctlw=(dz>0)? ctlw|ZUP|ZON:(ctlw&ZDOWN)|ZON;
+		fz=1;
+		}
+	else ctlw=ctlw&ZOFF;
+	ctlw=ctlw&OSCON;
+#ifdef VFY_COUNTERS
+	/* VERIFY: read back counters BEFORE starting motors.
+	   WARNING: latch commands may disrupt 8254 on real hardware.
+	   Only enable for bench testing. */
+	{	unsigned int _rk2x,_rk2y,_rk2z,_rdx,_rdy,_rdz;
+		_rk2x=read_counter(ADRPT0,0);	/* K2x */
+		_rdx=read_counter(ADRPT0,1);	/* dX */
+		_rk2y=read_counter(ADRPT1,0);	/* K2y */
+		_rdy=read_counter(ADRPT1,1);	/* dY */
+		_rk2z=read_counter(ADRPT0,2);	/* K2z */
+		_rdz=read_counter(ADRPT1,2);	/* dZ */
+		sprintf(_tbuf,"[VFY] K2x=%u dX=%u K2y=%u dY=%u K2z=%u dZ=%u",
+			_rk2x,_rdx,_rk2y,_rdy,_rk2z,_rdz);
+		tlog_write(_tbuf);
+	}
+#endif
+	outportb(ADRRG,ctlw);
+#ifdef TRACE
+	sprintf(_tbuf,"[HW] RG OUT %02X fxy=%d fz=%d",(int)ctlw,fxy,fz);
+	tlog_write(_tbuf);
+#endif
+	if((!dx)&&(!dy)&&(!dz)) goto b;
+	if(!f_demo) {
+		while(!done) {
+			stspb=inportb(ADRPPI+1);
+			if(fxy && ((stspb & 0x80)==0x80)) {ctlw=ctlw&XOFF&YOFF; fxy=0;}
+			if(fz && ((stspb & 0x40)==0x40)) {ctlw=ctlw&ZOFF; fz=0;}
+			outportb(ADRRG,ctlw);
+			if((!fxy) && (!fz)) done=1;
+			if((stspb & 0x3f) != 0x3f) {
+				delay(1);
+				stspb=inportb(ADRPPI+1);
+				if((stspb & 0x3f) != 0x3f) goto a;
+				else {
+					if(f_noise == 2) goto a;
+					if(f_noise == 1) {move_sen(0); goto c;}
+					}
+				}
+			}
+		}
+b:	if(f_demo) delay(l_period);										// v2.77: fixed per binary
+#ifdef TRACE
+	{	unsigned int _zd; unsigned char _sens;
+		_sens=inportb(ADRPPI+1);
+		_zd=read_counter(ADRPT1,2);  /* Z remainder: safe, motors already stopped */
+		sprintf(_tbuf,"[MOV] DONE sens=%02X Zd=%u dz_prog=%d cur=%d,%d,%d->%d,%d,%d",
+			(int)_sens,_zd,dz,xcur,ycur,zcur,x,y,z);
+		tlog_write(_tbuf);
+	}
+#endif
+	xcur=x; ycur=y; zcur=z;
+	/* v2.76: removed out_time(1) */
+	return 1;
+a:
+#ifdef TRACE
+	sprintf(_tbuf,"[MOVE] ERR sens=%02X x=%d y=%d z=%d cur=%d,%d,%d",
+		(int)stspb,x,y,z,xcur,ycur,zcur);
+	tlog_write(_tbuf);
+#endif
+	ctlw=ctlw&XOFF&YOFF&ZOFF;
+	outportb(ADRRG,ctlw); fxy=0; fz=0;
+#ifdef TRACE
+	sprintf(_tbuf,"[HW] RG STOP %02X sens=%02X",(int)ctlw,(int)stspb);
+	tlog_write(_tbuf);
+#endif
+	if((stspb & 0x03) != 0x03) {
+		outportb(ADRPT0,0xc8); outportb(ADRPT0,0x00);
+		outportb(ADRPT0+1,0xc8); outportb(ADRPT0+1,0x00);
+		ctlw=(dx<0)? ctlw|XUP|XON:(ctlw&XDOWN)|XON; fxy=1;
+		}
+	if((stspb & 0x0c) != 0x0c) {
+		outportb(ADRPT1,0xc8); outportb(ADRPT1,0x00);
+		outportb(ADRPT1+1,0xc8); outportb(ADRPT1+1,0x00);
+		ctlw=(dy<0)? ctlw|YUP|YON:(ctlw&YDOWN)|YON; fxy=1;
+		}
+	if((stspb & 0x30) != 0x30) {
+		outportb(ADRPT0+2,0xc8); outportb(ADRPT0+2,0x00);
+		outportb(ADRPT1+2,0xc8); outportb(ADRPT1+2,0x00);
+		ctlw=(dz<0)? ctlw|ZUP|ZON:(ctlw&ZDOWN)|ZON; fz=1;
+		}
+	ctlw=ctlw&OSCON; outportb(ADRRG,ctlw); done=0;
+#ifdef TRACE
+	sprintf(_tbuf,"[HW] RG RECOVER %02X",(int)ctlw);
+	tlog_write(_tbuf);
+#endif
+	while(!done) {
+		stspb=inportb(ADRPPI+1);
+		if(fxy && ((stspb & 0x80) == 0x80)) {ctlw=ctlw&XOFF&YOFF; fxy=0;}
+		if(fz && ((stspb & 0x40) == 0x40)) {ctlw=ctlw&ZOFF; fz=0;}
+		outportb(ADRRG,ctlw);
+		if((!fxy) && (!fz)) done=1;
+		}
+	ctlw=ctlw&XOFF&YOFF&ZOFF; outportb(ADRRG,ctlw);
+#ifdef TRACE
+	sprintf(_tbuf,"[HW] RG END %02X",(int)ctlw);
+	tlog_write(_tbuf);
+#endif
+	do_ptr=0; return 0;
+}

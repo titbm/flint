@@ -14,6 +14,14 @@ Flint 2.77 src/TURBOC.$LN
 Flint 2.77 src/BUILD/
 Flint 2.77 src/BUILD_*/
 
+# Build artifacts (Flint 2.77 BCC32 src)
+Flint 2.77 (BCC32) src/*.obj
+Flint 2.77 (BCC32) src/*.exe
+Flint 2.77 (BCC32) src/*.err
+Flint 2.77 (BCC32) src/DEBUG.LOG
+Flint 2.77 (BCC32) src/BUILD/
+Flint 2.77 (BCC32) src/BUILD_*/
+
 # IDE files
 *.bak
 *.tmp
