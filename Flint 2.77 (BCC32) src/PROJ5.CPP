@@ -230,6 +230,12 @@ b:					closegraph();
 
 
 void button(int btc[], int nmb, char buttxt[]) {
+#ifdef TRACE
+	if(!buttxt || (unsigned long)buttxt > 0xF0000000UL) {
+		sprintf(_tbuf,"[TRAP] button() BAD ptr=%p nmb=%d",buttxt,nmb);
+		tlog_write(_tbuf); return;
+	}
+#endif
 	setfillstyle(1,63); bar(btc[6*nmb+2],btc[6*nmb+3],
 		btc[6*nmb+2]+btc[6*nmb+4],btc[6*nmb+3]+btc[6*nmb+5]);
 	setfillstyle(1,BLACK); bar(btc[6*nmb+2]+1,btc[6*nmb+3]+1,
@@ -241,6 +247,12 @@ void button(int btc[], int nmb, char buttxt[]) {
 
 
 void buttonp(int btc[], int nmb, char buttxt[]) {
+#ifdef TRACE
+	if(!buttxt || (unsigned long)buttxt > 0xF0000000UL) {
+		sprintf(_tbuf,"[TRAP] buttonp() BAD ptr=%p nmb=%d",buttxt,nmb);
+		tlog_write(_tbuf); return;
+	}
+#endif
 	setfillstyle(1,BLACK); bar(btc[6*nmb+2],btc[6*nmb+3],
 		btc[6*nmb+2]+btc[6*nmb+4],btc[6*nmb+3]+btc[6*nmb+5]);
 	setfillstyle(1,7); bar(btc[6*nmb+2]+1,btc[6*nmb+3]+1,
@@ -1728,7 +1740,15 @@ unsigned int scan_ms(int btc[], char *bnam[], int nbt, int f_beep) {
 		else if(i==1) {
 			for(k=0; k<nbt; k++) {
 				if(pressbt(btc,k)) {
-					if(btc[6*k]==1) button(btc,nmb_pbt,bnam[nmb_pbt]);
+#ifdef TRACE
+					sprintf(_tbuf,"[scan_ms] i=1 k=%d nmb_pbt=%d nbt=%d bnam[k]=%p",k,nmb_pbt,nbt,bnam[k]);
+					tlog_write(_tbuf);
+					if(nmb_pbt!=255) {
+						sprintf(_tbuf,"[scan_ms] bnam[nmb_pbt=%d]=%p btc[6k]=%d",nmb_pbt,bnam[nmb_pbt],btc[6*k]);
+						tlog_write(_tbuf);
+					}
+#endif
+					if((nmb_pbt != 255) && btc[6*k]==1) button(btc,nmb_pbt,bnam[nmb_pbt]);
 					nmb_pbt=255;
 					if(btc[6*k+1]==1) return k;
 					}
