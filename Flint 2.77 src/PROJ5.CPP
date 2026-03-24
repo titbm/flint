@@ -635,11 +635,28 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 			case 28:																				// v2.78: Shot (single pulse with pump)
 				if(f_demo) { beep(4000,30); break; }
 				{	unsigned int _mask = (gl_nmb) ? glpos9 : 0x0200;
+#ifdef TRACE
+					sprintf(_tbuf,"[SHOT] BEGIN mask=%04X lper=%d gate=%d LCtl=%u demo=%d",
+						_mask,l_period,gate_delay,(unsigned)LCtl,f_demo);
+					tlog_write(_tbuf);
+#endif
 					/* Open mirrors & cover BEFORE enabling laser */
 					outportb(ADRPPI+2,inportb(ADRPPI+2)&PR_OPEN);
 					sh_open(_mask);
 					/* Sync with PT2 while laser is still off */
+#ifdef TRACE
+					{ unsigned int _pre = read_pt2();
+					  sprintf(_tbuf,"[SHOT] SYNC pt2=%u check=%04X",_pre,(_pre-2)&0xFFE0);
+					  tlog_write(_tbuf);
+					}
+#endif
 					while((read_pt2()-2) & 0xFFE0) ;
+#ifdef TRACE
+					{ unsigned int _post = read_pt2();
+					  sprintf(_tbuf,"[SHOT] SYNCED pt2=%u",_post);
+					  tlog_write(_tbuf);
+					}
+#endif
 					/* Enable and fire exactly one pulse */
 					LCtl = PUMP_ON | SHUT_ON;
 					outportb(LRG, LCtl);
@@ -654,7 +671,7 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 				}
 				ulFlash++;
 #ifdef TRACE
-				sprintf(_tbuf,"[SHOT] fire demo=%d fl=%lu",f_demo,ulFlash);
+				sprintf(_tbuf,"[SHOT] DONE fl=%lu",ulFlash);
 				tlog_write(_tbuf);
 #endif
 				break;
