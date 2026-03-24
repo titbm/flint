@@ -602,7 +602,6 @@ a:		if(f_metal) {
 				tlog_write(_tbuf);
 #endif
 				if(!k) return 0;
-				mainscr(1); show_reit(1); progbar(nmax,i,1,160,464);
 				msg(160,80,1,"For STOP: press ESC");
 				flag=1;
 				if(k == 1) goto a;
@@ -625,7 +624,6 @@ a2:		if(!lpuls(flag)) {
 			tlog_write(_tbuf);
 #endif
 			if(!k) return 0;
-			mainscr(1); show_reit(1); progbar(nmax,i,1,160,464);
 			msg(160,80,1,"For STOP: press ESC");
 			flag=1;
 			if(k == 1) goto a2;
