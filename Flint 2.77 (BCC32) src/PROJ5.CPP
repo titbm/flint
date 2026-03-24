@@ -668,6 +668,7 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 #endif
 				break;								// X clear positions
 			case 28:																				// v2.78: Shot (single pulse with pump)
+				if(f_demo) { beep(4000,30); break; }
 				{	unsigned int _mask = (gl_nmb) ? glpos9 : 0x0200;
 					/* Open mirrors & cover BEFORE enabling laser */
 					outportb(ADRPPI+2,inportb(ADRPPI+2)&PR_OPEN);

@@ -31,8 +31,8 @@ set "BC32=%~dp0..\Tools\BC45_32"
 set "FLINTDIR=%~dp0..\!GENESIS\Flint 2.77"
 
 :: Generate timestamp (YYYYMMDD_HHMMSS)
-for /f %%I in ('powershell -noprofile -command "Get-Date -Format yyyyMMdd_HHmmss"') do set "TSTAMP=%%I"
-set "BUILDDIR=%~dp0BUILD_BCC32_%TSTAMP%"
+for /f %%I in ('powershell -noprofile -command "Get-Date -Format ddMMyy_HHmmss"') do set "TSTAMP=%%I"
+set "BUILDDIR=%~dp032BCC_FLINT_%TSTAMP%"
 
 echo.
 echo ===========================================
@@ -138,7 +138,7 @@ if exist "%FLINTDIR%\BFT_FILES"  xcopy /E /I /Y "%FLINTDIR%\BFT_FILES" "%BUILDDI
 
 echo.
 echo ===========================================
-echo   Done! Directory: BUILD_BCC32_%TSTAMP%
+echo   Done! Directory: 32BCC_FLINT_%TSTAMP%
 echo   To run: double-click RUN.bat inside it
 echo ===========================================
 pause

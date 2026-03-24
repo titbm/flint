@@ -55,7 +55,7 @@ echo.
 echo *** Compilation successful ***
 
 :: Build output directory
-set BUILDNAME=BUILD_32BIT
+set BUILDNAME=32WTCM_FLINT
 echo Building output directory: %BUILDNAME%
 if not exist %BUILDNAME% mkdir %BUILDNAME%
 copy PROJ5.EXE %BUILDNAME%\ >nul
@@ -128,7 +128,7 @@ set "WATCOM=%~dp0..\Tools\WATCOM"
 
 :: Generate timestamp (DDMMYY_HHMMSS)
 for /f %%I in ('powershell -noprofile -command "Get-Date -Format ddMMyy_HHmmss"') do set "TSTAMP=%%I"
-set "BUILDDIR=%~dp0BUILD_32BIT_%TSTAMP%"
+set "BUILDDIR=%~dp032WTCM_FLINT_%TSTAMP%"
 
 :: --------------------------------------------
 :: Compiler: Open Watcom C++ wpp386
@@ -233,7 +233,7 @@ xcopy /E /I /Y "%FLINTDIR%\BFT_FILES" "%BUILDDIR%\BFT_FILES" >nul
 
 echo.
 echo ===========================================
-echo   Done! Directory created: BUILD_32BIT_%TSTAMP%
+echo   Done! Directory created: 32WTCM_FLINT_%TSTAMP%
 echo   To run - double-click RUN.bat inside it
 echo ===========================================
 pause

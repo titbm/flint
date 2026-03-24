@@ -41,7 +41,7 @@ echo.
 echo *** Compilation successful (RELEASE) ***
 
 :: Build output directory
-set BUILDNAME=BUILD_32BIT_NOLOGS
+set BUILDNAME=32NLWTCM_FLINT
 echo Building output directory: %BUILDNAME%
 if not exist %BUILDNAME% mkdir %BUILDNAME%
 copy PROJ5.EXE %BUILDNAME%\ >nul
@@ -111,7 +111,7 @@ set "WATCOM=%~dp0..\Tools\WATCOM"
 
 :: Generate timestamp (DDMMYY_HHMMSS)
 for /f %%I in ('powershell -noprofile -command "Get-Date -Format ddMMyy_HHmmss"') do set "TSTAMP=%%I"
-set "BUILDDIR=%~dp0BUILD_32BIT_NOLOGS_%TSTAMP%"
+set "BUILDDIR=%~dp032NLWTCM_FLINT_%TSTAMP%"
 
 rem --- Locate Watcom ---
 if not exist "%WATCOM%\binnt\wpp386.exe" goto :no_watcom
@@ -201,7 +201,7 @@ xcopy /E /I /Y "%FLINTDIR%\BFT_FILES" "%BUILDDIR%\BFT_FILES" >nul
 
 echo.
 echo ===========================================
-echo   Done! Directory created: BUILD_32BIT_NOLOGS_%TSTAMP%
+echo   Done! Directory created: 32NLWTCM_FLINT_%TSTAMP%
 echo   No FLINT.LOG will be created at runtime.
 echo   To run - double-click RUN.bat inside it
 echo ===========================================

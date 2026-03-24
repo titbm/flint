@@ -66,7 +66,7 @@ echo.
 echo *** Compilation successful ***
 
 :: Build output directory
-set BUILDNAME=BUILD_16BIT
+set BUILDNAME=16BCC_FLINT
 echo Building output directory: %BUILDNAME%
 if not exist %BUILDNAME% mkdir %BUILDNAME%
 copy PROJ5.EXE %BUILDNAME%\ >nul
@@ -121,7 +121,7 @@ set TOOLSDIR=%~dp0..\Tools
 
 :: Generate timestamp (DDMMYY_HHMMSS)
 for /f %%I in ('powershell -noprofile -command "Get-Date -Format ddMMyy_HHmmss"') do set "TSTAMP=%%I"
-set BUILDDIR=%~dp0BUILD_16BIT_%TSTAMP%
+set BUILDDIR=%~dp016BCC_FLINT_%TSTAMP%
 
 :: Check for BC45 compiler
 if exist "%TOOLSDIR%\BC45\BIN\BCC.EXE" (
@@ -204,6 +204,17 @@ if exist "%FLINTDIR%\BFT_FILES" (
     xcopy /E /I /Y "%FLINTDIR%\BFT_FILES" "%BUILDDIR%\BFT_FILES" >nul
 )
 
+:: Generate dosbox-x.conf inside BUILD
+>"%BUILDDIR%\dosbox-x.conf" echo [dosbox]
+>>"%BUILDDIR%\dosbox-x.conf" echo memsize=16
+>>"%BUILDDIR%\dosbox-x.conf" echo machine=svga_s3
+>>"%BUILDDIR%\dosbox-x.conf" echo.
+>>"%BUILDDIR%\dosbox-x.conf" echo [cpu]
+>>"%BUILDDIR%\dosbox-x.conf" echo cycles=max
+>>"%BUILDDIR%\dosbox-x.conf" echo.
+>>"%BUILDDIR%\dosbox-x.conf" echo [render]
+>>"%BUILDDIR%\dosbox-x.conf" echo aspect=true
+
 :: Generate dual-mode RUN.bat inside BUILD
 >"%BUILDDIR%\RUN.bat" (
     echo @echo off
@@ -220,14 +231,7 @@ if exist "%FLINTDIR%\BFT_FILES" (
     echo echo ERROR: DOSBox-X not found.
     echo pause ^& exit /b 1
     echo :DOSBOX_OK
-    echo "%%DOSBOX%%" -conf NUL ^^
-    echo   -set "machine=svga_s3" ^^
-    echo   -set "memsize=16" ^^
-    echo   -set "cycles=max" ^^
-    echo   -c "MOUNT C \"%%~dp0.\"" ^^
-    echo   -c "C:" ^^
-    echo   -c "PROJ5.EXE" ^^
-    echo   -c "EXIT"
+    echo "%%DOSBOX%%" -conf "%%~dp0dosbox-x.conf" -c "MOUNT C \"%%~dp0.\"" -c "C:" -c "PROJ5.EXE" -c "EXIT"
     echo copy /Y "%%~dp0FLINT1.CFG" "%%FLINTDIR%%\" ^>nul 2^>nul
     echo copy /Y "%%~dp0FLINT9.CFG" "%%FLINTDIR%%\" ^>nul 2^>nul
     echo copy /Y "%%~dp0FLASH.DAT"  "%%FLINTDIR%%\" ^>nul 2^>nul
@@ -239,7 +243,7 @@ if exist "%FLINTDIR%\BFT_FILES" (
 )
 
 echo.
-echo Done! Directory created: BUILD_16BIT_%TSTAMP%
+echo Done! Directory created: 16BCC_FLINT_%TSTAMP%
 echo To run - double-click RUN.bat inside it
 pause
 goto END
