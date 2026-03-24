@@ -64,9 +64,16 @@ mkdir "%BUILDDIR%"
 move /Y "%SRCDIR%\PROJ5.EXE" "%BUILDDIR%\" >nul
 copy /Y "%BC32%\BIN\32RTM.EXE"    "%BUILDDIR%\" >nul
 copy /Y "%BC32%\BIN\DPMI32VM.OVL" "%BUILDDIR%\" >nul
-copy /Y "%BC32%\BGI\BGI32.DLL"  "%BUILDDIR%\" >nul
-copy /Y "%BC32%\BGI\BGIVGA.DLL" "%BUILDDIR%\" >nul
-copy /Y "%BC32%\BGI\*.FNT"      "%BUILDDIR%\" >nul
+
+:: Copy BGI DLLs and fonts (required for graphics)
+:: BGI32.DLL stays in root (loaded by DPMI32 alongside EXE)
+:: BGIVGA.DLL and fonts go to BGI_DRVR\ (found via initgraph path; 8-char DOS name)
+:: Only BGIN__*.FNT and BGIR__*.FNT are needed (DEFAULT_FONT in BGI32)
+copy /Y "%BC32%\BGI\BGI32.DLL"     "%BUILDDIR%\" >nul
+mkdir "%BUILDDIR%\BGI_DRVR" >nul 2>nul
+copy /Y "%BC32%\BGI\BGIVGA.DLL"    "%BUILDDIR%\BGI_DRVR\" >nul
+copy /Y "%BC32%\BGI\BGIN__*.FNT"   "%BUILDDIR%\BGI_DRVR\" >nul
+copy /Y "%BC32%\BGI\BGIR__*.FNT"   "%BUILDDIR%\BGI_DRVR\" >nul
 
 del /Q "%SRCDIR%\*.OBJ" >nul 2>nul
 

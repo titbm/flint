@@ -122,9 +122,10 @@ int main() {
 	RdCfg(gl_nmb);
 	CurDir(); strcpy(wrkpath,path);
 	/* 32-bit BCC32: BGI through DLLs, no registerfarbgidriver needed.
-	   BGI32.DLL/BGIVGA.DLL must be findable. Use getcwd() so initgraph
-	   finds BGIVGA.DLL in the current directory (= EXE directory). */
+	   BGI32.DLL stays in EXE directory (loaded by DPMI32).
+	   Fonts live in BGI_DRVR\ subfolder (initgraph path, 8-char DOS name). */
 	getcwd(bgi_path, sizeof(bgi_path));
+	strncat(bgi_path, "\\BGI_DRVR", sizeof(bgi_path) - strlen(bgi_path) - 1);
 	initgraph(&g_driver,&g_mode,bgi_path);
 	g_error_code=graphresult();
 	if(g_error_code != grOk) {printf("graphics error %d\n", g_error_code); return 255;}
@@ -666,20 +667,24 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 				tlog_write("[CONFIG] CLEAR glass positions");
 #endif
 				break;								// X clear positions
-			case 28:													// v2.78: Shot (single pulse with pump)
-				{	unsigned char savedLCtl = LCtl;
+			case 28:																				// v2.78: Shot (single pulse with pump)
+				{	unsigned int _mask = (gl_nmb) ? glpos9 : 0x0200;
+					/* Open mirrors & cover BEFORE enabling laser */
+					outportb(ADRPPI+2,inportb(ADRPPI+2)&PR_OPEN);
+					sh_open(_mask);
+					/* Sync with PT2 while laser is still off */
+					while((read_pt2()-2) & 0xFFE0) ;
+					/* Enable and fire exactly one pulse */
 					LCtl = PUMP_ON | SHUT_ON;
 					outportb(LRG, LCtl);
-					outportb(ADRPPI+2,inportb(ADRPPI+2)&PR_OPEN);
-					{ int saved_dchk = d_check;
-					  d_check = 0;
-					  lpuls(1);
-					  d_check = saved_dchk;
-					}
-					sh_close();
-					outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
+					program_pt2(l_period,(unsigned char)gate_delay);
+					delay(1);
+					program_pt2(l_period,1);
+					/* Disable laser and close everything */
 					LCtl = 0;
 					outportb(LRG, LCtl);
+					sh_close();
+					outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
 				}
 				ulFlash++;
 #ifdef TRACE
