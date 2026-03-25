@@ -41,7 +41,7 @@ echo.
 
 :: Path to Flint 2.77 data (FLINT.GLS, CFG, BFT_FILES)
 :: Can be set in advance: SET FLINTDIR=C:\FLINT277
-if "%FLINTDIR%"=="" set FLINTDIR=..\!GENESIS\Flint 2.77
+if "%FLINTDIR%"=="" set FLINTDIR=..\_GENESIS\Flint 2.77
 
 :: Compile
 %BCDIR%\BGI\BGIOBJ /F %BCDIR%\BGI\EGAVGA EGAVGA
@@ -116,7 +116,7 @@ echo   Compiling FLINT 2.77
 echo ===========================================
 
 set SRCDIR=%~dp0.
-set FLINTDIR=%~dp0..\!GENESIS\Flint 2.77
+set FLINTDIR=%~dp0..\_GENESIS\Flint 2.77
 set TOOLSDIR=%~dp0..\Tools
 
 :: Generate timestamp (DDMMYY_HHMMSS)
@@ -224,7 +224,7 @@ if exist "%FLINTDIR%\BFT_FILES" (
     echo goto END
     echo :NT_RUN
     echo set DOSBOX=%%~dp0..\..\Tools\DOSBox-X\dosbox-x.exe
-    echo set FLINTDIR=%%~dp0..\..\!GENESIS\Flint 2.77
+    echo set FLINTDIR=%%~dp0..\..\_GENESIS\Flint 2.77
     echo if exist "%%DOSBOX%%" goto DOSBOX_OK
     echo for %%%%I in ^(dosbox-x.exe^) do if not "%%%%~$PATH:I"=="" set DOSBOX=%%%%~$PATH:I
     echo if exist "%%DOSBOX%%" goto DOSBOX_OK

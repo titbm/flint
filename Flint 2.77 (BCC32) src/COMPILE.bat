@@ -28,7 +28,7 @@ goto END
 
 set "SRCDIR=%~dp0."
 set "BC32=%~dp0..\Tools\BC45_32"
-set "FLINTDIR=%~dp0..\!GENESIS\Flint 2.77"
+set "FLINTDIR=%~dp0..\_GENESIS\Flint 2.77"
 
 :: Generate timestamp (YYYYMMDD_HHMMSS)
 for /f %%I in ('powershell -noprofile -command "Get-Date -Format ddMMyy_HHmmss"') do set "TSTAMP=%%I"

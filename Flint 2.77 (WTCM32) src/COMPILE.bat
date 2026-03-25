@@ -43,7 +43,7 @@ set LIB=%WATCOM%\lib386\dos
 echo.
 
 :: Path to Flint 2.77 data
-if "%FLINTDIR%"=="" set FLINTDIR=..\!GENESIS\Flint 2.77
+if "%FLINTDIR%"=="" set FLINTDIR=..\_GENESIS\Flint 2.77
 
 :: Compile
 echo Compiling...
@@ -122,7 +122,7 @@ echo   Compiling FLINT+ v2.77 (32-bit)
 echo ===========================================
 
 set "SRCDIR=%~dp0."
-set "FLINTDIR=%~dp0..\!GENESIS\Flint 2.77"
+set "FLINTDIR=%~dp0..\_GENESIS\Flint 2.77"
 set "TOOLSDIR=%~dp0..\Tools"
 set "WATCOM=%~dp0..\Tools\WATCOM"
 
@@ -212,7 +212,7 @@ xcopy /E /I /Y "%FLINTDIR%\BFT_FILES" "%BUILDDIR%\BFT_FILES" >nul
 >>"%BUILDDIR%\RUN.bat" echo goto END
 >>"%BUILDDIR%\RUN.bat" echo :NT_RUN
 
->>"%BUILDDIR%\RUN.bat" echo set "FLINTDIR=%%~dp0..\..\!GENESIS\Flint 2.77"
+>>"%BUILDDIR%\RUN.bat" echo set "FLINTDIR=%%~dp0..\..\_GENESIS\Flint 2.77"
 >>"%BUILDDIR%\RUN.bat" echo set "DOSBOX=%%~dp0..\..\Tools\DOSBox-X\dosbox-x.exe"
 >>"%BUILDDIR%\RUN.bat" echo if exist "%%DOSBOX%%" goto DOSBOX_OK
 >>"%BUILDDIR%\RUN.bat" echo for %%%%I in ^(dosbox-x.exe^) do if not "%%%%~$PATH:I"=="" set "DOSBOX=%%%%~$PATH:I"
