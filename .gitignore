@@ -1,11 +1,11 @@
-# Build artifacts (Flint 2.77 32bit)
-Flint 2.77 (32bit) src/*.obj
-Flint 2.77 (32bit) src/*.exe
-Flint 2.77 (32bit) src/*.err
-Flint 2.77 (32bit) src/DEBUG.LOG
-Flint 2.77 (32bit) src/BUILD/
-Flint 2.77 (32bit) src/BUILD_*/
-Flint 2.77 (32bit) src/*_FLINT_*/
+# Build artifacts (Flint 2.77 WTCM32)
+Flint 2.77 (WTCM32) src/*.obj
+Flint 2.77 (WTCM32) src/*.exe
+Flint 2.77 (WTCM32) src/*.err
+Flint 2.77 (WTCM32) src/DEBUG.LOG
+Flint 2.77 (WTCM32) src/BUILD/
+Flint 2.77 (WTCM32) src/BUILD_*/
+Flint 2.77 (WTCM32) src/*_FLINT_*/
 
 # Build artifacts (Flint 2.77 src)
 Flint 2.77 src/*.OBJ
