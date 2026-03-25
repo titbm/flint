@@ -693,23 +693,28 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 					/* Open mirrors & cover BEFORE enabling laser */
 					outportb(ADRPPI+2,inportb(ADRPPI+2)&PR_OPEN);
 					sh_open(_mask);
-					/* Sync with PT2 while laser is still off */
+					/* Safe gate before pump enable (no real pulse) */
+					program_pt2(l_period,1);
+					/* Enable pump first — PT2 CLK requires pump active */
+					LCtl = PUMP_ON | SHUT_ON;
+					outportb(LRG, LCtl);
+					/* Sync with PT2 cycle (timeout: ~130ms) */
 #ifdef TRACE
 					{ unsigned int _pre = read_pt2();
 					  sprintf(_tbuf,"[SHOT] SYNC pt2=%u check=%04X",_pre,(_pre-2)&0xFFE0);
 					  tlog_write(_tbuf);
 					}
 #endif
-					while((read_pt2()-2) & 0xFFE0) ;
+					{ unsigned int _tmo = 0;
+					  while(((read_pt2()-2) & 0xFFE0) && ++_tmo) ;
+					}
 #ifdef TRACE
 					{ unsigned int _post = read_pt2();
 					  sprintf(_tbuf,"[SHOT] SYNCED pt2=%u",_post);
 					  tlog_write(_tbuf);
 					}
 #endif
-					/* Enable and fire exactly one pulse */
-					LCtl = PUMP_ON | SHUT_ON;
-					outportb(LRG, LCtl);
+					/* Fire exactly one pulse */
 					program_pt2(l_period,(unsigned char)gate_delay);
 					delay(1);
 					program_pt2(l_period,1);
