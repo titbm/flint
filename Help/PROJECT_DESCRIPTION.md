@@ -468,6 +468,7 @@ zsize=	50
 | `bioskey(cmd)` | `_bios_keybrd(...)` | Работа с клавиатурой через BIOS |
 | `findfirst/findnext` | `_dos_findfirst/next` | Поиск файлов с обёрткой `struct ffblk` |
 | `sound()/nosound()` | Прямое программирование PIT | Звук через PC speaker |
+| `delay(ms)` | `pit_delay_ms(ms)` через PIT ch0 | Точная задержка (~1 мкс); Watcom `delay()` даёт ~55 мс через INT 21h/2Ch — неприемлемо для импульсов лазера |
 | `struct date / getdate()` | `dosdate_t / _dos_getdate()` | Получение текущей даты |
 | `int86x(0x33,...)` | `int386(0x33,...)` | Управление мышью (32-битные регистры) |
 
