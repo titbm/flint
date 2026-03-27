@@ -348,6 +348,8 @@ int lpuls(int flag) {
 		  tlog_write(_tbuf);
 		}
 #endif
+		/* v2.78: metal — pump on only for fire moment */
+		if(f_metal) { LCtl = PUMP_ON | SHUT_ON; outportb(LRG, LCtl); }
 		/* Fire: program gate delay */
 		program_pt2(l_period,(unsigned char)gate_delay);
 		ulFlash++;
@@ -364,6 +366,8 @@ int lpuls(int flag) {
 
 		/* Safe reset: gate minimum */
 		program_pt2(l_period,1);
+		/* v2.78: metal — pump off after fire */
+		if(f_metal) { LCtl = 0; outportb(LRG, LCtl); }
 		if(!d_check) {
 #ifdef TRACE
 			sprintf(_tbuf,"[LPULS] ok i=0 nodchk fl=%lu",ulFlash);
@@ -577,11 +581,7 @@ int process(void) {
 			return 0;
 			}
 a:		if(f_metal) {
-			/* v2.78: pump on/off per point to avoid parasitic shots during move */
-			LCtl = PUMP_ON | SHUT_ON;
-			outportb(LRG, LCtl);
 			if(!lpuls(flag)) {
-				LCtl = 0; outportb(LRG, LCtl);
 				outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
 #ifdef TRACE
 				tlog_write("[HW] PPI2 PR_CLOSE");
@@ -600,7 +600,6 @@ a:		if(f_metal) {
 				errnmb=0;
 				}
 			else flag=0;
-			LCtl = 0; outportb(LRG, LCtl);
 			}
 		else {
 a2:		if(!lpuls(flag)) {

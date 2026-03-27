@@ -681,11 +681,13 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 #endif
 				break;
 			case 29: f_metal=!f_metal;
-				if(f_metal && LCtl) {
-					LCtl=0; outportb(LRG,LCtl);	// pump off: managed per-point in metal
+				if(f_metal) {
+					if(LCtl) { LCtl=0; outportb(LRG,LCtl); }
+					f_gate=0;
+					program_pt2(l_period, 1);	// safe gate reset
 				}
 #ifdef TRACE
-				sprintf(_tbuf,"[CONFIG] METAL %s LCtl=%u",f_metal ? "ON" : "OFF",(unsigned)LCtl);
+				sprintf(_tbuf,"[CONFIG] METAL %s LCtl=%u gate=%d",f_metal ? "ON" : "OFF",(unsigned)LCtl,f_gate);
 				tlog_write(_tbuf);
 #endif
 				break;					// v2.78: Metal toggle
