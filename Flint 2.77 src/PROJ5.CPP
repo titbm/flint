@@ -635,9 +635,11 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 			case 28:																				// v2.78: Shot (single pulse with pump)
 				if(f_demo) { beep(4000,30); break; }
 				{	unsigned int _mask = (gl_nmb) ? glpos9 : 0x0200;
+					unsigned char _gate = f_gate ? (unsigned char)gate_delay : 1;
+					int _pump_was_on = (LCtl != 0);
 #ifdef TRACE
-					sprintf(_tbuf,"[SHOT] BEGIN mask=%04X lper=%d gate=%d LCtl=%u demo=%d",
-						_mask,l_period,gate_delay,(unsigned)LCtl,f_demo);
+					sprintf(_tbuf,"[SHOT] BEGIN mask=%04X lper=%d gate=%d fgate=%d pump=%d",
+						_mask,l_period,gate_delay,f_gate,_pump_was_on);
 					tlog_write(_tbuf);
 #endif
 					/* Open mirrors & cover BEFORE enabling laser */
@@ -645,9 +647,11 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 					sh_open(_mask);
 					/* Safe gate before pump enable (no real pulse) */
 					program_pt2(l_period,1);
-					/* Enable pump first — PT2 CLK requires pump active */
-					LCtl = PUMP_ON | SHUT_ON;
-					outportb(LRG, LCtl);
+					/* Enable pump only if not already on */
+					if(!_pump_was_on) {
+						LCtl = PUMP_ON | SHUT_ON;
+						outportb(LRG, LCtl);
+					}
 					/* Sync with PT2 cycle (timeout: ~130ms) */
 #ifdef TRACE
 					{ unsigned int _pre = read_pt2();
@@ -665,12 +669,14 @@ c:				/* v2.77: safe exit - PR_CLOSE, sh_close, program_pt2 reset */
 					}
 #endif
 					/* Fire exactly one pulse */
-					program_pt2(l_period,(unsigned char)gate_delay);
+					program_pt2(l_period, _gate);
 					delay(1);
 					program_pt2(l_period,1);
-					/* Disable laser and close everything */
-					LCtl = 0;
-					outportb(LRG, LCtl);
+					/* Disable pump only if we turned it on */
+					if(!_pump_was_on) {
+						LCtl = 0;
+						outportb(LRG, LCtl);
+					}
 					sh_close();
 					outportb(ADRPPI+2,inportb(ADRPPI+2)|PR_CLOSE);
 				}
