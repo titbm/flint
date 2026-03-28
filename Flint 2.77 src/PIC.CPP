@@ -176,7 +176,6 @@ void show_reit(int mode);
 /* Forward declarations for functions in this file */
 void sh_open(unsigned int pos);
 void sh_close(void);
-int lpuls_metal(int flag);
 int move_sen(int dir);
 int move(int x, int y, int z);
 #ifdef TRACE
@@ -402,87 +401,6 @@ int lpuls(int flag) {
 #ifdef TRACE
 	sprintf(_tbuf,"[LPULS] FAIL i=10 wrkpos=%04X dsens=%04X mask=%04X fl=%lu LCtl=%u",
 		wrkpos,dsens,mask,ulFlash,(unsigned)LCtl);
-	tlog_write(_tbuf);
-#endif
-	errnmb=wrkpos; return 0;
-	}
-
-
-/* v2.78: Direct PC6 pulse for metal engraving mode.
-   Same d_check/retry/EM-shutter logic as lpuls(), but fires
-   via PC6 bit instead of PT2 timer. No pump needed. */
-int lpuls_metal(int flag) {
-	unsigned int i,k,dsens,mask,wrkpos,shft;
-	unsigned int prevwrkpos;
-
-#ifdef TRACE
-	sprintf(_tbuf,"[METAL] CALL flag=%d dchk=%d",flag,d_check);
-	tlog_write(_tbuf);
-#endif
-
-	if(f_demo) {
-		ulFlash++;
-#ifdef TRACE
-		sprintf(_tbuf,"[METAL] demo ok fl=%lu",ulFlash);
-		tlog_write(_tbuf);
-#endif
-		return 1;
-		}
-	prevwrkpos=errnmb;
-	mask=(gl_nmb)? glpos9:0x0200;
-	if(d_check && errnmb) {
-		wrkpos=errnmb & mask;
-		}
-	else wrkpos=mask;
-	if(flag) sh_open(wrkpos);
-	for(i=0; i<11; i++) {
-		if(kbhit()) {
-			if(getch() == ESC) {
-#ifdef TRACE
-				sprintf(_tbuf,"[METAL] ESC i=%u wrkpos=%04X",i,wrkpos);
-				tlog_write(_tbuf);
-#endif
-				errnmb=wrkpos; return 0;
-				}
-			}
-		/* Fire: direct PC6 pulse */
-		outportb(ADRPPI+2,inportb(ADRPPI+2)&PULS_ON);
-		delay(1);
-		outportb(ADRPPI+2,inportb(ADRPPI+2)|PULS_OFF);
-		ulFlash++;
-		delay(1);
-		if(!d_check) {
-#ifdef TRACE
-			sprintf(_tbuf,"[METAL] ok i=0 nodchk fl=%lu",ulFlash);
-			tlog_write(_tbuf);
-#endif
-			return 1;
-			}
-		dsens=((unsigned int)inportb(ADRPPI2)+
-					(unsigned int)inportb(ADRPPI2+2)*256)&0x03ff;
-		wrkpos-=(dsens & wrkpos);
-		if(!wrkpos) {
-#ifdef TRACE
-			sprintf(_tbuf,"[METAL] ok i=%u dsens=%04X mask=%04X fl=%lu",
-				i,dsens,mask,ulFlash);
-			tlog_write(_tbuf);
-#endif
-			if(i || errnmb) sh_open(mask);
-			errnmb=0; return 1;
-			}
-		if(i == 10) break;
-#ifdef TRACE
-		sprintf(_tbuf,"[METAL] retry i=%u dsens=%04X wrk=%04X",i,dsens,wrkpos);
-		tlog_write(_tbuf);
-#endif
-		shft=0x0001;
-		for(k=0; k<10; k++) {if(wrkpos & shft) nmrpt[k]+=1; shft*=2;}
-		show_reit(0);
-		if(wrkpos != prevwrkpos) {sh_open(wrkpos); prevwrkpos=wrkpos;}
-		}
-#ifdef TRACE
-	sprintf(_tbuf,"[METAL] FAIL i=10 wrkpos=%04X dsens=%04X mask=%04X fl=%lu",
-		wrkpos,dsens,mask,ulFlash);
 	tlog_write(_tbuf);
 #endif
 	errnmb=wrkpos; return 0;
