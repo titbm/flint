@@ -339,6 +339,8 @@ int lpuls(int flag) {
 				errnmb=wrkpos; return 0;
 				}
 			}
+		/* v2.78: metal — pump on before sync (PT2 CLK needs pump) */
+		if(f_metal) { LCtl = PUMP_ON | SHUT_ON; outportb(LRG, LCtl); }
 		/* Wait for PT2 counter to near-complete */
 		while((read_pt2()-2) & 0xFFE0) ;
 #ifdef TRACE
@@ -347,9 +349,6 @@ int lpuls(int flag) {
 		          i, _sync_pt2, (unsigned)l_period*100, (unsigned)gate_delay, (unsigned)LCtl);
 		  tlog_write(_tbuf);
 		}
-#endif
-		/* v2.78: metal — pump on only for fire moment */
-		if(f_metal) { LCtl = PUMP_ON | SHUT_ON; outportb(LRG, LCtl); }
 		/* Fire: program gate delay */
 		program_pt2(l_period,(unsigned char)gate_delay);
 		ulFlash++;
