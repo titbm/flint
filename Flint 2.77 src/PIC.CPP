@@ -348,6 +348,7 @@ int lpuls(int flag) {
 		          i, _sync_pt2, (unsigned)l_period*100, (unsigned)gate_delay, (unsigned)LCtl);
 		  tlog_write(_tbuf);
 		}
+#endif
 		/* Fire: program gate delay */
 		program_pt2(l_period,(unsigned char)gate_delay);
 		ulFlash++;
