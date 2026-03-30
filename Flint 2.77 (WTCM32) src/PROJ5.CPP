@@ -1799,14 +1799,6 @@ unsigned int scan_ms(int btc[], char *bnam[], int nbt, int f_beep) {
 		else if(i==1) {
 			for(k=0; k<nbt; k++) {
 				if(pressbt(btc,k)) {
-#ifdef TRACE
-					sprintf(_tbuf,"[scan_ms] i=1 k=%d nmb_pbt=%d nbt=%d bnam[k]=%p",k,nmb_pbt,nbt,bnam[k]);
-					tlog_write(_tbuf);
-					if(nmb_pbt!=255) {
-						sprintf(_tbuf,"[scan_ms] bnam[nmb_pbt=%d]=%p btc[6k]=%d",nmb_pbt,bnam[nmb_pbt],btc[6*k]);
-						tlog_write(_tbuf);
-					}
-#endif
 					if((nmb_pbt != 255) && btc[6*k]==1) button(btc,nmb_pbt,bnam[nmb_pbt]);
 					nmb_pbt=255;
 					if(btc[6*k+1]==1) return k;

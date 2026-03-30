@@ -24,6 +24,7 @@
 #include <dos.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 #include <i86.h>
 
 #include "compat.h"
@@ -45,7 +46,14 @@ char _tbuf[160];
 #ifdef TRACE
 FILE *tlog = NULL;
 void tlog_open(void)  {
-	tlog=fopen("FLINT.LOG","w");
+	char fname[80];
+	time_t t; struct tm *tm;
+	t=time(NULL); tm=localtime(&t);
+	mkdir("LOGS");
+	sprintf(fname,"LOGS\\%02d%02d%02d%02d.LOG",
+		tm->tm_mon+1,tm->tm_mday,
+		tm->tm_hour,tm->tm_min);
+	tlog=fopen(fname,"w");
 	if(tlog) {
 		fprintf(tlog,"=== FLINT 2.77 Trace Log Start ===\n");
 		fflush(tlog);
@@ -787,12 +795,18 @@ c:	fxy=0; fz=0; done=0;
 		}
 b:	if(f_demo) delay(l_period);										// v2.77: fixed per binary
 #ifdef TRACE
-	{	unsigned int _zd; unsigned char _sens;
+	{	unsigned int _xd,_yd,_zd; unsigned char _sens;
 		_sens=inportb(ADRPPI+1);
-		_zd=read_counter(ADRPT1,2);  /* Z remainder: safe, motors already stopped */
-		sprintf(_tbuf,"[MOV] DONE sens=%02X Zd=%u dz_prog=%d cur=%d,%d,%d->%d,%d,%d",
-			(int)_sens,_zd,dz,xcur,ycur,zcur,x,y,z);
+		_xd=read_counter(ADRPT0,1);  /* X remainder */
+		_yd=read_counter(ADRPT1,1);  /* Y remainder */
+		_zd=read_counter(ADRPT1,2);  /* Z remainder */
+		sprintf(_tbuf,"[MOV] DONE sens=%02X Xd=%u Yd=%u Zd=%u d=%d,%d,%d cur=%d,%d,%d->%d,%d,%d",
+			(int)_sens,_xd,_yd,_zd,dx,dy,dz,xcur,ycur,zcur,x,y,z);
 		tlog_write(_tbuf);
+		if((_xd>1 && dx) || (_yd>1 && dy) || (_zd>1 && dz)) {
+			sprintf(_tbuf,"[WARN] INCOMPLETE MOVE Xd=%u Yd=%u Zd=%u",_xd,_yd,_zd);
+			tlog_write(_tbuf);
+			}
 	}
 #endif
 	xcur=x; ycur=y; zcur=z;
