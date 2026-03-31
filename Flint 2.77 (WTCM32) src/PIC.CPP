@@ -795,18 +795,12 @@ c:	fxy=0; fz=0; done=0;
 		}
 b:	if(f_demo) delay(l_period);										// v2.77: fixed per binary
 #ifdef TRACE
-	{	unsigned int _xd,_yd,_zd; unsigned char _sens;
+	{	unsigned char _sens;
 		_sens=inportb(ADRPPI+1);
-		_xd=read_counter(ADRPT0,1);  /* X remainder */
-		_yd=read_counter(ADRPT1,1);  /* Y remainder */
-		_zd=read_counter(ADRPT1,2);  /* Z remainder */
-		sprintf(_tbuf,"[MOV] DONE sens=%02X Xd=%u Yd=%u Zd=%u d=%d,%d,%d cur=%d,%d,%d->%d,%d,%d",
-			(int)_sens,_xd,_yd,_zd,dx,dy,dz,xcur,ycur,zcur,x,y,z);
+		/* read_counter removed: 8253 latch corrupts flip-flop, breaks next move() */
+		sprintf(_tbuf,"[MOV] DONE sens=%02X d=%d,%d,%d cur=%d,%d,%d->%d,%d,%d",
+			(int)_sens,dx,dy,dz,xcur,ycur,zcur,x,y,z);
 		tlog_write(_tbuf);
-		if((_xd>1 && dx) || (_yd>1 && dy) || (_zd>1 && dz)) {
-			sprintf(_tbuf,"[WARN] INCOMPLETE MOVE Xd=%u Yd=%u Zd=%u",_xd,_yd,_zd);
-			tlog_write(_tbuf);
-			}
 	}
 #endif
 	xcur=x; ycur=y; zcur=z;
