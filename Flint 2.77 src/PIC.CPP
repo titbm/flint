@@ -46,14 +46,25 @@ FILE *tlog = NULL;
 void tlog_open(void)  {
 	char fname[80];
 	time_t t; struct tm *tm;
+	int seq = 0;
+	FILE *f;
 	t=time(NULL); tm=localtime(&t);
 	mkdir("LOGS");
-	sprintf(fname,"LOGS\\%02d%02d%02d%02d.LOG",
-		tm->tm_mon+1,tm->tm_mday,
-		tm->tm_hour,tm->tm_min);
+	
+	/* Find next available sequence number for today: YYMMDDNN.LOG */
+	do {
+		sprintf(fname,"LOGS\\%02d%02d%02d%02d.LOG",
+			tm->tm_year%100, tm->tm_mon+1, tm->tm_mday, seq);
+		f = fopen(fname,"r");
+		if(f) { fclose(f); seq++; }
+	} while(f && seq < 100);
+	
 	tlog=fopen(fname,"w");
 	if(tlog) {
 		fprintf(tlog,"=== FLINT 2.77 Trace Log Start ===\n");
+		fprintf(tlog,"[DATE] %04d-%02d-%02d %02d:%02d:%02d\n",
+			tm->tm_year+1900, tm->tm_mon+1, tm->tm_mday,
+			tm->tm_hour, tm->tm_min, tm->tm_sec);
 		fflush(tlog);
 	}
 }
